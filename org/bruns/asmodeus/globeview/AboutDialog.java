@@ -10,10 +10,12 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/01 02:06:03  cmbruns
+// minor comment change
+//
 // Revision 1.2  2005/03/01 02:03:25  cmbruns
 // Added cvs headers
 //
-// 
 
 
 package org.bruns.asmodeus.globeview;
