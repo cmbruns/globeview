@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/11 00:18:34  cmbruns
+// Changed InputStream constructor call to read UTF-8 characters from labels file
+//
 // Revision 1.2  2005/03/01 02:13:13  cmbruns
 // added cvs headers
 //
@@ -28,7 +31,8 @@ public class SiteLabelCollection extends GeoCollection {
 	SiteLabelCollection(URL siteURL) {
 		
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(siteURL.openStream()));		
+			BufferedReader in = new BufferedReader(new InputStreamReader(siteURL.openStream(),
+												   "UTF-8"));		
 			String inputLine;		
 			while ((inputLine = in.readLine()) != null) {
 				StringTokenizer tokenizer = new StringTokenizer(inputLine, "\t");
