@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/02 01:52:49  cmbruns
+// Set resolution of individual paths
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -32,6 +35,7 @@ public class GeoPathCollection extends GeoCollection
 
 		setResolution(resolution);
 		color = borderColor;
+		if (pathURL == null) return;
 
 		try {
 			InputStream urlStream = pathURL.openStream();
@@ -74,12 +78,12 @@ public class GeoPathCollection extends GeoCollection
 				for (int i = 0; i < pointCount; i++) {
 					inputLine = in.readLine();
 					StringTokenizer tokenizer2 = new StringTokenizer(inputLine, "\t ", false);
-					// TODO parse coordinate pair
+					// Parse coordinate pair
 					double latitude = (new Double(tokenizer2.nextToken())).doubleValue();
 					double longitude = (new Double(tokenizer2.nextToken())).doubleValue();
 					path.addPoint(longitude * degreesToRadians, latitude * degreesToRadians);
 				}
-				
+				path.setResolution(resolution);
 				path.color = color;
 				addElement(path);
 			}
