@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/02 01:56:25  cmbruns
+// Wrapped getColor() around getPixel(), since they were so similar
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -96,43 +99,29 @@ public class MapBlitter
     }
 
     Color getColor(Vector3D v, double resolution) {
-	if (pixelArray == null) return null;
-	try {
-	    int x, y;
-
-	    double lambda = Math.atan2(v.x(), v.z());
-	    x = (int) (dX + lambda * kX);
-
-	    // double phi = Math.asin(v.y());
-	    y = (int) (dY - yPixelIndex[(int)((1.0 + v.y())*yScale)]);
-
-	    int intColor = pixelArray[x + y * width];
-	    // return Color.white;
-	    return new Color(intColor);
-
-	} catch (Exception e) {
-	    return null;
-	}
+		int intColor = getPixel(v, resolution);
+		if (intColor < 0) return null;
+		return new Color(intColor);
     }
 
     int getPixel(Vector3D v, double resolution) {
-	if (pixelArray == null) return 0;
-	try {
-	    int x, y;
-
-	    double lambda = Math.atan2(v.x(), v.z());
-	    x = (int) (dX + lambda * kX);
-
-	    // double phi = Math.asin(v.y());
-	    y = (int) (dY - yPixelIndex[(int)((1.0 + v.y())*yScale)]);
-
-	    int intColor = pixelArray[x + y * width];
-
-	    return intColor;
-
-	} catch (Exception e) {
-	    return 0;
-	}
+		if (pixelArray == null) return 0;
+		try {
+			int x, y;
+			
+			double lambda = Math.atan2(v.x(), v.z());
+			x = (int) (dX + lambda * kX);
+			
+			// double phi = Math.asin(v.y());
+			y = (int) (dY - yPixelIndex[(int)((1.0 + v.y())*yScale)]);
+			
+			int intColor = pixelArray[x + y * width];
+			
+			return intColor;
+			
+		} catch (Exception e) {
+			return 0;
+		}
     }
 	
 	static MapBlitter readMap(URL mapURL, GeoCanvas geoCanvas) {
