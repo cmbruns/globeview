@@ -13,6 +13,33 @@ import java.text.*;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/05 00:55:25  cmbruns
+// Implemented separate DrawBitmapThread to handle drawing the satellite and day/night images.  Gave public
+// access to offscreen buffers for this purpose.  Made some
+// variables volatile for this, but am not sure that is
+// necessary.
+//
+// Created container objects for parameter files, graticules,
+// coastlines, labels
+//
+// Created reference to parent frame, so that menu checks can be modified from ParameterFiles.  Several new
+// routines to change local variables and reflect this in
+// parent frame menus.  e.g. setGraticules(boolean)
+//
+// Removed parameters for separate mapURL, etc.  These can now be passed in ParameterFiles.
+//
+// Removed rusty benchmarking code.
+//
+// Created getViewLens() routine
+//
+// Created setWait(String) and unsetWait() to centralize feedback on time consuming operations.
+//
+// swapped update() and paint() routines.  I don't think this makes a difference.
+//
+// most of the content of paintBitmap() has been moved to ImageCollection
+//
+// created centerOnPosition() routine
+//
 // Revision 1.3  2005/03/02 01:48:23  cmbruns
 // Changed data type of borders and labels to GeoCollection, to make it easier for the new ParameterFiles to add to them.
 //
@@ -51,13 +78,13 @@ implements MouseListener, MouseMotionListener
     // double planetRadius = 6371; // Radius of earth in kilometers
 	
     NightUpdateThread nightUpdateThread;
+	DrawBitmapThread drawBitmapThread;
+	String busyString = "";
 	
     int colorResolution = 30;
     // Colors of different transparency for labels
     Vector labelColors;
 	
-	double twilightWidth = 0.05; // size of the twilight zone, in radians
-
 	int oceanColorInt = 0xFF3060E0;
 	int oceanColorInt2 = oceanColorInt - 0xFF000000;
     Color oceanColor = new Color(oceanColorInt2);
@@ -69,7 +96,7 @@ implements MouseListener, MouseMotionListener
 	int backgroundColorInt = 0xFF000000;
 	
     // Define what kinds of objects will be drawn
-    boolean fullUpdateNow = true; // Want to draw satellite image on startup
+    volatile boolean fullUpdateNow = true; // Want to draw satellite image on startup
     boolean drawSatelliteImage = true; // Want to draw satellite image in general
     boolean dayNight = true; // Draw day/night terminator
     boolean drawLabels = true;
@@ -79,7 +106,7 @@ implements MouseListener, MouseMotionListener
 	
     int canvasWidth, canvasHeight;	
 	
-    GenGlobe genGlobe = new GenGlobe(6371); // Radius in kilometers
+    volatile GenGlobe genGlobe = new GenGlobe(6371); // Radius in kilometers
 	
 	// Objects whose sole purpose is to communicate resolution ranges
 	GeoObject allResolution = new GeoObject(-1,-1,-1,-1);
@@ -88,12 +115,15 @@ implements MouseListener, MouseMotionListener
 	GeoObject highResolution = new GeoObject(0.150, 0.150, -1, -1);
 	
 	DirectionGraticule directionGraticule = new DirectionGraticule(2000, 15, genGlobe);
-	LatitudeGraticule latitudeGraticule1 = new LatitudeGraticule(Math.PI/6, lowResolution);
-	LatitudeGraticule latitudeGraticule2 = new LatitudeGraticule(Math.PI/18, highResolution);
+
+	// For dynamically loaded parameter files
+	GeoCollection graticule = new GeoCollection();
 	
     // Vector siteLabels; // All the city labels we are using
 	GeoCollection siteLabels = new GeoCollection();
 	SiteLabelCollection newSiteLabels;
+	
+	GeoCollection paramFiles = new GeoCollection();
 	
     // For Sinusoidal Projection outline shape
     int numOutlinePoints = 100;
@@ -102,22 +132,25 @@ implements MouseListener, MouseMotionListener
     
     Projection projection = Projection.ORTHOGRAPHIC;
 	
+	ImageCollection images = new ImageCollection(this);
     MapBlitter mapBlitter;
+
 	GeoCollection borders = new GeoCollection();
-	// GeoPathCollection borders;
 	
     Method whatTheMouseDoes;
     Method whatTheModifiedMouseDoes;
 	
     // Whole gang of objects to represent one off-screen image buffer
     int offScreenPixels[];
-    private MemoryImageSource offScreenSource;
-    private Image memOffScreenImage;
+    public MemoryImageSource offScreenSource;
+    public Image memOffScreenImage;
 	
-    private Image offScreenImage;
-    private Graphics offScreenGraphics;
+    public Image offScreenImage;
+    volatile public Graphics offScreenGraphics;
 	
     Label messageArea = new Label("");
+	
+	GlobeView globeViewFrame;
 	
     // These two lines form the paradigm for converting from plane to screen
     // Turn abstract plane coordinates into screen pixel coordinates
@@ -127,10 +160,12 @@ implements MouseListener, MouseMotionListener
     // double planeX(int x) {return (double)(x - centerX) * genGlobe.getInvPixelRadius();}
     // double planeY(int y) {return (double)(centerY - y) * genGlobe.getInvPixelRadius();}
 	
-    GeoCanvas(int width, int height, URL mapURL, URL siteURL, URL borderURL) {
+    GeoCanvas(int width, int height, GlobeView parent) {
 		setSize(width, height);
 		canvasWidth = width;
 		canvasHeight = height;
+		
+		globeViewFrame = parent;
 		
 		// Automatically updates image periodically, if dayNight is set
 		nightUpdateThread = new NightUpdateThread("nightUpdateThread");
@@ -145,22 +180,8 @@ implements MouseListener, MouseMotionListener
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
-		
-		mapBlitter = MapBlitter.readMap(mapURL, this);
-		// Build some city labels		
-		if (siteURL != null) {
-			newSiteLabels = new SiteLabelCollection(siteURL);
-			siteLabels.addElement(newSiteLabels);
-		}
 
-		if (borderURL != null) {
-			GeoPathCollection deprecatedBorders = 
-			new GeoPathCollection(borderURL, lowResolution, borderColor);
-			if (deprecatedBorders != null) borders.addElement(deprecatedBorders);
-		}
-		
-		createOffScreen(width, height);
-		
+		createOffScreen(width, height);		
     }
 	
     public void fastRepaint() {
@@ -178,6 +199,7 @@ implements MouseListener, MouseMotionListener
 		if (nightUpdateThread != null && nightUpdateThread.isAlive()) {
 			nightUpdateThread.interrupt();
 		}	
+		if (!stopBitmapThread()) return; // Painting thread would not stop
 		fullUpdateNow = true;
 		repaint();
 		// nightUpdateThread.interrupt();
@@ -291,89 +313,139 @@ implements MouseListener, MouseMotionListener
     Vector2D lastScreenTemp = new Vector2D();
     Vector2D newScreenTemp = new Vector2D();
 	
-	// For benchmarking
-	int updateCount = 0;
-	int fullUpdateCount = 0;
-	
-	int otherTime = 0; // 5 - 20 ms
-	int checkTime = 0;
-	int paintBackgroundTime = 0;
-	int paintBitmapTime = 0;
-	int paintForegroundTime = 0; // 65 - 180 ms
-	int drawImageTime = 0; // 2 - 6 ms
-	
-	int foreOtherTime = 0;
-	int foreCoastTime = 0;
-	int foreGratTime = 0;
-	int foreGrat2Time = 0;
-	int foreBearingTime = 0;
-	int foreLabelTime = 0;
-	int foreOutlineTime = 0;
-	int foreCrossHairTime = 0;
-	
     // Everything IN FRONT OF the texture map
-    public void paintForeground(Graphics g) {
+    synchronized public void paintForeground(Graphics g, LensRegion viewLens) {
 		double r = genGlobe.getPixelRadius();
 		// double resolution = r / planetRadius; // Pixels per kilometer
 		double resolution = genGlobe.getResolution(); // Pixels per kilometer
 													  // System.out.println("" + resolution);
-		int i;
-		
-		// Compute viewable LensArea
-		// Get the z value at each of the 4 corners of the display
-		// If any come up null, use the minimum z for that projection
-		double lensZ = projection.getMinimumZ(); // Start with worst case
-		// Upper left corner - all projections are symmetric at the corners
-		// This one point should be enough
-		Vector3D cornerPoint = new Vector3D();
-		cornerPoint = projection.vec2DTo3D(genGlobe.planeX(0),
-										   genGlobe.planeY(0),
-										   cornerPoint);
-		if (cornerPoint != null) lensZ = cornerPoint.z();		
-		Vector3D lensUnitVector = new Vector3D(0.0, 0.0, 1.0);
-		Vector3D lensPlanePoint = new Vector3D(0.0, 0.0, lensZ);
-		lensUnitVector = genGlobe.unrotate(lensUnitVector);
-		lensPlanePoint = genGlobe.unrotate(lensPlanePoint);
-		LensRegion viewLens = new LensRegion(lensPlanePoint, lensUnitVector);
-		
-		if (countBenchMark) foreOtherTime += timeIncrement();
 
 		if (drawCoastLines) borders.paint(g, genGlobe, projection, viewLens);
-		if (countBenchMark) foreCoastTime += timeIncrement();
-
-		if (drawGraticule) latitudeGraticule1.paint(g, genGlobe, projection, viewLens);
-		if (countBenchMark) foreGratTime += timeIncrement();
-		if (drawGraticule) latitudeGraticule2.paint(g, genGlobe, projection, viewLens);
-		if (countBenchMark) foreGrat2Time += timeIncrement();
+		if (drawGraticule) graticule.paint(g, genGlobe, projection, viewLens);
 		
 		// Draw the center-focussed elements, such as antenna directions
 		if (drawBearing) directionGraticule.paint(g, genGlobe, projection, null);
-		if (countBenchMark) foreBearingTime += timeIncrement();
 		
 		// Draw outline (again, to clean up edges)
 		g.setColor(outlineColor);
-		// projection.paintOutline(g);
 		paintOutline(g);
-		if (countBenchMark) foreOutlineTime += timeIncrement();
-		
-		// Matrix3D m3 = genGlobe.getOrientation();
 		
 		// Draw city labels
-		if (drawLabels) {
-			siteLabels.paint(g, genGlobe, projection, viewLens);
-		}
-		if (countBenchMark) foreLabelTime += timeIncrement();
+		if (drawLabels) siteLabels.paint(g, genGlobe, projection, viewLens);
 		
 		// Cross-hair at center
 		g.setColor(crosshairColor);
 		g.drawLine(genGlobe.centerX, genGlobe.centerY - 5, genGlobe.centerX, genGlobe.centerY + 5);
 		g.drawLine(genGlobe.centerX - 5, genGlobe.centerY, genGlobe.centerX + 5, genGlobe.centerY);
-		if (countBenchMark) foreCrossHairTime += timeIncrement();
     }
+	
+	LensRegion getViewLens() {
+		// For clipping
+		// Compute viewable LensArea
+		// Get the z value at each of the 4 corners of the display
+		// If any come up null, use the minimum z for that projection
+		double lensZ = projection.getMinimumZ(); // Start with worst case
+		
+		double farthestPointZ = 2.0;
+		Vector3D cornerPoint = new Vector3D();
+		
+		// Upper left corner - all projections are symmetric at the corners
+		// This one point should be enough
+		// But not for Mercator?
+		cornerPoint = projection.vec2DTo3D(genGlobe.planeX(0),
+										   genGlobe.planeY(0),
+										   cornerPoint);
+		if (cornerPoint != null) {
+			if (cornerPoint.z() < farthestPointZ) farthestPointZ = cornerPoint.z();
+		} else {farthestPointZ = lensZ;}
+		// left middle point
+		cornerPoint = new Vector3D();
+		cornerPoint = projection.vec2DTo3D(genGlobe.planeX(0),
+										   0,
+										   cornerPoint);
+		if (cornerPoint != null) {
+			if (cornerPoint.z() < farthestPointZ) farthestPointZ = cornerPoint.z();
+		} else {farthestPointZ = lensZ;}
+		
+		if ((farthestPointZ < 1.0) && (farthestPointZ > lensZ))
+			lensZ = farthestPointZ;
+		
+		Vector3D lensUnitVector = new Vector3D(0.0, 0.0, 1.0);
+		Vector3D lensPlanePoint = new Vector3D(0.0, 0.0, lensZ);
+		lensUnitVector = genGlobe.unrotate(lensUnitVector);
+		lensPlanePoint = genGlobe.unrotate(lensPlanePoint);
+		return new LensRegion(lensPlanePoint, lensUnitVector);
+	}
 	
     void setNorthUp(boolean state) {
 		genGlobe.setNorthUp(state);
+		if ((globeViewFrame != null) && (globeViewFrame.northUpButton != null)) {
+			globeViewFrame.northUpButton.setState(state);
+		}
     }
+	
+    void setDayNight(boolean state) {
+		dayNight = state;
+		if ((globeViewFrame != null) && (globeViewFrame.dayNightButton != null)) {
+			globeViewFrame.dayNightButton.setState(state);
+		}
+    }
+	
+    void setCoastLines(boolean state) {
+		drawCoastLines = state;
+		if ((globeViewFrame != null) && (globeViewFrame.coastsButton != null)) {
+			globeViewFrame.coastsButton.setState(state);
+		}
+    }
+	
+    void setSiteLabels(boolean state) {
+		drawLabels = state;
+		if ((globeViewFrame != null) && (globeViewFrame.sitesButton != null)) {
+			globeViewFrame.sitesButton.setState(state);
+		}
+    }
+	
+    void setGraticules(boolean state) {
+		drawGraticule = state;
+		if ((globeViewFrame != null) && (globeViewFrame.graticulesButton != null)) {
+			globeViewFrame.graticulesButton.setState(state);
+		}
+    }
+	
+    void setSatellites(boolean state) {
+		drawSatelliteImage = state;
+		if ((globeViewFrame != null) && (globeViewFrame.imagesButton != null)) {
+			globeViewFrame.imagesButton.setState(state);
+		}
+    }
+	
+    void setBearing(boolean state) {
+		drawBearing = state;
+		if ((globeViewFrame != null) && (globeViewFrame.bearingButton != null)) {
+			globeViewFrame.bearingButton.setState(state);
+		}
+    }
+	
+    void setProjection(Projection p) {
+		projection = p;
+		if (globeViewFrame != null) {
+			globeViewFrame.setProjection(p);
+		}
+    }
+	
+	// Make clear to the user that waiting is required
+	void setWait(String msg) {
+		setCursor(waitCursor); // Could be slow
+		busyString = msg + "  ";
+		messageArea.setText(busyString);
+		messageArea.repaint();
+	}
+	void unsetWait() {
+		setCursor(defaultCursor);
+		busyString = "";
+		messageArea.setText(busyString + "(ready)");
+		messageArea.repaint();
+	}
 	
     void createOffScreen(int width, int height) {
 		// Create one buffer for pixel-by-pixel drawing
@@ -388,18 +460,8 @@ implements MouseListener, MouseMotionListener
 		offScreenImage = createImage(width, height);
     }
 	
-    // Paint should only be called during infrequent window expose events
-    // (because we have redefined update() to not call paint())
-    // It is also called to paint the initial image
-    public void paint(Graphics g) {
-		update(g);
-    }
-	
-	// TODO - watch time variables for benchmarking
-	// number of milliseconds since this function was last called
-	boolean countBenchMark = false;
-	boolean timeStarted = false;
 	long oldTime = 0;
+	boolean timeStarted = false;
 	int timeIncrement() {
 		long newTime = (new Date()).getTime();
 		if (!timeStarted) {
@@ -411,90 +473,51 @@ implements MouseListener, MouseMotionListener
 		return elapsedTime;
 	}
 
-	void flushBenchMarks() {
-		if (updateCount > 0) {
-			System.out.println();
-			System.out.println("otherTime = " + otherTime / updateCount);
-			System.out.println("checkTime = " + checkTime / updateCount);
-			System.out.println("paintBackgroundTime = " + paintBackgroundTime / updateCount);
+	public boolean stopBitmapThread() {
+		if ((drawBitmapThread != null) && (drawBitmapThread.isAlive())) {
+			images.keepDrawing = false;
+			drawBitmapThread.interrupt();
+			try {drawBitmapThread.join(2000); // Wait up to two seconds for it to die
+			} catch (InterruptedException e) {}
 		}
-		if (fullUpdateCount > 0) {
-			System.out.println("paintBitmapTime = " + paintBitmapTime / fullUpdateCount);
-		}		
-		if (updateCount > 0) {
-			System.out.println("paintForegroundTime = " + paintForegroundTime / updateCount);
-			System.out.println("drawImageTime = " + drawImageTime / updateCount);
-			
-			System.out.println();
-			System.out.println("foreOtherTime = " + foreOtherTime / updateCount);
-			System.out.println("foreCoastTime = " + foreCoastTime / updateCount);
-			System.out.println("foreGratTime = " + foreGratTime / updateCount);
-			System.out.println("foreGrat2Time = " + foreGrat2Time / updateCount);
-			System.out.println("foreBearingTime = " + foreBearingTime / updateCount);
-			System.out.println("foreLabelTime = " + foreBearingTime / updateCount);
-			System.out.println("foreOutlineTime = " + foreOutlineTime / updateCount);
-			System.out.println("foreCrossHairTime = " + foreCrossHairTime / updateCount);
-		}
-		
-		updateCount = 0;
-		fullUpdateCount = 0;
-		otherTime = 0;
-		checkTime = 0;
-		paintBackgroundTime = 0;
-		paintBitmapTime = 0;
-		paintForegroundTime = 0;
-		drawImageTime = 0;
-
-		foreOtherTime = 0;
-		foreCoastTime = 0;
-		foreGratTime = 0;
-		foreGrat2Time = 0;
-		foreBearingTime = 0;
-		foreLabelTime = 0;
-		foreOutlineTime = 0;
-		foreCrossHairTime = 0;		
+		if ((drawBitmapThread != null) && (drawBitmapThread.isAlive())) return false; // Did not stop
+		return true;
 	}
-
-    // This is the "cheap" update that should occur during mouse-drag animation
+	
+    // Paint should only be called during infrequent window expose events
+    // (because we have redefined update() to not call paint())
+    // It is also called to paint the initial image
     public void update(Graphics g) {
-		if (countBenchMark) {
-			otherTime += timeIncrement();
-			updateCount ++;
-		}
+		paint(g);
+    }
+	
+    public void paint(Graphics g) {
+		if (!stopBitmapThread()) return; // thread did not stop
 
 		checkOffScreenImage();
-		if (countBenchMark) checkTime += timeIncrement();
+		LensRegion viewLens = getViewLens();
+		if (fullUpdateNow)  // Check for new data to load
+			paramFiles.paint(g, genGlobe, projection, viewLens);
 		
-		// 1 - paint background to OSI
-		paintBackground(offScreenGraphics);
-		if (countBenchMark) paintBackgroundTime += timeIncrement();
-		
-		// Handle full image updates here
-		if (fullUpdateNow) {
-			// 1.5 paint background to screen
-			// paintBackground(g);
-			
-			// Paint bitmap simultaneously to screen and memOffScreenImage
-			if (drawSatelliteImage || dayNight) {
-				paintBitmap(offScreenGraphics, g);
-				// 4 - copy raw memOSI to OSI
-				offScreenGraphics.drawImage(memOffScreenImage, 0, 0, null);
-				if (countBenchMark) {
-					paintBitmapTime += timeIncrement();
-					fullUpdateCount ++;
-				}
+		// Do we need time consuming draw operation?
+		if (drawSatelliteImage || dayNight) {
+			// Draw old one first
+			offScreenGraphics.drawImage(memOffScreenImage, 0, 0, this);		
+			if (fullUpdateNow) {
+				images.keepDrawing = true;
+				drawBitmapThread = new DrawBitmapThread("DrawBitmap", this, g, viewLens);
+				drawBitmapThread.start();
+			}
+			else { // Fast update of foreground
+				paintForeground(offScreenGraphics, viewLens);
+				g.drawImage(offScreenImage, 0, 0, null);
 			}
 		}
-		
-		// 5 - paint frontal stuff to OSI
-		paintForeground(offScreenGraphics);
-		if (countBenchMark) paintForegroundTime += timeIncrement();
-		
-		// 6 - copy to screen
-		g.drawImage(offScreenImage, 0, 0, null);
-		if (countBenchMark) drawImageTime += timeIncrement();
-		
-		if (countBenchMark && ((updateCount % 10) == 0)) flushBenchMarks();
+		else { // Non-bitmap drawing
+			paintBackground(offScreenGraphics);
+			paintForeground(offScreenGraphics, viewLens);
+			g.drawImage(offScreenImage, 0, 0, null);
+		}
     }
 	
     private void checkOffScreenImage() {
@@ -527,155 +550,13 @@ implements MouseListener, MouseMotionListener
 		paintOutline(g);
     }
 	
-    // The texture map, simultaneously to two destinations
-    // g1 is the off-screen image
-    // g2 is the on-screen image
-    // Try for faster version -
-    //  No new objects
-    //  No inner loop stack variables
-    //  No function calls
-    int stripWidth = 10; // How often to update progress on-screen
-    Vector3D sunVector;
-    public void paintBitmap(Graphics g1, Graphics onScreenGraphics) {
-		setCursor(waitCursor); // Could be slow
-		
-		if (dayNight) {
-			// Measure elapsed time
-			// Date t1 = new Date();
-			// sunVector = getSunVector2();
-			Date currentDate = new Date();
-			try {
-				SimpleDateFormat dateFormat = 
-				new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss a z");
-				// currentDate = dateFormat.parse("01-Jun-2008 12:00:00 PM GMT");
-				// currentDate = dateFormat.parse("09-May-2003 07:05:02 PM PST");	  
-			} catch (Exception e) {}
-			sunVector = Sun.getVector(currentDate);
-		}
-		
-		Vector3D tempv1 = new Vector3D(); // These two are NEVER null
-		Vector3D v1 = tempv1; // These may be null
-		
-		Color color;
-		int pixel, darkPixel, shadePixel;
-		int width = memOffScreenImage.getWidth(null);
-		int height = memOffScreenImage.getHeight(null);
-		
-		int x, y; // Actual screen coordinates
-		double cx, cy; // Scaled, translated screen coordinates
-		
-		int tx, ty; // Coordinates of texture map pixel
-		
-		Dimension d = getSize();
-		int xMax = d.width;
-		int yMax = d.height;
-		
-		double r = genGlobe.getPixelRadius();
-		double rInv = 1.0 / r;
-		
-		// Image textureMap = mapBlitter.rawImage;
-		double dX, dY, kX, kY; // Scale parameters for texture map
-		if (mapBlitter != null) {
-			kX = mapBlitter.kX;
-			kY = mapBlitter.kY;
-			dX = mapBlitter.dX;
-			dY = mapBlitter.dY;
-		}
-		double lambda, phi; // longitude, latitude
-		
-		int mapIndex;
-		
-		double sinSunElevation = 0;
-		// "civil twilight" is six degrees below horizon (0.2 radians)
-		double alpha; // Day/night ratio for twilight zone
-		double fakeAngle;
-		
-		for (x = 0; x < xMax; ++x) {
-			cx = (x - genGlobe.centerX) * rInv;
-			for (y = 0; y < yMax; ++y) {
-				mapIndex = x + y * width;
-
-				offScreenPixels[mapIndex] = 0xFF000000; // set to black?
-				
-				cy = (genGlobe.centerY - y) * rInv;
-				
-				v1 = projection.vec2DTo3D(cx, cy, tempv1);
-				if (v1 == null) continue; // Clipping (function failed)
-				
-				// Oblique transform (centers globe on point of interest)
-				v1 = genGlobe.unrotate(v1);
-				
-				pixel = 0;
-				if ((mapBlitter != null) && (mapBlitter.rawImage != null) && drawSatelliteImage) 
-					pixel = mapBlitter.getPixel(v1, 0);
-				if (pixel == 0) pixel = oceanColorInt;
-				
-				// Check for day/night
-				if (dayNight) {
-					sinSunElevation = 
-					v1.x() * sunVector.x() +
-					v1.y() * sunVector.y() +
-					v1.z() * sunVector.z();
-					// Make it bright everywhere sun shines 
-					// (i.e. twilight is all in shadow)
-					// if (sinSunElevation < twilightWidth ) { // not quite day
-					if (sinSunElevation < 0) { // not quite day
-						darkPixel = pixel >> 1; // Shift to darken
-						darkPixel = darkPixel & 0xFF7F7F7F; // High bit zero in each color
-						darkPixel = darkPixel | 0xFF000000; // Restore opacity
-						
-						if (sinSunElevation < -twilightWidth) { // definitely night
-							pixel = darkPixel;
-						}
-						else { // in twilight zone
-							   // Make Twilight Zone really smooth by using SINE function
-							   // fakeAngle = (sinSunElevation / twilightWidth)  * (Math.PI / 2.0);
-							fakeAngle = (2*(sinSunElevation + twilightWidth/2)/ twilightWidth)  * (Math.PI / 2.0);
-							alpha = (Math.sin(fakeAngle) + 1.0) / 2.0;
-							// alpha = (sinSunElevation + twilightWidth) /
-							//     (2.0 * twilightWidth);
-							if (alpha > 1.0) alpha = 1.0;
-							if (alpha < 0.0) alpha = 0.0;
-							
-							// Red
-							shadePixel = (int) ((1.0 - alpha) * (darkPixel & 0x00FF0000) + 
-												alpha * (pixel & 0x00FF0000));
-							shadePixel = shadePixel & 0x00FF0000;
-							pixel = pixel & 0xFF00FFFF; // clear red
-							pixel = pixel + shadePixel; // add shaded red
-							
-							// Green
-							shadePixel = (int) ((1.0 - alpha) * (darkPixel & 0x0000FF00) + 
-												alpha * (pixel & 0x0000FF00));
-							shadePixel = shadePixel & 0x0000FF00;
-							pixel = pixel & 0xFFFF00FF; // clear green
-							pixel = pixel + shadePixel; // add shaded green
-							
-							// Blue
-							shadePixel = (int) ((1.0 - alpha) * (darkPixel & 0x000000FF) + 
-												alpha * (pixel & 0x000000FF));
-							shadePixel = shadePixel & 0x000000FF;
-							pixel = pixel & 0xFFFFFF00; // clear blue
-							pixel = pixel + shadePixel; // add shaded blue
-							
-						}
-					}
-					}
-				
-				offScreenPixels[mapIndex] = pixel;
-				}
-			// When bitmap is slow, update on-screen image
-			if (((x % stripWidth) == 0) && (x > 0)){
-				offScreenSource.newPixels(x - stripWidth,0, stripWidth,yMax);
-				onScreenGraphics.drawImage(memOffScreenImage,
-										   x - stripWidth,0, x,yMax,
-										   x - stripWidth,0, x,yMax,
-										   null);
-			}
-			}
-		offScreenSource.newPixels(0,0,width,height);
-		setCursor(defaultCursor); // Could be slow
-		}
+    public void paintBitmap(Graphics offScreenGraphics, // always offScreenGraphics?
+							Graphics onScreenGraphics, 
+							GenGlobe genGlobe, 
+							Projection projection, 
+							LensRegion viewLens) {
+		images.paint(onScreenGraphics, genGlobe, projection, viewLens); 
+	}
 	
     public void setBounds(Rectangle r) {
 		super.setBounds(r);
@@ -714,13 +595,10 @@ implements MouseListener, MouseMotionListener
     Cursor waitCursor = new Cursor(Cursor.WAIT_CURSOR);
     Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 	
-    public void mouseClicked(MouseEvent e) {
-		// Recenter globe on clicked point
-		
-		double x = genGlobe.planeX(e.getX());
-		double y = genGlobe.planeY(e.getY());
-		Vector3D newCenter = new Vector3D();
-		newCenter = projection.vec2DTo3D(x, y, newCenter);
+	public void centerOnPosition(double longitude, double latitude) {
+		centerOnPosition(new Vector3D(longitude, latitude));
+	}
+	public void centerOnPosition(Vector3D newCenter) {
 		if (newCenter == null) return;
 		// newCenter = genGlobe.getInverseOrientation().mult(newCenter);
 		newCenter = genGlobe.unrotate(newCenter);
@@ -742,14 +620,33 @@ implements MouseListener, MouseMotionListener
 		Matrix3D adjustment = new Matrix3D();
 		adjustment.setAxisAngle(axis, angle);
 		genGlobe.changeOrientation(adjustment.mult(genGlobe.getOrientation()));
+	}
+	
+    public void mouseClicked(MouseEvent e) {
+		stopBitmapThread();
+		// Recenter globe on clicked point
+		
+		double x = genGlobe.planeX(e.getX());
+		double y = genGlobe.planeY(e.getY());
+		Vector3D newCenter = new Vector3D();
+		newCenter = projection.vec2DTo3D(x, y, newCenter);
+		centerOnPosition(newCenter);
 		
 		useOldMouse = false;
 		isDragging = false;
 		
+		// Immediate visual feedback of click
+		// To avoid coalescing with the following repaint, use update(),
+		// [usually a no-no]
+		if (stopBitmapThread()) {
+			fullUpdateNow = false;
+			update(getGraphics());
+		}
+		
 		fullRepaint();
     }
     public void mouseEntered(MouseEvent e) {
-		setCursor(crosshairCursor);
+		// setCursor(crosshairCursor); // This is handled in mouseMoved
     }
     public void mouseExited(MouseEvent e) {
 		setCursor(defaultCursor);
@@ -769,6 +666,8 @@ implements MouseListener, MouseMotionListener
 		setCursor(crosshairCursor);
     }
     public void mouseDragged(MouseEvent e) {
+		stopBitmapThread();
+		
 		isDragging = true;
 		setCursor(handCursor);
 		if (useOldMouse) {
@@ -790,8 +689,7 @@ implements MouseListener, MouseMotionListener
 			} catch (Exception ex) {
 				System.out.println("1" + ex);
 			}
-			fastRepaint();
-			setCursor(moveCursor);
+			if (stopBitmapThread()) fastRepaint();
 		}
 		
 		oldMouseX = e.getX();
@@ -876,7 +774,7 @@ implements MouseListener, MouseMotionListener
 			latString += (" " + (int)(second) + '\"');
 			latString += (" " + latChar);
 			
-			messageArea.setText(bearingString + "(" + 
+			messageArea.setText(busyString + bearingString + "(" + 
 								longString + ",  " + 
 								latString + ")"
 								);
@@ -977,5 +875,5 @@ implements MouseListener, MouseMotionListener
 		if (zoomRadius < 1) zoomRadius = 1;
 		genGlobe.setPixelRadius(zoomRadius);
     }
-	}
+}
 
