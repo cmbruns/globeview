@@ -10,6 +10,10 @@ package org.bruns.asmodeus.globeview;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/11 00:05:45  cmbruns
+// made boundingLens public
+// fixed a bug in overlaps()
+//
 // Revision 1.4  2005/03/04 23:58:53  cmbruns
 // made overlap comparison to be more generic, using both LensRegions and BoundingBoxes
 //
@@ -32,7 +36,7 @@ public class GeoObject
     double maxResolution; // default to 100
 	
 	private BoundingBox boundingBox = null;
-	private LensRegion boundingLens = null;
+	public LensRegion boundingLens = null;
 	
     // Constructor
     GeoObject() {
@@ -122,7 +126,7 @@ public class GeoObject
 		if ((boundingBox != null) &&
 			boundingBox.overlaps(viewLens))
 			return true;
-		if ((viewLens != null) && viewLens.overlaps(viewLens))
+		if ((viewLens != null) && viewLens.overlaps(boundingLens))
 			return true;
 		return false;
 	}
