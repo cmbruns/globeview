@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/28 01:46:01  cmbruns
+// Created copy() method for use in the copy() method of GenGlobe()
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -33,6 +36,8 @@ public class Matrix3D {
 
     }
 
+	Matrix3D copy() {return this.mult(1.0);}
+	
     Matrix3D mult(Matrix3D m2) {
 	Matrix3D answer = new Matrix3D();
 	int i, j, k;
