@@ -10,6 +10,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.7  2005/03/14 04:17:13  cmbruns
+// Upped version to 1.1.2
+//
 // Revision 1.6  2005/03/13 21:39:49  cmbruns
 // Changed version number to 1.1.1
 // Credited census 2000 gazetteer site data
@@ -39,7 +42,7 @@ public class AboutDialog extends InfoDialog {
 	AboutDialog(Frame frame) {
 		super(frame, "About GlobeView", true); // modal dialog
 
-		addLine("Globevew version 1.1.1 by Chris Bruns");
+		addLine("Globevew version 1.1.2 by Chris Bruns");
 		addLine("Copyright \u00A9 2001-2005 all rights reserved");
 		addLine("http://bruns.homeip.net/~bruns/globeview.html");
 		addLine("cmbruns@comcast.net");
