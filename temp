@@ -1,0 +1,128 @@
+		// *** One city per continent resolution ***
+		l = new SiteLabel("London", d2r * 0.16, d2r * 51.5, labelColors);
+		l.setResolution(0.015, 0.060, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Tokyo", d2r * 139.75, d2r * 35.67, labelColors);
+		l.setResolution(0.015, 0.060, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("New York", d2r * -73.95, d2r * 40.8, labelColors);
+		l.setResolution(0.015, 0.060, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Cairo", d2r * 31.15, d2r * 29.58, labelColors);
+		l.setResolution(0.015, 0.060, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Sydney", d2r * 151.20, d2r * -33.9, labelColors);
+		l.setResolution(0.015, 0.060, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Buenos Aires", d2r * -58.35, d2r * -34.58, labelColors);
+		l.setResolution(0.015, 0.060, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		// *** Other major city resolution ***
+		
+		l = new SiteLabel("Paris", d2r * 2.3, d2r * 48.8, labelColors);
+		l.setResolution(0.030, 0.120, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Los Angeles", d2r * -118.45, d2r * 33.95, labelColors);
+		l.setResolution(0.030, 0.120, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Moscow", d2r * 37.72, d2r * 55.75, labelColors);
+		l.setResolution(0.030, 0.120, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		// 
+		
+		l = new SiteLabel("Calgary", d2r * -114.017, d2r * 51.1, labelColors);
+		l.setResolution(0.050, 0.200, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Baghdad", d2r * 44.4, d2r * 33.3, labelColors);
+		l.setResolution(0.050, 0.200, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Denver", d2r * -105.039, d2r * 39.6516, labelColors);
+		l.setResolution(0.050, 0.200, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("San Diego", d2r * -117.12, d2r * 32.71, labelColors);
+		l.setResolution(0.050, 0.200, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Washington", d2r * -77.46, d2r * 38.95, labelColors);
+		l.setResolution(0.05, 0.2, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Portland", d2r * -122.60, d2r * 45.59, labelColors);
+		l.setResolution(0.05, 0.2, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("San Francisco", d2r * -122.45, d2r * 37.8, labelColors);
+		l.setResolution(0.05, 0.2, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Montreal", d2r * -73.75, d2r * 45.48, labelColors);
+		l.setResolution(0.05, 0.2, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Toronto", d2r * -79.6, d2r * 43.7, labelColors);
+		l.setResolution(0.05, 0.2, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		//
+		
+		l = new SiteLabel("Canberra", d2r * 149.13, d2r * -35.3, labelColors);
+		l.setResolution(0.10, 0.040, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Edmonton", d2r * -113.51, d2r * 53.55, labelColors);
+		l.setResolution(0.10, 0.40, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("San Jose", d2r * -121.93, d2r * 37.36, labelColors);
+		l.setResolution(0.10, 0.40, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Vancouver", d2r * -123.17, d2r * 49.18, labelColors);
+		l.setResolution(0.10, 0.40, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Brussels", d2r * 4.36, d2r * 50.85, labelColors);
+		l.setResolution(0.10, 0.40, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Ithaca", d2r * -76.47, d2r * 42.48, labelColors);
+		l.setResolution(0.10, 0.40, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		// *** Towns near larger cities
+		
+		l = new SiteLabel("Aurora", d2r * -104.72, d2r * 39.7, labelColors);
+		l.setResolution(0.15, 0.60, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Goldendale", d2r * -120.84, d2r * 45.83, labelColors);
+		l.setResolution(0.15, 0.60, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		l = new SiteLabel("Rossmoor", d2r * -118.08, d2r * 33.79, labelColors);
+		l.setResolution(0.15, 0.60, 10.0, 20.0);
+		siteLabels.addElement(l);
+		
+		// 
+		
+		l = new SiteLabel("Mountain View", d2r * -122.0910, d2r * 37.3883, labelColors);
+		l.setResolution(0.50, 2.00, 10.0, 20.0);
+		siteLabels.addElement(l);	
+		
+		// 
+		
+		l = new SiteLabel("Zaventem", d2r * 4.47, d2r * 50.88, labelColors);
+		l.setResolution(1.00, 4.00, 10.0, 20.0);
+		siteLabels.addElement(l);	

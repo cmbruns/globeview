@@ -1,0 +1,2544 @@
+// !$*UTF8*$!
+{
+	00E6828EFEC88D1A11DB9C8B = {
+		activeBuildStyle = 130F8B81001BD9A911CA292A;
+		activeExecutable = 130F8B8C001BDBAD11CA292A;
+		activeTarget = 130F8B84001BDB6411CA292A;
+		addToTargets = (
+			130F8B84001BDB6411CA292A,
+		);
+		breakpoints = (
+			D0041760077B51A000DE1F95,
+		);
+		codeSenseManager = D00414F70778B4AD00DE1F95;
+		executables = (
+			130F8B8C001BDBAD11CA292A,
+			D00414F20778B49200DE1F95,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXBookmarksDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXBookmarksDataSource_NameID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					267.2085,
+					251.5991,
+					278.5835,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXBookmarksDataSource_LocationID,
+					PBXBookmarksDataSource_NameID,
+					PBXBookmarksDataSource_CommentsID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXErrorsWarningsDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXErrorsWarningsDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					503.8799,
+					273.2085,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXErrorsWarningsDataSource_TypeID,
+					PBXErrorsWarningsDataSource_MessageID,
+					PBXErrorsWarningsDataSource_LocationID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXExecutablesDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = 1;
+				PBXFileTableDataSourceColumnSortingKey = PBXExecutablesDataSource_ActiveFlagID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					22,
+					509.7974,
+					265.5835,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXExecutablesDataSource_ActiveFlagID,
+					PBXExecutablesDataSource_NameID,
+					PBXExecutablesDataSource_CommentsID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					538,
+					20,
+					97,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXFindDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFindDataSource_LocationID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					399.2974,
+					401.2085,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFindDataSource_MessageID,
+					PBXFindDataSource_LocationID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.PBXSymbolsDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXSymbolsDataSource_SymbolNameID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					16,
+					247.8008,
+					276.0356,
+					253.2085,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXSymbolsDataSource_SymbolTypeIconID,
+					PBXSymbolsDataSource_SymbolNameID,
+					PBXSymbolsDataSource_SymbolTypeID,
+					PBXSymbolsDataSource_ReferenceNameID,
+				);
+			};
+			PBXConfiguration.PBXFileTableDataSource3.XCSCMDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					20,
+					528,
+					20,
+					83,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_SCM_ColumnID,
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					457,
+					99,
+					20,
+					99,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 131230361;
+			PBXPrepackagedSmartGroups_v2 = (
+				{
+					PBXTransientLocationAtTop = bottom;
+					absolutePathToBundle = "";
+					activationKey = OldTargetSmartGroup;
+					clz = PBXTargetSmartGroup;
+					description = "Displays all targets of the project.";
+					globalID = 1C37FABC04509CD000000102;
+					name = Targets;
+					preferences = {
+						image = Targets;
+					};
+				},
+				{
+					PBXTransientLocationAtTop = bottom;
+					absolutePathToBundle = "";
+					clz = PBXTargetSmartGroup2;
+					description = "Displays all targets of the project as well as nested build phases.";
+					globalID = 1C37FBAC04509CD000000102;
+					name = Targets;
+					preferences = {
+						image = Targets;
+					};
+				},
+				{
+					PBXTransientLocationAtTop = bottom;
+					absolutePathToBundle = "";
+					clz = PBXExecutablesSmartGroup;
+					description = "Displays all executables of the project.";
+					globalID = 1C37FAAC04509CD000000102;
+					name = Executables;
+					preferences = {
+						image = Executable;
+					};
+				},
+				{
+					" PBXTransientLocationAtTop " = bottom;
+					absolutePathToBundle = "";
+					clz = PBXErrorsWarningsSmartGroup;
+					description = "Displays files with errors or warnings.";
+					globalID = 1C08E77C0454961000C914BD;
+					name = "Errors and Warnings";
+					preferences = {
+						fnmatch = "";
+						image = WarningsErrors;
+						recursive = 1;
+						regex = "";
+						root = "<PROJECT>";
+					};
+				},
+				{
+					PBXTransientLocationAtTop = bottom;
+					absolutePathToBundle = "";
+					clz = PBXFilenameSmartGroup;
+					description = "Filters items in a given group (potentially recursively) based on matching the name with the regular expression of the filter.";
+					globalID = 1CC0EA4004350EF90044410B;
+					name = "Implementation Files";
+					preferences = {
+						canSave = 1;
+						fnmatch = "";
+						image = SmartFolder;
+						isLeaf = 0;
+						recursive = 1;
+						regex = "?*\\.[mcMC]";
+						root = "<PROJECT>";
+					};
+				},
+				{
+					PBXTransientLocationAtTop = bottom;
+					absolutePathToBundle = "";
+					clz = PBXFilenameSmartGroup;
+					description = "This group displays Interface Builder NIB Files.";
+					globalID = 1CC0EA4004350EF90041110B;
+					name = "NIB Files";
+					preferences = {
+						canSave = 1;
+						fnmatch = "*.nib";
+						image = SmartFolder;
+						isLeaf = 0;
+						recursive = 1;
+						regex = "";
+						root = "<PROJECT>";
+					};
+				},
+				{
+					PBXTransientLocationAtTop = no;
+					absolutePathToBundle = "";
+					clz = PBXFindSmartGroup;
+					description = "Displays Find Results.";
+					globalID = 1C37FABC05509CD000000102;
+					name = "Find Results";
+					preferences = {
+						image = spyglass;
+					};
+				},
+				{
+					PBXTransientLocationAtTop = no;
+					absolutePathToBundle = "";
+					clz = PBXBookmarksSmartGroup;
+					description = "Displays Project Bookmarks.";
+					globalID = 1C37FABC05539CD112110102;
+					name = Bookmarks;
+					preferences = {
+						image = Bookmarks;
+					};
+				},
+				{
+					PBXTransientLocationAtTop = bottom;
+					absolutePathToBundle = "";
+					clz = XCSCMSmartGroup;
+					description = "Displays files with interesting SCM status.";
+					globalID = E2644B35053B69B200211256;
+					name = SCM;
+					preferences = {
+						image = PBXRepository;
+						isLeaf = 0;
+					};
+				},
+				{
+					PBXTransientLocationAtTop = bottom;
+					absolutePathToBundle = "";
+					clz = PBXSymbolsSmartGroup;
+					description = "Displays all symbols for the project.";
+					globalID = 1C37FABC04509CD000100104;
+					name = "Project Symbols";
+					preferences = {
+						image = ProjectSymbols;
+						isLeaf = 1;
+					};
+				},
+				{
+					PBXTransientLocationAtTop = bottom;
+					absolutePathToBundle = "";
+					clz = PBXFilenameSmartGroup;
+					description = "Filters items in a given group (potentially recursively) based on matching the name with the regular expression of the filter.";
+					globalID = PBXTemplateMarker;
+					name = "Simple Filter SmartGroup";
+					preferences = {
+						canSave = 1;
+						fnmatch = "*.nib";
+						image = SmartFolder;
+						isLeaf = 0;
+						recursive = 1;
+						regex = "";
+						root = "<PROJECT>";
+					};
+				},
+				{
+					PBXTransientLocationAtTop = bottom;
+					absolutePathToBundle = "";
+					clz = PBXFilenameSmartGroup;
+					description = "Filters items in a given group (potentially recursively) based on matching the name with the regular expression of the filter.";
+					globalID = PBXTemplateMarker;
+					name = "Simple Regular Expression SmartGroup";
+					preferences = {
+						canSave = 1;
+						fnmatch = "";
+						image = SmartFolder;
+						isLeaf = 0;
+						recursive = 1;
+						regex = "?*\\.[mcMC]";
+						root = "<PROJECT>";
+					};
+				},
+				{
+					PBXTransientLocationAtTop = bottom;
+					clz = XDDesignSmartGroup;
+					description = "Displays Xdesign models";
+					globalID = 2E4A936305E6979E00701470;
+					name = Design;
+					preferences = {
+						image = Design;
+						isLeaf = 0;
+					};
+				},
+			);
+			PBXWorkspaceStateSaveDate = 131230361;
+		};
+		perUserProjectItems = {
+			D004157E0778C16D00DE1F95 = D004157E0778C16D00DE1F95;
+			D00415840778C16D00DE1F95 = D00415840778C16D00DE1F95;
+			D00415850778C16D00DE1F95 = D00415850778C16D00DE1F95;
+			D00415870778C16D00DE1F95 = D00415870778C16D00DE1F95;
+			D00415890778C16D00DE1F95 = D00415890778C16D00DE1F95;
+			D004158A0778C16D00DE1F95 = D004158A0778C16D00DE1F95;
+			D00415920778C1C100DE1F95 = D00415920778C1C100DE1F95;
+			D004160B0778DAF200DE1F95 = D004160B0778DAF200DE1F95;
+			D00416390778DF1100DE1F95 = D00416390778DF1100DE1F95;
+			D0041676077B1CEE00DE1F95 = D0041676077B1CEE00DE1F95;
+			D0041684077B389E00DE1F95 = D0041684077B389E00DE1F95;
+			D0041692077B398F00DE1F95 = D0041692077B398F00DE1F95;
+			D00416AE077B3B6F00DE1F95 = D00416AE077B3B6F00DE1F95;
+			D00416EB077B447900DE1F95 = D00416EB077B447900DE1F95;
+			D0041722077B4B8200DE1F95 = D0041722077B4B8200DE1F95;
+			D00417CF077B6EBB00DE1F95 = D00417CF077B6EBB00DE1F95;
+			D0239A7B0790A4770026B525 = D0239A7B0790A4770026B525;
+			D032DF1207D26AB300BC434B = D032DF1207D26AB300BC434B;
+			D032DF1307D26AB300BC434B = D032DF1307D26AB300BC434B;
+			D032DF1807D26B0400BC434B = D032DF1807D26B0400BC434B;
+			D032DF1907D26B0400BC434B = D032DF1907D26B0400BC434B;
+			D032DF1A07D26B0400BC434B = D032DF1A07D26B0400BC434B;
+			D032DF1B07D26B0400BC434B = D032DF1B07D26B0400BC434B;
+			D032DF1C07D26B0400BC434B = D032DF1C07D26B0400BC434B;
+			D032DF1D07D26B3300BC434B = D032DF1D07D26B3300BC434B;
+			D032DF2207D26E6700BC434B = D032DF2207D26E6700BC434B;
+			D032DF2307D26E6700BC434B = D032DF2307D26E6700BC434B;
+			D032DF2407D26F5100BC434B = D032DF2407D26F5100BC434B;
+			D032DF2507D26F8500BC434B = D032DF2507D26F8500BC434B;
+			D032DF2607D26FAF00BC434B = D032DF2607D26FAF00BC434B;
+			D032DF2707D2721600BC434B = D032DF2707D2721600BC434B;
+			D032DF2807D2721600BC434B = D032DF2807D2721600BC434B;
+			D032DF2907D2721600BC434B = D032DF2907D2721600BC434B;
+			D032DF2A07D2721600BC434B = D032DF2A07D2721600BC434B;
+			D032DF2B07D2721600BC434B = D032DF2B07D2721600BC434B;
+			D032DF2C07D2721600BC434B = D032DF2C07D2721600BC434B;
+			D032DF2D07D272F700BC434B = D032DF2D07D272F700BC434B;
+			D032DF2E07D272F700BC434B = D032DF2E07D272F700BC434B;
+			D032DF2F07D2732500BC434B = D032DF2F07D2732500BC434B;
+			D032DF3007D2733200BC434B = D032DF3007D2733200BC434B;
+			D032DF3307D281D600BC434B = D032DF3307D281D600BC434B;
+			D032DF3407D281D600BC434B = D032DF3407D281D600BC434B;
+			D032DF3507D281D600BC434B = D032DF3507D281D600BC434B;
+			D032DF3607D281D600BC434B = D032DF3607D281D600BC434B;
+			D032DF3707D281D600BC434B = D032DF3707D281D600BC434B;
+			D032DF3807D281D600BC434B = D032DF3807D281D600BC434B;
+			D032DF3907D281D600BC434B = D032DF3907D281D600BC434B;
+			D032DF3A07D281D600BC434B = D032DF3A07D281D600BC434B;
+			D032DF3B07D281D600BC434B = D032DF3B07D281D600BC434B;
+			D032DF3C07D281D600BC434B = D032DF3C07D281D600BC434B;
+			D032DF3D07D281D600BC434B = D032DF3D07D281D600BC434B;
+			D032DF3E07D281D600BC434B = D032DF3E07D281D600BC434B;
+			D032DF3F07D281D600BC434B = D032DF3F07D281D600BC434B;
+			D032DF4007D281D600BC434B = D032DF4007D281D600BC434B;
+			D032DF4107D281D600BC434B = D032DF4107D281D600BC434B;
+			D032DF4207D281D600BC434B = D032DF4207D281D600BC434B;
+			D032DF4307D281D600BC434B = D032DF4307D281D600BC434B;
+			D032DF4407D281D600BC434B = D032DF4407D281D600BC434B;
+			D032DF4507D281D600BC434B = D032DF4507D281D600BC434B;
+			D032DF4607D281D600BC434B = D032DF4607D281D600BC434B;
+			D032DF4707D281D600BC434B = D032DF4707D281D600BC434B;
+			D032DF4807D281D600BC434B = D032DF4807D281D600BC434B;
+			D032DF4907D281D600BC434B = D032DF4907D281D600BC434B;
+			D032DF4A07D281D600BC434B = D032DF4A07D281D600BC434B;
+			D032DF4B07D281D600BC434B = D032DF4B07D281D600BC434B;
+			D032DF4C07D2824600BC434B = D032DF4C07D2824600BC434B;
+			D032DF4D07D2849900BC434B = D032DF4D07D2849900BC434B;
+			D032DF4E07D2849900BC434B = D032DF4E07D2849900BC434B;
+			D032DF4F07D2849900BC434B = D032DF4F07D2849900BC434B;
+			D032DF5007D2849900BC434B = D032DF5007D2849900BC434B;
+			D032DF5107D2849900BC434B = D032DF5107D2849900BC434B;
+			D032DF5207D2849900BC434B = D032DF5207D2849900BC434B;
+			D032DF5307D2856800BC434B = D032DF5307D2856800BC434B;
+			D032DF5407D285C100BC434B = D032DF5407D285C100BC434B;
+			D032DF5507D285C100BC434B = D032DF5507D285C100BC434B;
+			D032DF5607D285C100BC434B = D032DF5607D285C100BC434B;
+			D032DF5707D285C100BC434B = D032DF5707D285C100BC434B;
+			D032DF5807D2868700BC434B = D032DF5807D2868700BC434B;
+			D032DF5B07D28B6300BC434B = D032DF5B07D28B6300BC434B;
+			D032DF5C07D28B6300BC434B = D032DF5C07D28B6300BC434B;
+			D032DF5D07D28B6300BC434B = D032DF5D07D28B6300BC434B;
+			D032DF5E07D28B6300BC434B = D032DF5E07D28B6300BC434B;
+			D032DF5F07D28B6300BC434B = D032DF5F07D28B6300BC434B;
+			D032DF6007D28B6300BC434B = D032DF6007D28B6300BC434B;
+			D032DF6107D28BF800BC434B = D032DF6107D28BF800BC434B;
+			D032DF6207D28D2500BC434B = D032DF6207D28D2500BC434B;
+			D032DF6307D28DDF00BC434B = D032DF6307D28DDF00BC434B;
+			D032DF6907D2936B00BC434B = D032DF6907D2936B00BC434B;
+			D032DF6A07D2936B00BC434B = D032DF6A07D2936B00BC434B;
+			D032DF6B07D2951700BC434B = D032DF6B07D2951700BC434B;
+			D032DF6C07D2971D00BC434B = D032DF6C07D2971D00BC434B;
+			D032DF6D07D297F900BC434B = D032DF6D07D297F900BC434B;
+			D032DF6E07D298BC00BC434B = D032DF6E07D298BC00BC434B;
+			D032DF6F07D299A100BC434B = D032DF6F07D299A100BC434B;
+			D032DF7007D29A3000BC434B = D032DF7007D29A3000BC434B;
+			D032DF7107D29A9800BC434B = D032DF7107D29A9800BC434B;
+			D032DF7207D29AF000BC434B = D032DF7207D29AF000BC434B;
+			D032DF7307D29B5E00BC434B = D032DF7307D29B5E00BC434B;
+			D032DF7407D29BA300BC434B = D032DF7407D29BA300BC434B;
+			D032DF7507D29E5D00BC434B = D032DF7507D29E5D00BC434B;
+			D032DF7607D2A10F00BC434B = D032DF7607D2A10F00BC434B;
+			D032DF7707D2A10F00BC434B = D032DF7707D2A10F00BC434B;
+			D032DF7807D2A10F00BC434B = D032DF7807D2A10F00BC434B;
+			D032DF7907D2A10F00BC434B = D032DF7907D2A10F00BC434B;
+			D032DF7A07D2A1C900BC434B = D032DF7A07D2A1C900BC434B;
+			D032DF7B07D391F600BC434B = D032DF7B07D391F600BC434B;
+			D032DF7C07D391F600BC434B = D032DF7C07D391F600BC434B;
+			D032DF7D07D392B600BC434B = D032DF7D07D392B600BC434B;
+			D032DF7E07D3957100BC434B = D032DF7E07D3957100BC434B;
+			D032DF7F07D39BD100BC434B = D032DF7F07D39BD100BC434B;
+			D032DF8007D39C4D00BC434B = D032DF8007D39C4D00BC434B;
+			D032DF8107D39C4D00BC434B = D032DF8107D39C4D00BC434B;
+			D032DF8207D39C4D00BC434B = D032DF8207D39C4D00BC434B;
+			D032DF8307D3A25C00BC434B = D032DF8307D3A25C00BC434B;
+			D032DF8407D3A64D00BC434B = D032DF8407D3A64D00BC434B;
+			D032DF8507D3A64D00BC434B = D032DF8507D3A64D00BC434B;
+			D032DF8607D3A64D00BC434B = D032DF8607D3A64D00BC434B;
+			D032DF8707D3A64D00BC434B = D032DF8707D3A64D00BC434B;
+			D032DF8807D3ABFE00BC434B = D032DF8807D3ABFE00BC434B;
+			D032DF8907D3AD1500BC434B = D032DF8907D3AD1500BC434B;
+			D032DF8A07D3B12600BC434B = D032DF8A07D3B12600BC434B;
+			D032DF8B07D3DC5000BC434B = D032DF8B07D3DC5000BC434B;
+			D032DF8C07D3DEDD00BC434B = D032DF8C07D3DEDD00BC434B;
+			D032DF8D07D3E2BE00BC434B = D032DF8D07D3E2BE00BC434B;
+			D032DF8E07D3E2D300BC434B = D032DF8E07D3E2D300BC434B;
+			D032DF8F07D3E4B500BC434B = D032DF8F07D3E4B500BC434B;
+			D032DF9007D3E57600BC434B = D032DF9007D3E57600BC434B;
+			D032DF9107D3E75400BC434B = D032DF9107D3E75400BC434B;
+			D032DF9207D3EA0A00BC434B = D032DF9207D3EA0A00BC434B;
+			D032DF9307D3EA1C00BC434B = D032DF9307D3EA1C00BC434B;
+			D032DF9407D3EBC400BC434B = D032DF9407D3EBC400BC434B;
+			D032DF9507D3F4A800BC434B = D032DF9507D3F4A800BC434B;
+			D032DF9607D3F58900BC434B = D032DF9607D3F58900BC434B;
+			D032DF9707D3FEEB00BC434B = D032DF9707D3FEEB00BC434B;
+			D032DF9807D4001E00BC434B = D032DF9807D4001E00BC434B;
+			D078E6C507C586F2004DEEF5 = D078E6C507C586F2004DEEF5;
+			D078E6E007C58A50004DEEF5 = D078E6E007C58A50004DEEF5;
+			D078E7C907C6C059004DEEF5 = D078E7C907C6C059004DEEF5;
+			D078E86307CA71A9004DEEF5 = D078E86307CA71A9004DEEF5;
+			D078E8CB07CA80D8004DEEF5 = D078E8CB07CA80D8004DEEF5;
+			D078E92C07CA966B004DEEF5 = D078E92C07CA966B004DEEF5;
+			D078E94007CAA1C1004DEEF5 = D078E94007CAA1C1004DEEF5;
+			D078E9ED07CBAD88004DEEF5 = D078E9ED07CBAD88004DEEF5;
+			D078EA3207CBC38B004DEEF5 = D078EA3207CBC38B004DEEF5;
+			D078EA6007CD093B004DEEF5 = D078EA6007CD093B004DEEF5;
+			D078EA9207CD2A64004DEEF5 = D078EA9207CD2A64004DEEF5;
+			D078EAC307CD49B7004DEEF5 = D078EAC307CD49B7004DEEF5;
+			D078EAD407CD4AD4004DEEF5 = D078EAD407CD4AD4004DEEF5;
+			D078EADB07CD4AD4004DEEF5 = D078EADB07CD4AD4004DEEF5;
+			D078EAED07CD4AD4004DEEF5 = D078EAED07CD4AD4004DEEF5;
+			D078EAF507CD4E70004DEEF5 = D078EAF507CD4E70004DEEF5;
+			D078EAF807CD4E70004DEEF5 = D078EAF807CD4E70004DEEF5;
+			D078EAFA07CD4E70004DEEF5 = D078EAFA07CD4E70004DEEF5;
+			D078EB1307CD51DE004DEEF5 = D078EB1307CD51DE004DEEF5;
+			D078EB1A07CD5383004DEEF5 = D078EB1A07CD5383004DEEF5;
+			D078EB2807CD559C004DEEF5 = D078EB2807CD559C004DEEF5;
+			D078EB2907CD559C004DEEF5 = D078EB2907CD559C004DEEF5;
+			D078EB2A07CD559C004DEEF5 = D078EB2A07CD559C004DEEF5;
+			D078EB3707CD5628004DEEF5 = D078EB3707CD5628004DEEF5;
+			D078EB4207CD5709004DEEF5 = D078EB4207CD5709004DEEF5;
+			D078EB7207CD678B004DEEF5 = D078EB7207CD678B004DEEF5;
+			D078EB8907CD6A2A004DEEF5 = D078EB8907CD6A2A004DEEF5;
+			D078EB9D07CD6ECF004DEEF5 = D078EB9D07CD6ECF004DEEF5;
+			D078EBC107CE4AFC004DEEF5 = D078EBC107CE4AFC004DEEF5;
+			D0AEE5E407D2624A001C59C0 = D0AEE5E407D2624A001C59C0;
+			D0AEE5F307D26864001C59C0 = D0AEE5F307D26864001C59C0;
+			D0AEE5F407D26864001C59C0 = D0AEE5F407D26864001C59C0;
+			D0AEE5F607D26864001C59C0 = D0AEE5F607D26864001C59C0;
+			D0AEE5F707D26864001C59C0 = D0AEE5F707D26864001C59C0;
+			D0AEE5F807D26864001C59C0 = D0AEE5F807D26864001C59C0;
+			D0AEE5FF07D26901001C59C0 = D0AEE5FF07D26901001C59C0;
+			D0AEE60007D26901001C59C0 = D0AEE60007D26901001C59C0;
+			D0AEE60107D26901001C59C0 = D0AEE60107D26901001C59C0;
+			D0AEE60907D26A58001C59C0 = D0AEE60907D26A58001C59C0;
+		};
+		sourceControlManager = D00414F60778B4AD00DE1F95;
+		userBuildSettings = {
+		};
+	};
+	130F8B84001BDB6411CA292A = {
+		activeExec = 0;
+		executables = (
+			D00414F20778B49200DE1F95,
+		);
+	};
+	130F8B8C001BDBAD11CA292A = {
+		activeArgIndex = 1;
+		activeArgIndices = (
+			NO,
+			YES,
+		);
+		argumentStrings = (
+			example1.html,
+			globeviewtest.html,
+		);
+		configStateDict = {
+			"PBXLSLaunchAction-0" = {
+				PBXLSLaunchAction = 0;
+				PBXLSLaunchStartAction = 1;
+				PBXLSLaunchStdioStyle = 2;
+				PBXLSLaunchStyle = 0;
+				class = PBXLSRunLaunchConfig;
+				displayName = "Executable Runner";
+				identifier = com.apple.Xcode.launch.runConfig;
+				remoteHostInfo = "";
+				startActionInfo = "";
+			};
+		};
+		cppStopOnCatchEnabled = 0;
+		cppStopOnThrowEnabled = 0;
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = JavaDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		isa = PBXExecutable;
+		launchableReference = 130F8B8D001BDBAD11CA292A;
+		libgmallocEnabled = 0;
+		shlibInfoDictList = (
+		);
+		sourceDirectories = (
+		);
+		startupPath = "<<ProductDirectory>>";
+	};
+	130F8B8D001BDBAD11CA292A = {
+		isa = PBXFileReference;
+		lastKnownFileType = "compiled.mach-o.executable";
+		name = appletviewer;
+		path = /usr/bin/appletviewer;
+		refType = 0;
+		sourceTree = "<absolute>";
+	};
+	D00414F20778B49200DE1F95 = {
+		activeArgIndex = 2147483647;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		configStateDict = {
+		};
+		cppStopOnCatchEnabled = 0;
+		cppStopOnThrowEnabled = 0;
+		customDataFormattersEnabled = 1;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		isa = PBXExecutable;
+		libgmallocEnabled = 0;
+		name = globeview;
+		shlibInfoDictList = (
+		);
+		sourceDirectories = (
+		);
+	};
+	D00414F60778B4AD00DE1F95 = {
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		isa = PBXSourceControlManager;
+		scmConfiguration = {
+		};
+		scmType = "";
+	};
+	D00414F70778B4AD00DE1F95 = {
+		indexTemplatePath = "";
+		isa = PBXCodeSenseManager;
+		usesDefaults = 1;
+		wantsCodeCompletion = 1;
+		wantsCodeCompletionAutoSuggestions = 0;
+		wantsCodeCompletionCaseSensitivity = 1;
+		wantsCodeCompletionListAlways = 1;
+		wantsCodeCompletionOnlyMatchingItems = 1;
+		wantsCodeCompletionParametersIncluded = 1;
+		wantsCodeCompletionPlaceholdersInserted = 1;
+		wantsCodeCompletionTabCompletes = 1;
+		wantsIndex = 1;
+	};
+	D00415410778BFB800DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {785, 5718}}";
+			sepNavSelRange = "{3170, 8}";
+			sepNavVisRect = "{{0, 2024}, {785, 544}}";
+		};
+	};
+	D00415420778BFB800DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1076, 18258}}";
+			sepNavSelRange = "{16405, 0}";
+			sepNavVisRect = "{{0, 1200}, {785, 544}}";
+		};
+	};
+	D00415430778BFB800DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1060, 1994}}";
+			sepNavSelRange = "{1387, 0}";
+			sepNavVisRect = "{{0, 1450}, {785, 544}}";
+		};
+	};
+	D00415440778BFB800DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {828, 987}}";
+			sepNavSelRange = "{1344, 0}";
+			sepNavVisRect = "{{0, 443}, {785, 544}}";
+		};
+	};
+	D00415460778BFB800DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {788, 7637}}";
+			sepNavSelRange = "{10679, 5}";
+			sepNavVisRect = "{{0, 5230}, {785, 544}}";
+			sepNavWindowFrame = "{{38, 162}, {750, 558}}";
+		};
+	};
+	D00415480778BFB900DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {785, 2640}}";
+			sepNavSelRange = "{2100, 0}";
+			sepNavVisRect = "{{0, 779}, {785, 544}}";
+			sepNavWindowFrame = "{{15, 183}, {750, 558}}";
+		};
+	};
+	D00415490778BFB900DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {785, 2678}}";
+			sepNavSelRange = "{131, 0}";
+			sepNavVisRect = "{{0, 0}, {785, 544}}";
+		};
+	};
+	D004154B0778BFB900DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {785, 702}}";
+			sepNavSelRange = "{616, 0}";
+			sepNavVisRect = "{{0, 98}, {785, 544}}";
+		};
+	};
+	D004154C0778BFB900DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {836, 9594}}";
+			sepNavSelRange = "{11928, 0}";
+			sepNavVisRect = "{{0, 9050}, {785, 544}}";
+		};
+	};
+	D004154D0778BFB900DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {785, 544}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {785, 544}}";
+		};
+	};
+	D004154E0778BFB900DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {804, 2488}}";
+			sepNavSelRange = "{1762, 0}";
+			sepNavVisRect = "{{0, 840}, {785, 544}}";
+		};
+	};
+	D004154F0778BFB900DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1564, 9195}}";
+			sepNavSelRange = "{98, 0}";
+			sepNavVisRect = "{{0, 3117}, {796, 544}}";
+		};
+	};
+	D00415510778BFB900DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {704, 285}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {704, 257}}";
+		};
+	};
+	D00415520778BFB900DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {785, 1291}}";
+			sepNavSelRange = "{744, 0}";
+			sepNavVisRect = "{{0, 507}, {785, 544}}";
+		};
+	};
+	D004157E0778C16D00DE1F95 = {
+		fRef = D00415510778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "Vector2D.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 323;
+		vrLoc = 0;
+	};
+	D00415840778C16D00DE1F95 = {
+		fRef = D004154E0778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "SiteLabel.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 335;
+		vrLoc = 0;
+	};
+	D00415850778C16D00DE1F95 = {
+		fRef = D00415510778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "Vector2D.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 323;
+		vrLoc = 0;
+	};
+	D00415870778C16D00DE1F95 = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "URL mapURL";
+		rLen = 10;
+		rLoc = 3726;
+		rType = 0;
+		vrLen = 1158;
+		vrLoc = 2680;
+	};
+	D00415890778C16D00DE1F95 = {
+		fRef = D00415480778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "GlobeViewFrameApplet.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 901;
+		vrLoc = 0;
+	};
+	D004158A0778C16D00DE1F95 = {
+		fRef = D00415410778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GenGlobe.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 606;
+		vrLoc = 0;
+	};
+	D00415920778C1C100DE1F95 = {
+		isa = PBXTargetBookmark;
+		trg = 130F8B84001BDB6411CA292A;
+	};
+	D004160B0778DAF200DE1F95 = {
+		fRef = D00415460778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GlobeView.java: 113";
+		rLen = 0;
+		rLoc = 4589;
+		rType = 0;
+		vrLen = 567;
+		vrLoc = 5166;
+	};
+	D00416390778DF1100DE1F95 = {
+		fRef = D00415490778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "MapBlitter.java: 43";
+		rLen = 0;
+		rLoc = 1056;
+		rType = 0;
+		vrLen = 173;
+		vrLoc = 0;
+	};
+	D0041676077B1CEE00DE1F95 = {
+		fRef = D004154B0778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "NightUpdateThread.java: 28";
+		rLen = 0;
+		rLoc = 655;
+		rType = 0;
+		vrLen = 331;
+		vrLoc = 398;
+	};
+	D0041684077B389E00DE1F95 = {
+		fRef = D004154F0778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "Sun.java: 23";
+		rLen = 0;
+		rLoc = 883;
+		rType = 0;
+		vrLen = 883;
+		vrLoc = 222;
+	};
+	D0041692077B398F00DE1F95 = {
+		fRef = D0041693077B398F00DE1F95;
+		isa = PBXTextBookmark;
+		name = "(null): 1";
+		rLen = 0;
+		rLoc = 2664;
+		rType = 0;
+		vrLen = 0;
+		vrLoc = 0;
+	};
+	D0041693077B398F00DE1F95 = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.java;
+		name = DirectionGraticule.java;
+		path = "/Users/cmbruns/Documents/My Programming Projects/globeview/org/bruns/asmodeus/globeview/DirectionGraticule.java";
+		refType = 0;
+		sourceTree = "<absolute>";
+	};
+	D004169F077B39E200DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {828, 1405}}";
+			sepNavSelRange = "{290, 8}";
+			sepNavVisRect = "{{0, 843}, {785, 544}}";
+		};
+	};
+	D00416AE077B3B6F00DE1F95 = {
+		fRef = D00415430778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoObject.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 800;
+		vrLoc = 0;
+	};
+	D00416CD077B416B00DE1F95 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {996, 2584}}";
+			sepNavSelRange = "{2814, 0}";
+			sepNavVisRect = "{{0, 0}, {785, 544}}";
+		};
+	};
+	D00416EB077B447900DE1F95 = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPath.java: 44";
+		rLen = 0;
+		rLoc = 1162;
+		rType = 0;
+		vrLen = 670;
+		vrLoc = 0;
+	};
+	D0041722077B4B8200DE1F95 = {
+		fRef = D00415440778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPosition.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 686;
+		vrLoc = 0;
+	};
+	D0041760077B51A000DE1F95 = {
+		isa = PBXSymbolicBreakpoint;
+		state = 2;
+		symbolName = "";
+	};
+	D00417CF077B6EBB00DE1F95 = {
+		fRef = D004154C0778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "Projection.java: 133";
+		rLen = 0;
+		rLoc = 4172;
+		rType = 0;
+		vrLen = 594;
+		vrLoc = 3753;
+	};
+	D0239A710790A3B00026B525 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {785, 1652}}";
+			sepNavSelRange = "{202, 163}";
+			sepNavVisRect = "{{0, 0}, {785, 544}}";
+		};
+	};
+	D0239A7B0790A4770026B525 = {
+		fRef = D0239A710790A3B00026B525;
+		isa = PBXTextBookmark;
+		name = "AboutDialog.java: 10";
+		rLen = 0;
+		rLoc = 1532;
+		rType = 0;
+		vrLen = 178;
+		vrLoc = 0;
+	};
+	D032DF1207D26AB300BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 426";
+		rLen = 0;
+		rLoc = 16751;
+		rType = 0;
+		vrLen = 959;
+		vrLoc = 13698;
+	};
+	D032DF1307D26AB300BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 426";
+		rLen = 0;
+		rLoc = 16751;
+		rType = 0;
+		vrLen = 959;
+		vrLoc = 13698;
+	};
+	D032DF1807D26B0400BC434B = {
+		isa = PBXTargetBookmark;
+		trg = 130F8B84001BDB6411CA292A;
+		uiCtxt = {
+			TOCViewDetailVisibleRect = "{{0, 0}, {562, 291}}";
+			TOCViewExpandedItems = (
+				"com.apple.target-editor-pane.settings",
+				"com.apple.target-editor-pane.settings.simple",
+				"com.apple.target-editor-pane.buildphases",
+			);
+			TOCViewMasterVisibleRect = "{{0, 0}, {223, 527}}";
+			TOCViewSelectedItems = (
+				"com.apple.target-editor-pane.settings.compiler.java",
+			);
+		};
+	};
+	D032DF1907D26B0400BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 426";
+		rLen = 0;
+		rLoc = 16751;
+		rType = 0;
+		vrLen = 959;
+		vrLoc = 13698;
+	};
+	D032DF1A07D26B0400BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 426";
+		rLen = 0;
+		rLoc = 16751;
+		rType = 0;
+		vrLen = 959;
+		vrLoc = 13698;
+	};
+	D032DF1B07D26B0400BC434B = {
+		isa = PBXTargetBookmark;
+		trg = 130F8B84001BDB6411CA292A;
+		uiCtxt = {
+			TOCViewDetailVisibleRect = "{{0, 0}, {562, 291}}";
+			TOCViewExpandedItems = (
+				"com.apple.target-editor-pane.settings",
+				"com.apple.target-editor-pane.settings.simple",
+				"com.apple.target-editor-pane.buildphases",
+			);
+			TOCViewMasterVisibleRect = "{{0, 0}, {223, 527}}";
+			TOCViewSelectedItems = (
+				"com.apple.target-editor-pane.settings.compiler.java",
+			);
+		};
+	};
+	D032DF1C07D26B0400BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 426";
+		rLen = 0;
+		rLoc = 16751;
+		rType = 0;
+		vrLen = 959;
+		vrLoc = 13698;
+	};
+	D032DF1D07D26B3300BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 426";
+		rLen = 0;
+		rLoc = 16751;
+		rType = 0;
+		vrLen = 959;
+		vrLoc = 13698;
+	};
+	D032DF2007D26E4200BC434B = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.java;
+		name = GeoCanvas.java;
+		path = "/Users/cmbruns/Documents/My Programming Projects/globeview/org/bruns/asmodeus/globeview/GeoCanvas.java";
+		refType = 0;
+		sourceTree = "<absolute>";
+	};
+	D032DF2207D26E6700BC434B = {
+		fRef = D032DF2007D26E4200BC434B;
+		isa = PBXTextBookmark;
+		rLen = 1;
+		rLoc = 434;
+		rType = 1;
+	};
+	D032DF2307D26E6700BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 427";
+		rLen = 0;
+		rLoc = 15372;
+		rType = 0;
+		vrLen = 825;
+		vrLoc = 14777;
+	};
+	D032DF2407D26F5100BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 434";
+		rLen = 0;
+		rLoc = 15429;
+		rType = 0;
+		vrLen = 718;
+		vrLoc = 14971;
+	};
+	D032DF2507D26F8500BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 434";
+		rLen = 0;
+		rLoc = 15429;
+		rType = 0;
+		vrLen = 718;
+		vrLoc = 14971;
+	};
+	D032DF2607D26FAF00BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 434";
+		rLen = 0;
+		rLoc = 15429;
+		rType = 0;
+		vrLen = 718;
+		vrLoc = 14971;
+	};
+	D032DF2707D2721600BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 426";
+		rLen = 0;
+		rLoc = 15289;
+		rType = 0;
+		vrLen = 718;
+		vrLoc = 14971;
+	};
+	D032DF2807D2721600BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 531;
+		rType = 0;
+		vrLen = 756;
+		vrLoc = 271;
+	};
+	D032DF2907D2721600BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D032DF2A07D2721600BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 426";
+		rLen = 0;
+		rLoc = 15289;
+		rType = 0;
+		vrLen = 718;
+		vrLoc = 14971;
+	};
+	D032DF2B07D2721600BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 531;
+		rType = 0;
+		vrLen = 756;
+		vrLoc = 271;
+	};
+	D032DF2C07D2721600BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D032DF2D07D272F700BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D032DF2E07D272F700BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D032DF2F07D2732500BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D032DF3007D2733200BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D032DF3307D281D600BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D032DF3407D281D600BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 531;
+		rType = 0;
+		vrLen = 704;
+		vrLoc = 0;
+	};
+	D032DF3507D281D600BC434B = {
+		fRef = D078E92107CA9451004DEEF5;
+		isa = PBXTextBookmark;
+		name = "GeoPathCollection.java: 14";
+		rLen = 0;
+		rLoc = 292;
+		rType = 0;
+		vrLen = 932;
+		vrLoc = 1574;
+	};
+	D032DF3607D281D600BC434B = {
+		fRef = D078E87207CA7A75004DEEF5;
+		isa = PBXTextBookmark;
+		name = "GeoCollection.java: 31";
+		rLen = 0;
+		rLoc = 801;
+		rType = 0;
+		vrLen = 783;
+		vrLoc = 228;
+	};
+	D032DF3707D281D600BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = Clip;
+		rLen = 4;
+		rLoc = 19740;
+		rType = 0;
+		vrLen = 1094;
+		vrLoc = 19493;
+	};
+	D032DF3807D281D600BC434B = {
+		fRef = D00415430778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoObject.java: 43";
+		rLen = 0;
+		rLoc = 1387;
+		rType = 0;
+		vrLen = 1144;
+		vrLoc = 2804;
+	};
+	D032DF3907D281D600BC434B = {
+		fRef = D078EAB407CD3EBB004DEEF5;
+		isa = PBXTextBookmark;
+		name = "\tboolean overlaps(LensRegion lens) {\n\n\t\t// If there is uncertainty, return true\n\t\tif (lens == null) return true;\n\t\tif (pointCount == 0) return true; // Empty BoundingBox -- cannot be certain of rejection\n\n\t\t// We only need to compare the corner of the BoundingBox that is in the same\n\t\t// general direction as the LensRegion unitVector\n\t\tVector3D uV = lens.getUnitVector();\n\n\t\tif (uV.x() > 0) extremeCorner.setX(maxX);\n\t\telse extremeCorner.setX(minX);\n\t\tif (uV.y() > 0) extremeCorner.setY(maxY);\n\t\telse extremeCorner.setY(minY);\n\t\tif (uV.z() > 0) extremeCorner.setZ(maxZ);\n\t\telse extremeCorner.setZ(minZ);\n\t\t\n\t\tif (extremeCorner.dot(uV) > lens.getCosAngleRadius()) return true;\n\t\telse return false;\n\t}\n";
+		rLen = 702;
+		rLoc = 1828;
+		rType = 0;
+		vrLen = 981;
+		vrLoc = 1551;
+	};
+	D032DF3A07D281D600BC434B = {
+		fRef = D00415440778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPosition.java: 43";
+		rLen = 0;
+		rLoc = 1136;
+		rType = 0;
+		vrLen = 759;
+		vrLoc = 403;
+	};
+	D032DF3B07D281D600BC434B = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPath.java: 98";
+		rLen = 0;
+		rLoc = 2426;
+		rType = 0;
+		vrLen = 944;
+		vrLoc = 2090;
+	};
+	D032DF3C07D281D600BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D032DF3D07D281D600BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 531;
+		rType = 0;
+		vrLen = 704;
+		vrLoc = 0;
+	};
+	D032DF3E07D281D600BC434B = {
+		fRef = D078E87207CA7A75004DEEF5;
+		isa = PBXTextBookmark;
+		name = "GeoCollection.java: 30";
+		rLen = 0;
+		rLoc = 745;
+		rType = 0;
+		vrLen = 783;
+		vrLoc = 228;
+	};
+	D032DF3F07D281D600BC434B = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPath.java: 58";
+		rLen = 0;
+		rLoc = 1429;
+		rType = 0;
+		vrLen = 751;
+		vrLoc = 1570;
+	};
+	D032DF4007D281D600BC434B = {
+		fRef = D078E92107CA9451004DEEF5;
+		isa = PBXTextBookmark;
+		name = "GeoPathCollection.java: 14";
+		rLen = 0;
+		rLoc = 292;
+		rType = 0;
+		vrLen = 932;
+		vrLoc = 1574;
+	};
+	D032DF4107D281D600BC434B = {
+		fRef = D078E87207CA7A75004DEEF5;
+		isa = PBXTextBookmark;
+		name = "GeoCollection.java: 31";
+		rLen = 0;
+		rLoc = 801;
+		rType = 0;
+		vrLen = 783;
+		vrLoc = 228;
+	};
+	D032DF4207D281D600BC434B = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "nv.getZ(),";
+		rLen = 10;
+		rLoc = 2836;
+		rType = 0;
+		vrLen = 1107;
+		vrLoc = 2235;
+	};
+	D032DF4307D281D600BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = Clip;
+		rLen = 4;
+		rLoc = 19740;
+		rType = 0;
+		vrLen = 1094;
+		vrLoc = 19493;
+	};
+	D032DF4407D281D600BC434B = {
+		fRef = D00415430778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoObject.java: 43";
+		rLen = 0;
+		rLoc = 1387;
+		rType = 0;
+		vrLen = 1144;
+		vrLoc = 2804;
+	};
+	D032DF4507D281D600BC434B = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPath.java: 98";
+		rLen = 0;
+		rLoc = 2426;
+		rType = 0;
+		vrLen = 994;
+		vrLoc = 2090;
+	};
+	D032DF4607D281D600BC434B = {
+		fRef = D078EAB407CD3EBB004DEEF5;
+		isa = PBXTextBookmark;
+		name = "\tboolean overlaps(LensRegion lens) {\n\n\t\t// If there is uncertainty, return true\n\t\tif (lens == null) return true;\n\t\tif (pointCount == 0) return true; // Empty BoundingBox -- cannot be certain of rejection\n\n\t\t// We only need to compare the corner of the BoundingBox that is in the same\n\t\t// general direction as the LensRegion unitVector\n\t\tVector3D uV = lens.getUnitVector();\n\n\t\tif (uV.x() > 0) extremeCorner.setX(maxX);\n\t\telse extremeCorner.setX(minX);\n\t\tif (uV.y() > 0) extremeCorner.setY(maxY);\n\t\telse extremeCorner.setY(minY);\n\t\tif (uV.z() > 0) extremeCorner.setZ(maxZ);\n\t\telse extremeCorner.setZ(minZ);\n\t\t\n\t\tif (extremeCorner.dot(uV) > lens.getCosAngleRadius()) return true;\n\t\telse return false;\n\t}\n";
+		rLen = 702;
+		rLoc = 1828;
+		rType = 0;
+		vrLen = 935;
+		vrLoc = 1597;
+	};
+	D032DF4707D281D600BC434B = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPath.java: 98";
+		rLen = 0;
+		rLoc = 2426;
+		rType = 0;
+		vrLen = 944;
+		vrLoc = 2090;
+	};
+	D032DF4807D281D600BC434B = {
+		fRef = D00415440778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPosition.java: 43";
+		rLen = 0;
+		rLoc = 1043;
+		rType = 0;
+		vrLen = 824;
+		vrLoc = 727;
+	};
+	D032DF4907D281D600BC434B = {
+		fRef = D078EAB407CD3EBB004DEEF5;
+		isa = PBXTextBookmark;
+		name = "\tboolean overlaps(LensRegion lens) {\n\n\t\t// If there is uncertainty, return true\n\t\tif (lens == null) return true;\n\t\tif (pointCount == 0) return true; // Empty BoundingBox -- cannot be certain of rejection\n\n\t\t// We only need to compare the corner of the BoundingBox that is in the same\n\t\t// general direction as the LensRegion unitVector\n\t\tVector3D uV = lens.getUnitVector();\n\n\t\tif (uV.x() > 0) extremeCorner.setX(maxX);\n\t\telse extremeCorner.setX(minX);\n\t\tif (uV.y() > 0) extremeCorner.setY(maxY);\n\t\telse extremeCorner.setY(minY);\n\t\tif (uV.z() > 0) extremeCorner.setZ(maxZ);\n\t\telse extremeCorner.setZ(minZ);\n\t\t\n\t\tif (extremeCorner.dot(uV) > lens.getCosAngleRadius()) return true;\n\t\telse return false;\n\t}\n";
+		rLen = 702;
+		rLoc = 1828;
+		rType = 0;
+		vrLen = 981;
+		vrLoc = 1551;
+	};
+	D032DF4A07D281D600BC434B = {
+		fRef = D00415440778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPosition.java: 43";
+		rLen = 0;
+		rLoc = 1136;
+		rType = 0;
+		vrLen = 759;
+		vrLoc = 403;
+	};
+	D032DF4B07D281D600BC434B = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPath.java: 107";
+		rLen = 0;
+		rLoc = 2814;
+		rType = 0;
+		vrLen = 742;
+		vrLoc = 0;
+	};
+	D032DF4C07D2824600BC434B = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPath.java: 107";
+		rLen = 0;
+		rLoc = 2814;
+		rType = 0;
+		vrLen = 742;
+		vrLoc = 0;
+	};
+	D032DF4D07D2849900BC434B = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPath.java: 107";
+		rLen = 0;
+		rLoc = 2814;
+		rType = 0;
+		vrLen = 742;
+		vrLoc = 0;
+	};
+	D032DF4E07D2849900BC434B = {
+		fRef = D00415440778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPosition.java: 48";
+		rLen = 0;
+		rLoc = 1344;
+		rType = 0;
+		vrLen = 878;
+		vrLoc = 524;
+	};
+	D032DF4F07D2849900BC434B = {
+		fRef = D078EA2907CBB6EF004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LensRegion.java: 57";
+		rLen = 0;
+		rLoc = 2480;
+		rType = 0;
+		vrLen = 1080;
+		vrLoc = 1865;
+	};
+	D032DF5007D2849900BC434B = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPath.java: 107";
+		rLen = 0;
+		rLoc = 2814;
+		rType = 0;
+		vrLen = 742;
+		vrLoc = 0;
+	};
+	D032DF5107D2849900BC434B = {
+		fRef = D00415440778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPosition.java: 48";
+		rLen = 0;
+		rLoc = 1344;
+		rType = 0;
+		vrLen = 878;
+		vrLoc = 524;
+	};
+	D032DF5207D2849900BC434B = {
+		fRef = D078EA2907CBB6EF004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LensRegion.java: 61";
+		rLen = 0;
+		rLoc = 2516;
+		rType = 0;
+		vrLen = 1049;
+		vrLoc = 2133;
+	};
+	D032DF5307D2856800BC434B = {
+		fRef = D078EA2907CBB6EF004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LensRegion.java: 60";
+		rLen = 0;
+		rLoc = 2514;
+		rType = 0;
+		vrLen = 1049;
+		vrLoc = 2133;
+	};
+	D032DF5407D285C100BC434B = {
+		fRef = D078EA2907CBB6EF004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LensRegion.java: 60";
+		rLen = 0;
+		rLoc = 2514;
+		rType = 0;
+		vrLen = 1049;
+		vrLoc = 2133;
+	};
+	D032DF5507D285C100BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = Clip;
+		rLen = 4;
+		rLoc = 19740;
+		rType = 0;
+		vrLen = 1087;
+		vrLoc = 19493;
+	};
+	D032DF5607D285C100BC434B = {
+		fRef = D078EA2907CBB6EF004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LensRegion.java: 60";
+		rLen = 0;
+		rLoc = 2514;
+		rType = 0;
+		vrLen = 1049;
+		vrLoc = 2133;
+	};
+	D032DF5707D285C100BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 381";
+		rLen = 0;
+		rLoc = 13628;
+		rType = 0;
+		vrLen = 919;
+		vrLoc = 13312;
+	};
+	D032DF5807D2868700BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 381";
+		rLen = 0;
+		rLoc = 13628;
+		rType = 0;
+		vrLen = 874;
+		vrLoc = 16213;
+	};
+	D032DF5907D28B2200BC434B = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.java;
+		name = LatitudeGraticule.java;
+		path = "/Users/cmbruns/Documents/My Programming Projects/globeview/org/bruns/asmodeus/globeview/LatitudeGraticule.java";
+		refType = 0;
+		sourceTree = "<absolute>";
+	};
+	D032DF5B07D28B6300BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 470";
+		rLen = 0;
+		rLoc = 16405;
+		rType = 0;
+		vrLen = 1229;
+		vrLoc = 2125;
+	};
+	D032DF5C07D28B6300BC434B = {
+		fRef = D032DF5907D28B2200BC434B;
+		isa = PBXTextBookmark;
+		rLen = 0;
+		rLoc = 44;
+		rType = 1;
+	};
+	D032DF5D07D28B6300BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 470";
+		rLen = 0;
+		rLoc = 16405;
+		rType = 0;
+		vrLen = 874;
+		vrLoc = 16213;
+	};
+	D032DF5E07D28B6300BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 556;
+		rType = 0;
+		vrLen = 775;
+		vrLoc = 271;
+	};
+	D032DF5F07D28B6300BC434B = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 470";
+		rLen = 0;
+		rLoc = 16405;
+		rType = 0;
+		vrLen = 1229;
+		vrLoc = 2125;
+	};
+	D032DF6007D28B6300BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 1867;
+		rType = 0;
+		vrLen = 968;
+		vrLoc = 1327;
+	};
+	D032DF6107D28BF800BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 1992;
+		rType = 0;
+		vrLen = 1040;
+		vrLoc = 1252;
+	};
+	D032DF6207D28D2500BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 1496;
+		rType = 0;
+		vrLen = 877;
+		vrLoc = 778;
+	};
+	D032DF6307D28DDF00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 2161;
+		rType = 0;
+		vrLen = 963;
+		vrLoc = 1757;
+	};
+	D032DF6707D2935B00BC434B = {
+		isa = PBXFileReference;
+		lastKnownFileType = sourcecode.java;
+		name = LatitudeGraticule.java;
+		path = "/Users/cmbruns/Documents/My Programming Projects/globeview/org/bruns/asmodeus/globeview/LatitudeGraticule.java";
+		refType = 0;
+		sourceTree = "<absolute>";
+	};
+	D032DF6907D2936B00BC434B = {
+		fRef = D032DF6707D2935B00BC434B;
+		isa = PBXTextBookmark;
+		rLen = 1;
+		rLoc = 129;
+		rType = 1;
+	};
+	D032DF6A07D2936B00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 3995;
+		rType = 0;
+		vrLen = 1139;
+		vrLoc = 3079;
+	};
+	D032DF6B07D2951700BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 449;
+		rType = 0;
+		vrLen = 809;
+		vrLoc = 193;
+	};
+	D032DF6C07D2971D00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 1940;
+		rType = 0;
+		vrLen = 936;
+		vrLoc = 3897;
+	};
+	D032DF6D07D297F900BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 4580;
+		rType = 0;
+		vrLen = 765;
+		vrLoc = 4193;
+	};
+	D032DF6E07D298BC00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 4414;
+		rType = 0;
+		vrLen = 1289;
+		vrLoc = 3473;
+	};
+	D032DF6F07D299A100BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 4840;
+		rType = 0;
+		vrLen = 884;
+		vrLoc = 4266;
+	};
+	D032DF7007D29A3000BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 5067;
+		rType = 0;
+		vrLen = 866;
+		vrLoc = 4299;
+	};
+	D032DF7107D29A9800BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 4533;
+		rType = 0;
+		vrLen = 796;
+		vrLoc = 4369;
+	};
+	D032DF7207D29AF000BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 4312;
+		rType = 0;
+		vrLen = 1166;
+		vrLoc = 3328;
+	};
+	D032DF7307D29B5E00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 2643;
+		rType = 0;
+		vrLen = 1165;
+		vrLoc = 3718;
+	};
+	D032DF7407D29BA300BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 2643;
+		rType = 0;
+		vrLen = 1165;
+		vrLoc = 3718;
+	};
+	D032DF7507D29E5D00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 2643;
+		rType = 0;
+		vrLen = 1165;
+		vrLoc = 3718;
+	};
+	D032DF7607D2A10F00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 2643;
+		rType = 0;
+		vrLen = 1165;
+		vrLoc = 3718;
+	};
+	D032DF7707D2A10F00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D032DF7807D2A10F00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 2643;
+		rType = 0;
+		vrLen = 1165;
+		vrLoc = 3718;
+	};
+	D032DF7907D2A10F00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 964;
+		vrLoc = 0;
+	};
+	D032DF7A07D2A1C900BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 964;
+		vrLoc = 0;
+	};
+	D032DF7B07D391F600BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 964;
+		vrLoc = 0;
+	};
+	D032DF7C07D391F600BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 953;
+		vrLoc = 0;
+	};
+	D032DF7D07D392B600BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 953;
+		vrLoc = 0;
+	};
+	D032DF7E07D3957100BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 953;
+		vrLoc = 0;
+	};
+	D032DF7F07D39BD100BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 953;
+		vrLoc = 0;
+	};
+	D032DF8007D39C4D00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 953;
+		vrLoc = 0;
+	};
+	D032DF8107D39C4D00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 953;
+		vrLoc = 0;
+	};
+	D032DF8207D39C4D00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 4398;
+		rType = 0;
+		vrLen = 1148;
+		vrLoc = 3718;
+	};
+	D032DF8307D3A25C00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 4398;
+		rType = 0;
+		vrLen = 1148;
+		vrLoc = 3718;
+	};
+	D032DF8407D3A64D00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 4398;
+		rType = 0;
+		vrLen = 1148;
+		vrLoc = 3718;
+	};
+	D032DF8507D3A64D00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 953;
+		vrLoc = 0;
+	};
+	D032DF8607D3A64D00BC434B = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 4398;
+		rType = 0;
+		vrLen = 1148;
+		vrLoc = 3718;
+	};
+	D032DF8707D3A64D00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 952;
+		vrLoc = 0;
+	};
+	D032DF8807D3ABFE00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 952;
+		vrLoc = 0;
+	};
+	D032DF8907D3AD1500BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 952;
+		vrLoc = 0;
+	};
+	D032DF8A07D3B12600BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 952;
+		vrLoc = 0;
+	};
+	D032DF8B07D3DC5000BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 952;
+		vrLoc = 0;
+	};
+	D032DF8C07D3DEDD00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 952;
+		vrLoc = 0;
+	};
+	D032DF8D07D3E2BE00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 951;
+		vrLoc = 0;
+	};
+	D032DF8E07D3E2D300BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 844;
+		rType = 0;
+		vrLen = 951;
+		vrLoc = 0;
+	};
+	D032DF8F07D3E4B500BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 951;
+		vrLoc = 0;
+	};
+	D032DF9007D3E57600BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 951;
+		vrLoc = 0;
+	};
+	D032DF9107D3E75400BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 951;
+		vrLoc = 0;
+	};
+	D032DF9207D3EA0A00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 951;
+		vrLoc = 0;
+	};
+	D032DF9307D3EA1C00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 951;
+		vrLoc = 0;
+	};
+	D032DF9407D3EBC400BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 951;
+		vrLoc = 0;
+	};
+	D032DF9507D3F4A800BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 951;
+		vrLoc = 0;
+	};
+	D032DF9607D3F58900BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 861;
+		rType = 0;
+		vrLen = 951;
+		vrLoc = 0;
+	};
+	D032DF9707D3FEEB00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 859;
+		rType = 0;
+		vrLen = 954;
+		vrLoc = 0;
+	};
+	D032DF9807D4001E00BC434B = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 18";
+		rLen = 0;
+		rLoc = 859;
+		rType = 0;
+		vrLen = 954;
+		vrLoc = 0;
+	};
+	D078E6A807C530C7004DEEF5 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1092, 544}}";
+			sepNavSelRange = "{859, 0}";
+			sepNavVisRect = "{{307, 0}, {785, 544}}";
+		};
+	};
+	D078E6C507C586F2004DEEF5 = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 696;
+		vrLoc = 0;
+	};
+	D078E6CF07C5886A004DEEF5 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {812, 3191}}";
+			sepNavSelRange = "{4398, 0}";
+			sepNavVisRect = "{{0, 2394}, {785, 544}}";
+		};
+	};
+	D078E6E007C58A50004DEEF5 = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 191;
+		vrLoc = 0;
+	};
+	D078E7C907C6C059004DEEF5 = {
+		fRef = D004154F0778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "Sun.java: 5";
+		rLen = 0;
+		rLoc = 98;
+		rType = 0;
+		vrLen = 942;
+		vrLoc = 6314;
+	};
+	D078E85A07CA702C004DEEF5 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {852, 892}}";
+			sepNavSelRange = "{286, 0}";
+			sepNavVisRect = "{{0, 108}, {785, 544}}";
+		};
+	};
+	D078E86307CA71A9004DEEF5 = {
+		fRef = D078E85A07CA702C004DEEF5;
+		isa = PBXTextBookmark;
+		name = "SiteLabelCollection.java: 10";
+		rLen = 0;
+		rLoc = 1704;
+		rType = 0;
+		vrLen = 195;
+		vrLoc = 0;
+	};
+	D078E87207CA7A75004DEEF5 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {788, 740}}";
+			sepNavSelRange = "{801, 0}";
+			sepNavVisRect = "{{0, 196}, {785, 544}}";
+		};
+	};
+	D078E8CB07CA80D8004DEEF5 = {
+		fRef = D078E87207CA7A75004DEEF5;
+		isa = PBXTextBookmark;
+		name = "GeoCollection.java: 10";
+		rLen = 0;
+		rLoc = 1011;
+		rType = 0;
+		vrLen = 183;
+		vrLoc = 0;
+	};
+	D078E92107CA9451004DEEF5 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {820, 1576}}";
+			sepNavSelRange = "{292, 0}";
+			sepNavVisRect = "{{0, 1032}, {785, 544}}";
+		};
+	};
+	D078E92C07CA966B004DEEF5 = {
+		fRef = D078E92107CA9451004DEEF5;
+		isa = PBXTextBookmark;
+		name = "GeoPathCollection.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 191;
+		vrLoc = 0;
+	};
+	D078E94007CAA1C1004DEEF5 = {
+		fRef = D00415480778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "GlobeViewFrameApplet.java: 64";
+		rLen = 0;
+		rLoc = 2100;
+		rType = 0;
+		vrLen = 1075;
+		vrLoc = 1312;
+	};
+	D078E9ED07CBAD88004DEEF5 = {
+		fRef = D00415520778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "Vector3D.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 718;
+		vrLoc = 516;
+	};
+	D078EA2907CBB6EF004DEEF5 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1148, 1462}}";
+			sepNavSelRange = "{2514, 0}";
+			sepNavVisRect = "{{0, 842}, {785, 544}}";
+		};
+	};
+	D078EA3207CBC38B004DEEF5 = {
+		fRef = D078EA2907CBB6EF004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LensRegion.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 177;
+		vrLoc = 0;
+	};
+	D078EA6007CD093B004DEEF5 = {
+		fRef = D00415410778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = unrotate;
+		rLen = 8;
+		rLoc = 3170;
+		rType = 0;
+		vrLen = 810;
+		vrLoc = 2946;
+	};
+	D078EA9207CD2A64004DEEF5 = {
+		fRef = D00415490778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "MapBlitter.java: 6";
+		rLen = 0;
+		rLoc = 131;
+		rType = 0;
+		vrLen = 674;
+		vrLoc = 0;
+	};
+	D078EAB407CD3EBB004DEEF5 = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {804, 1690}}";
+			sepNavSelRange = "{1828, 702}";
+			sepNavVisRect = "{{0, 1128}, {785, 544}}";
+		};
+	};
+	D078EAC307CD49B7004DEEF5 = {
+		fRef = D078EAB407CD3EBB004DEEF5;
+		isa = PBXTextBookmark;
+		name = "BoundingBox.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 179;
+		vrLoc = 0;
+	};
+	D078EAD407CD4AD4004DEEF5 = {
+		fRef = D004169F077B39E200DE1F95;
+		isa = PBXTextBookmark;
+		name = genGlobe;
+		rLen = 8;
+		rLoc = 290;
+		rType = 0;
+		vrLen = 1037;
+		vrLoc = 1638;
+	};
+	D078EADB07CD4AD4004DEEF5 = {
+		fRef = D004154D0778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "ScreenPoint.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 386;
+		vrLoc = 0;
+	};
+	D078EAED07CD4AD4004DEEF5 = {
+		fRef = D004154D0778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "ScreenPoint.java: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 386;
+		vrLoc = 0;
+	};
+	D078EAF507CD4E70004DEEF5 = {
+		fRef = D00415430778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoObject.java: 43";
+		rLen = 0;
+		rLoc = 1387;
+		rType = 0;
+		vrLen = 1102;
+		vrLoc = 1078;
+	};
+	D078EAF807CD4E70004DEEF5 = {
+		fRef = D00415440778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "getSpherePoint()";
+		rLen = 16;
+		rLoc = 384;
+		rType = 0;
+		vrLen = 721;
+		vrLoc = 0;
+	};
+	D078EAFA07CD4E70004DEEF5 = {
+		fRef = D078E85A07CA702C004DEEF5;
+		isa = PBXTextBookmark;
+		name = "SiteLabelCollection.java: 14";
+		rLen = 0;
+		rLoc = 286;
+		rType = 0;
+		vrLen = 1127;
+		vrLoc = 94;
+	};
+	D078EB1307CD51DE004DEEF5 = {
+		fRef = D004154E0778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "SiteLabel.java: 63";
+		rLen = 0;
+		rLoc = 1762;
+		rType = 0;
+		vrLen = 1149;
+		vrLoc = 1118;
+	};
+	D078EB1A07CD5383004DEEF5 = {
+		fRef = D078E92107CA9451004DEEF5;
+		isa = PBXTextBookmark;
+		name = "GeoPathCollection.java: 14";
+		rLen = 0;
+		rLoc = 292;
+		rType = 0;
+		vrLen = 996;
+		vrLoc = 584;
+	};
+	D078EB2807CD559C004DEEF5 = {
+		fRef = D00415520778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "Vector3D.java: 34";
+		rLen = 0;
+		rLoc = 744;
+		rType = 0;
+		vrLen = 751;
+		vrLoc = 562;
+	};
+	D078EB2907CD559C004DEEF5 = {
+		fRef = D078EAB407CD3EBB004DEEF5;
+		isa = PBXTextBookmark;
+		name = "BoundingBox.java: 47";
+		rLen = 0;
+		rLoc = 1142;
+		rType = 0;
+		vrLen = 935;
+		vrLoc = 1597;
+	};
+	D078EB2A07CD559C004DEEF5 = {
+		fRef = D00416CD077B416B00DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoPath.java: 58";
+		rLen = 0;
+		rLoc = 1429;
+		rType = 0;
+		vrLen = 893;
+		vrLoc = 2656;
+	};
+	D078EB3707CD5628004DEEF5 = {
+		fRef = D078EA2907CBB6EF004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LensRegion.java: 57";
+		rLen = 0;
+		rLoc = 2480;
+		rType = 0;
+		vrLen = 988;
+		vrLoc = 1957;
+	};
+	D078EB4207CD5709004DEEF5 = {
+		fRef = D078E87207CA7A75004DEEF5;
+		isa = PBXTextBookmark;
+		name = "GeoCollection.java: 30";
+		rLen = 0;
+		rLoc = 745;
+		rType = 0;
+		vrLen = 783;
+		vrLoc = 228;
+	};
+	D078EB7207CD678B004DEEF5 = {
+		fRef = D00415460778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = Mouse;
+		rLen = 5;
+		rLoc = 10679;
+		rType = 0;
+		vrLen = 623;
+		vrLoc = 8238;
+	};
+	D078EB8907CD6A2A004DEEF5 = {
+		fRef = D004154B0778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = "NightUpdateThread.java: 26";
+		rLen = 0;
+		rLoc = 616;
+		rType = 0;
+		vrLen = 631;
+		vrLoc = 99;
+	};
+	D078EB9D07CD6ECF004DEEF5 = {
+		fRef = D078E6CF07C5886A004DEEF5;
+		isa = PBXTextBookmark;
+		name = "LatitudeGraticule.java: LatitudeGraticule";
+		rLen = 0;
+		rLoc = 810;
+		rType = 0;
+		vrLen = 662;
+		vrLoc = 151;
+	};
+	D078EBC107CE4AFC004DEEF5 = {
+		fRef = D004154C0778BFB900DE1F95;
+		isa = PBXTextBookmark;
+		name = corner;
+		rLen = 6;
+		rLoc = 10430;
+		rType = 0;
+		vrLen = 748;
+		vrLoc = 4308;
+	};
+	D0AEE5E407D2624A001C59C0 = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D0AEE5F307D26864001C59C0 = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 426";
+		rLen = 0;
+		rLoc = 16751;
+		rType = 0;
+		vrLen = 959;
+		vrLoc = 13698;
+	};
+	D0AEE5F407D26864001C59C0 = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D0AEE5F607D26864001C59C0 = {
+		fRef = D00415420778BFB800DE1F95;
+		isa = PBXTextBookmark;
+		name = "GeoCanvas.java: 426";
+		rLen = 0;
+		rLoc = 16751;
+		rType = 0;
+		vrLen = 959;
+		vrLoc = 13698;
+	};
+	D0AEE5F707D26864001C59C0 = {
+		fRef = D078E6A807C530C7004DEEF5;
+		isa = PBXTextBookmark;
+		name = "globeviewtest.html: 12";
+		rLen = 0;
+		rLoc = 251;
+		rType = 0;
+		vrLen = 961;
+		vrLoc = 0;
+	};
+	D0AEE5F807D26864001C59C0 = {
+		isa = PBXTargetBookmark;
+		trg = 130F8B84001BDB6411CA292A;
+	};
+	D0AEE5FF07D26901001C59C0 = {
+		fRef = D0239A710790A3B00026B525;
+		isa = PBXTextBookmark;
+		name = "AboutDialog.java: 2";
+		rLen = 0;
+		rLoc = 12;
+		rType = 0;
+		vrLen = 732;
+		vrLoc = 0;
+	};
+	D0AEE60007D26901001C59C0 = {
+		isa = PBXTargetBookmark;
+		trg = 130F8B84001BDB6411CA292A;
+	};
+	D0AEE60107D26901001C59C0 = {
+		fRef = D0239A710790A3B00026B525;
+		isa = PBXTextBookmark;
+		name = "AboutDialog.java: 2";
+		rLen = 0;
+		rLoc = 12;
+		rType = 0;
+		vrLen = 732;
+		vrLoc = 0;
+	};
+	D0AEE60907D26A58001C59C0 = {
+		isa = PBXTargetBookmark;
+		trg = 130F8B84001BDB6411CA292A;
+	};
+}

@@ -1,0 +1,582 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 39;
+	objects = {
+		00E6828EFEC88D1A11DB9C8B = {
+			buildSettings = {
+			};
+			buildStyles = (
+				130F8B80001BD9A911CA292A,
+				130F8B81001BD9A911CA292A,
+			);
+			hasScannedForEncodings = 1;
+			isa = PBXProject;
+			mainGroup = 00E6828FFEC88D1A11DB9C8B;
+			productRefGroup = 0120612AFEC8923411DB9C8B;
+			projectDirPath = "";
+			targets = (
+				130F8B84001BDB6411CA292A,
+			);
+		};
+		00E6828FFEC88D1A11DB9C8B = {
+			children = (
+				D078E6A807C530C7004DEEF5,
+				D00415400778BFB800DE1F95,
+				0120612AFEC8923411DB9C8B,
+			);
+			isa = PBXGroup;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//000
+//001
+//002
+//003
+//004
+//010
+//011
+//012
+//013
+//014
+		0120612AFEC8923411DB9C8B = {
+			children = (
+				329C727C0360BF8700C91783,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+//010
+//011
+//012
+//013
+//014
+//130
+//131
+//132
+//133
+//134
+		130F8B80001BD9A911CA292A = {
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				ZERO_LINK = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		130F8B81001BD9A911CA292A = {
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				ZERO_LINK = NO;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+		130F8B84001BDB6411CA292A = {
+			buildPhases = (
+				130F8B85001BDB6411CA292A,
+				130F8B87001BDB6411CA292A,
+				130F8B88001BDB6411CA292A,
+				130F8B89001BDB6411CA292A,
+			);
+			buildSettings = {
+				HEADER_SEARCH_PATHS = "";
+				JAVA_ARCHIVE_COMPRESSION = YES;
+				JAVA_ARCHIVE_TYPE = JAR;
+				JAVA_CLASS_SEARCH_PATHS = org;
+				JAVA_COMPILER_DEPRECATED_WARNINGS = YES;
+				JAVA_COMPILER_FLAGS = "-O";
+				JAVA_COMPILER_TARGET_VM_VERSION = 1.2;
+				JAVA_SOURCE_SUBDIR = .;
+				OPTIMIZATION_CFLAGS = "-O3";
+				PRODUCT_NAME = globeview;
+				PURE_JAVA = YES;
+				REZ_EXECUTABLE = YES;
+			};
+			dependencies = (
+			);
+			isa = PBXToolTarget;
+			name = globeview;
+			productInstallPath = /usr/local/bin;
+			productName = JavaAWTApplet;
+			productReference = 329C727C0360BF8700C91783;
+		};
+		130F8B85001BDB6411CA292A = {
+			buildActionMask = 2147483647;
+			files = (
+				D00415560778BFB900DE1F95,
+				D00415570778BFB900DE1F95,
+				D00415580778BFB900DE1F95,
+				D00415590778BFB900DE1F95,
+				D004155B0778BFB900DE1F95,
+				D004155D0778BFB900DE1F95,
+				D004155E0778BFB900DE1F95,
+				D004155F0778BFB900DE1F95,
+				D00415600778BFB900DE1F95,
+				D00415610778BFB900DE1F95,
+				D00415620778BFB900DE1F95,
+				D00415630778BFB900DE1F95,
+				D00415640778BFB900DE1F95,
+				D00415660778BFB900DE1F95,
+				D00415670778BFB900DE1F95,
+				D00416A0077B39E200DE1F95,
+				D00416CE077B416B00DE1F95,
+				D0239A720790A3B00026B525,
+				D078E6D007C5886A004DEEF5,
+				D078E85B07CA702C004DEEF5,
+				D078E87307CA7A75004DEEF5,
+				D078E92207CA9451004DEEF5,
+				D078EA2A07CBB6F0004DEEF5,
+				D078EAB507CD3EBB004DEEF5,
+			);
+			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		130F8B87001BDB6411CA292A = {
+			buildActionMask = 2147483647;
+			files = (
+				D078E6A907C530C7004DEEF5,
+			);
+			isa = PBXJavaArchiveBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		130F8B88001BDB6411CA292A = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		130F8B89001BDB6411CA292A = {
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+			);
+			isa = PBXCopyFilesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+//130
+//131
+//132
+//133
+//134
+//320
+//321
+//322
+//323
+//324
+		329C727C0360BF8700C91783 = {
+			explicitFileType = "compiled.mach-o.executable";
+			includeInIndex = 0;
+			isa = PBXFileReference;
+			path = globeview.jar;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+//320
+//321
+//322
+//323
+//324
+//D00
+//D01
+//D02
+//D03
+//D04
+		D00415400778BFB800DE1F95 = {
+			children = (
+				D0239A710790A3B00026B525,
+				D078EAB407CD3EBB004DEEF5,
+				D004169F077B39E200DE1F95,
+				D00415410778BFB800DE1F95,
+				D00415420778BFB800DE1F95,
+				D078E87207CA7A75004DEEF5,
+				D00415430778BFB800DE1F95,
+				D00416CD077B416B00DE1F95,
+				D078E92107CA9451004DEEF5,
+				D00415440778BFB800DE1F95,
+				D00415460778BFB800DE1F95,
+				D00415480778BFB900DE1F95,
+				D078E6CF07C5886A004DEEF5,
+				D078EA2907CBB6EF004DEEF5,
+				D00415490778BFB900DE1F95,
+				D004154A0778BFB900DE1F95,
+				D004154B0778BFB900DE1F95,
+				D004154C0778BFB900DE1F95,
+				D004154D0778BFB900DE1F95,
+				D004154E0778BFB900DE1F95,
+				D078E85A07CA702C004DEEF5,
+				D004154F0778BFB900DE1F95,
+				D00415510778BFB900DE1F95,
+				D00415520778BFB900DE1F95,
+			);
+			isa = PBXGroup;
+			name = globeview;
+			path = org/bruns/asmodeus/globeview;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00415410778BFB800DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = GenGlobe.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00415420778BFB800DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = GeoCanvas.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00415430778BFB800DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = GeoObject.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00415440778BFB800DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = GeoPosition.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00415460778BFB800DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = GlobeView.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00415480778BFB900DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = GlobeViewFrameApplet.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00415490778BFB900DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = MapBlitter.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D004154A0778BFB900DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = Matrix3D.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D004154B0778BFB900DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = NightUpdateThread.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D004154C0778BFB900DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = Projection.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D004154D0778BFB900DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = ScreenPoint.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D004154E0778BFB900DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = SiteLabel.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D004154F0778BFB900DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = Sun.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00415510778BFB900DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = Vector2D.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00415520778BFB900DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = Vector3D.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00415560778BFB900DE1F95 = {
+			fileRef = D00415410778BFB800DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00415570778BFB900DE1F95 = {
+			fileRef = D00415420778BFB800DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00415580778BFB900DE1F95 = {
+			fileRef = D00415430778BFB800DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00415590778BFB900DE1F95 = {
+			fileRef = D00415440778BFB800DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D004155B0778BFB900DE1F95 = {
+			fileRef = D00415460778BFB800DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D004155D0778BFB900DE1F95 = {
+			fileRef = D00415480778BFB900DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D004155E0778BFB900DE1F95 = {
+			fileRef = D00415490778BFB900DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D004155F0778BFB900DE1F95 = {
+			fileRef = D004154A0778BFB900DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00415600778BFB900DE1F95 = {
+			fileRef = D004154B0778BFB900DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00415610778BFB900DE1F95 = {
+			fileRef = D004154C0778BFB900DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00415620778BFB900DE1F95 = {
+			fileRef = D004154D0778BFB900DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00415630778BFB900DE1F95 = {
+			fileRef = D004154E0778BFB900DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00415640778BFB900DE1F95 = {
+			fileRef = D004154F0778BFB900DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00415660778BFB900DE1F95 = {
+			fileRef = D00415510778BFB900DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00415670778BFB900DE1F95 = {
+			fileRef = D00415520778BFB900DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D004169F077B39E200DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = DirectionGraticule.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00416A0077B39E200DE1F95 = {
+			fileRef = D004169F077B39E200DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D00416CD077B416B00DE1F95 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = GeoPath.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D00416CE077B416B00DE1F95 = {
+			fileRef = D00416CD077B416B00DE1F95;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D0239A710790A3B00026B525 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = AboutDialog.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D0239A720790A3B00026B525 = {
+			fileRef = D0239A710790A3B00026B525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D078E6A807C530C7004DEEF5 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text.html;
+			path = globeviewtest.html;
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		D078E6A907C530C7004DEEF5 = {
+			fileRef = D078E6A807C530C7004DEEF5;
+			isa = PBXBuildFile;
+			settings = {
+				JAVA_ARCHIVE_SUBDIR = ../../../programming;
+			};
+		};
+		D078E6CF07C5886A004DEEF5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = LatitudeGraticule.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D078E6D007C5886A004DEEF5 = {
+			fileRef = D078E6CF07C5886A004DEEF5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D078E85A07CA702C004DEEF5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = SiteLabelCollection.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D078E85B07CA702C004DEEF5 = {
+			fileRef = D078E85A07CA702C004DEEF5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D078E87207CA7A75004DEEF5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = GeoCollection.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D078E87307CA7A75004DEEF5 = {
+			fileRef = D078E87207CA7A75004DEEF5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D078E92107CA9451004DEEF5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = GeoPathCollection.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D078E92207CA9451004DEEF5 = {
+			fileRef = D078E92107CA9451004DEEF5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D078EA2907CBB6EF004DEEF5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = LensRegion.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D078EA2A07CBB6F0004DEEF5 = {
+			fileRef = D078EA2907CBB6EF004DEEF5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		D078EAB407CD3EBB004DEEF5 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.java;
+			path = BoundingBox.java;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		D078EAB507CD3EBB004DEEF5 = {
+			fileRef = D078EAB407CD3EBB004DEEF5;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+	};
+	rootObject = 00E6828EFEC88D1A11DB9C8B;
+}
