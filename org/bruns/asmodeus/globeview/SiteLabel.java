@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/04 23:59:56  cmbruns
+// made overlap comparison to be more generic, using both LensRegions and BoundingBoxes
+//
 // Revision 1.3  2005/03/02 01:51:19  cmbruns
 // Renamed checkResolution() to usableResolution()
 //
@@ -36,7 +39,7 @@ public class SiteLabel extends GeoObject
 		setLabel(l);
 		position.set(lon, lat);
         labelColors = colors;
-		boundingBox.addPoint(position.getSpherePoint());
+		addBoxPoint(position.getSpherePoint());
     }
 
     // Constructor
@@ -45,7 +48,7 @@ public class SiteLabel extends GeoObject
 		setLabel(l);
 		position.set(lon, lat);
         labelColors = defaultLabelColors;
-		boundingBox.addPoint(position.getSpherePoint());
+		addBoxPoint(position.getSpherePoint());
     }
 	
 	void checkLabelColors() {
@@ -70,7 +73,7 @@ public class SiteLabel extends GeoObject
     public void paint(Graphics g, GenGlobe genGlobe, Projection projection, LensRegion viewLens) {
 
 		if (!usableResolution(genGlobe)) return;
-		if (!boundingBox.overlaps(viewLens)) return;
+		if (!overlaps(viewLens)) return;
 
         double resolution = genGlobe.getResolution(); // Pixels per kilometer
 

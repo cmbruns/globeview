@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/04 23:59:22  cmbruns
+// made overlap comparison to be more generic, using both LensRegions and BoundingBoxes
+//
 // Revision 1.3  2005/03/02 01:51:19  cmbruns
 // Renamed checkResolution() to usableResolution()
 //
@@ -47,7 +50,7 @@ public class GeoPath extends GeoObject
 	
 	void addPoint(GeoPosition p) {
 		point.addElement(p);
-		boundingBox.addPoint(p.getSpherePoint());
+		addBoxPoint(p.getSpherePoint());
 	}
 	
 	void setColor(Color c) {
@@ -67,7 +70,7 @@ public class GeoPath extends GeoObject
 		if (point.size() < 1) return;
 				
 		if (!usableResolution(genGlobe)) return;
-		if (!boundingBox.overlaps(viewLens)) return;
+		if (!overlaps(viewLens)) return;
 		
 		g.setColor(color);
 

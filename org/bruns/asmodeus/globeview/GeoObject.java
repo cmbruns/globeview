@@ -10,6 +10,9 @@ package org.bruns.asmodeus.globeview;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/04 23:58:53  cmbruns
+// made overlap comparison to be more generic, using both LensRegions and BoundingBoxes
+//
 // Revision 1.3  2005/03/02 01:51:19  cmbruns
 // Renamed checkResolution() to usableResolution()
 //
@@ -28,7 +31,8 @@ public class GeoObject
     double maxFullResolution; // Resolution at which this object becomes fully distinct
     double maxResolution; // default to 100
 	
-	BoundingBox boundingBox = new BoundingBox();
+	private BoundingBox boundingBox = null;
+	private LensRegion boundingLens = null;
 	
     // Constructor
     GeoObject() {
@@ -111,5 +115,35 @@ public class GeoObject
 
 	// Paint does nothing, but is not abstract so that resolution objects do not need their own class
 	void paint(Graphics g, GenGlobe genGlobe, Projection projection, LensRegion viewLens) {
+	}
+	
+	boolean overlaps(LensRegion viewLens) {
+		if ((viewLens == null) && (boundingBox == null)) return true;  // Uncertainty means truth
+		if ((boundingBox != null) &&
+			boundingBox.overlaps(viewLens))
+			return true;
+		if ((viewLens != null) && viewLens.overlaps(viewLens))
+			return true;
+		return false;
+	}
+	
+	void addBoxPoint(Vector3D p) {
+		if (boundingBox == null) boundingBox = new BoundingBox();
+		boundingBox.addPoint(p);
+	}
+	
+	void addBoundingBox(GeoObject o) {
+		if (o.boundingBox == null) return;
+		if (boundingBox == null) boundingBox = new BoundingBox();
+		boundingBox.addBoundingBox(o.boundingBox);
+	}
+	void addBoundingLens(GeoObject o) {
+		if (o.boundingLens == null) return;
+		LensRegion l2 = o.boundingLens;
+		if (boundingLens == null) boundingLens = new LensRegion(l2.getPlanePoint(), l2.getUnitVector());
+		else boundingLens.addBoundingLens(o.boundingLens);
+	}
+	void setLonLatRange(double minLon, double maxLon, double minLat, double maxLat) {
+		boundingLens = LensRegion.lonLatRange(minLon, maxLon, minLat, maxLat);
 	}
 }
