@@ -2,6 +2,13 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.8  2005/03/28 01:12:06  cmbruns
+// New menus for detail level, rivers, and political borders
+// Menus rearranged under Nature, Cartography, and Politics
+// Stereoscopic menu items placed under Perspective projection
+// Modified Projection and MouseAction menus to use MyCheckBoxMenuItemGroup for radio button behavior
+// Modified starting width and height of canvas
+//
 // Revision 1.7  2005/03/14 04:20:47  cmbruns
 // Change catch of AccessControlExeception to placate Netscape 4.7, which does not understand java.security.AccessControlException, but prefers netscape.security.AccessControlException
 //
@@ -35,62 +42,49 @@ package org.bruns.asmodeus.globeview;
 
 import java.awt.*;
 import java.awt.event.*;
-import org.bruns.asmodeus.globeview.*;
 import java.net.*; // URL
+import java.util.*;
+import org.bruns.asmodeus.globeview.*;
 
 public class GlobeView extends Frame 
     implements ActionListener, ItemListener
 {
     GeoCanvas canvas;
-    int canvasStartSize = 300;
+    int canvasStartWidth = 500;
+    int canvasStartHeight = 280;
     AboutDialog aboutDialog;
     HelpDialog helpDialog;
-
-	// Supported projections
-    static final int AZIMUTHALEQUALAREA   = 0;
-    static final int AZIMUTHALEQUIDISTANT = 1;
-    static final int EQUIRECTANGULAR      = 2;
-    static final int GNOMONIC             = 3;
-    static final int MERCATOR             = 4;
-    static final int ORTHOGRAPHIC         = 5;
-    static final int PERSPECTIVE          = 6;
-    static final int SINUSOIDAL           = 7;
-    static final int STEREOGRAPHIC        = 8;
-    static final int totalProjections     = 9;
-    static int currentProjection          = ORTHOGRAPHIC;
-
-    CheckboxMenuItem[] projectionCheck = new CheckboxMenuItem[totalProjections];
-    static String[] projectionDescription = new String[totalProjections];
 
 	CheckboxMenuItem northUpButton;
 	CheckboxMenuItem dayNightButton;
 	CheckboxMenuItem graticulesButton;
 	CheckboxMenuItem coastsButton;
+	CheckboxMenuItem riversButton;
 	CheckboxMenuItem bearingButton;
 	CheckboxMenuItem imagesButton;
 	CheckboxMenuItem sitesButton;
+	CheckboxMenuItem bordersButton;
 	CheckboxMenuItem scaleBarButton;
 	CheckboxMenuItem crosshairButton;
     
-    // Supported mouseActions
-    static final int ROT_XY  = 0;
-    static final int ZOOM    = 1;
-    static final int ROT_Z   = 2;
-    // static final int ROT_XYZ = 3;
-    static final int totalMouseActions = 3;
-    static int currentMouseAction      = ROT_XY;
-    CheckboxMenuItem[] mouseActionCheck = new CheckboxMenuItem[totalMouseActions];
-    static String[] mouseActionDescription = new String[totalMouseActions];
-
+	// Groups of menu items that must exhibit radio button behavior
+	MyCheckboxMenuItemGroup detailGroup = new MyCheckboxMenuItemGroup();
+	MyCheckboxMenuItemGroup projectionGroup = new MyCheckboxMenuItemGroup();
+	MyCheckboxMenuItemGroup mouseActionGroup = new MyCheckboxMenuItemGroup();
+	
+	// Store mapping of map projections to menu item names
+	Hashtable projectionNames = new Hashtable();
+	Hashtable mouseActionNames = new Hashtable();
+	
     public static void main(String arg[]) {
-	try {
-		URL parameterURL = new URL(arg[0]);
-	    GlobeView frame = new GlobeView(parameterURL);
-	    frame.show();
-	} catch (MalformedURLException exception) {
-	    System.out.println(exception);
-	    System.exit(0);
-	}
+		try {
+			URL parameterURL = new URL(arg[0]);
+			GlobeView frame = new GlobeView(parameterURL);
+			frame.show();
+		} catch (MalformedURLException exception) {
+			System.out.println(exception);
+			System.exit(0);
+		}
     }
 
     GlobeView(URL parameterURL) {
@@ -99,29 +93,10 @@ public class GlobeView extends Frame
 		// Make window close when it should
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				try {
-					System.exit(0); // Kill the program
-				// } catch (java.security.AccessControlException exception) {
-				} catch (Exception exception) {
-				 	hide(); // OK, just hide it then
-				}
+				try {System.exit(0);} // Kill the program
+				catch (Exception exception) {hide();} // OK, just hide it then
 			}});
-	
-		projectionDescription[AZIMUTHALEQUALAREA] = "Azimuthal Equal Area";
-		projectionDescription[AZIMUTHALEQUIDISTANT] = "Azimuthal Equidistant";
-		projectionDescription[EQUIRECTANGULAR] = "Equirectangular";
-		projectionDescription[GNOMONIC]        = "Gnomonic";
-		projectionDescription[MERCATOR]        = "Mercator";
-		projectionDescription[ORTHOGRAPHIC]    = "Orthographic";
-		projectionDescription[PERSPECTIVE]     = "Perspective";
-		projectionDescription[SINUSOIDAL]      = "Sinusoidal";
-		projectionDescription[STEREOGRAPHIC]      = "Stereographic";
-		
-		mouseActionDescription[ROT_XY]  = "Rotate XY";
-		mouseActionDescription[ROT_Z]   = "Rotate Z";
-		// mouseActionDescription[ROT_XYZ] = "Rotate XYZ";
-		mouseActionDescription[ZOOM]    = "Zoom";
-		
+
 		// Menus
 		MenuBar menuBar;
 		Menu menu;
@@ -134,76 +109,111 @@ public class GlobeView extends Frame
 		menu = new Menu("GlobeView");
 		menuBar.add(menu);
 		
+		Menu natureMenu = new Menu("Nature");
+		menu.add(natureMenu);
+		Menu cartographyMenu = new Menu("Cartography");
+		menu.add(cartographyMenu);
+		Menu politicsMenu = new Menu("Politics");
+		menu.add(politicsMenu);
+
 		northUpButton = new CheckboxMenuItem("Force North Up");
 		northUpButton.setEnabled(true);
 		northUpButton.setState(true);
-		menu.add(northUpButton);
+		cartographyMenu.add(northUpButton);
 		northUpButton.addItemListener(this);
 		
-		dayNightButton = new CheckboxMenuItem("Show Day/Night");
+		dayNightButton = new CheckboxMenuItem("Darken Night Side");
 		dayNightButton.setEnabled(true);
 		dayNightButton.setState(true);
-		menu.add(dayNightButton);
+		natureMenu.add(dayNightButton);
 		dayNightButton.addItemListener(this);
 		
-		Menu graphicsMenu = new Menu("Display Graphics");
-		menu.add(graphicsMenu);
-		
-		sitesButton = new CheckboxMenuItem("Place Names");
+		sitesButton = new CheckboxMenuItem("Show Place Names");
 		sitesButton.setEnabled(true);
 		sitesButton.setState(true);
-		graphicsMenu.add(sitesButton);
+		politicsMenu.add(sitesButton);
 		sitesButton.addItemListener(this);
 		
-		imagesButton = new CheckboxMenuItem("Satellite Image");
+		bordersButton = new CheckboxMenuItem("Show Political Borders");
+		bordersButton.setEnabled(true);
+		bordersButton.setState(true);
+		politicsMenu.add(bordersButton);
+		bordersButton.addItemListener(this);
+		
+		imagesButton = new CheckboxMenuItem("Show Planet Image");
 		imagesButton.setEnabled(true);
 		imagesButton.setState(true);
-		graphicsMenu.add(imagesButton);
+		natureMenu.add(imagesButton);
 		imagesButton.addItemListener(this);
 		
-		coastsButton = new CheckboxMenuItem("Coast Lines");
+		coastsButton = new CheckboxMenuItem("Show Coast Lines");
 		coastsButton.setEnabled(true);
 		coastsButton.setState(true);
-		graphicsMenu.add(coastsButton);
+		natureMenu.add(coastsButton);
 		coastsButton.addItemListener(this);
 		
-		graticulesButton = new CheckboxMenuItem("Graticule");
+		riversButton = new CheckboxMenuItem("Show Rivers");
+		riversButton.setEnabled(true);
+		riversButton.setState(true);
+		natureMenu.add(riversButton);
+		riversButton.addItemListener(this);
+		
+		graticulesButton = new CheckboxMenuItem("Show Graticule");
 		graticulesButton.setEnabled(true);
 		graticulesButton.setState(true);
-		graphicsMenu.add(graticulesButton);
+		cartographyMenu.add(graticulesButton);
 		graticulesButton.addItemListener(this);
 		
-		scaleBarButton = new CheckboxMenuItem("Scale Bar");
+		scaleBarButton = new CheckboxMenuItem("Show Scale Bar");
 		scaleBarButton.setEnabled(true);
 		scaleBarButton.setState(true);
-		graphicsMenu.add(scaleBarButton);
+		cartographyMenu.add(scaleBarButton);
 		scaleBarButton.addItemListener(this);
 		
-		crosshairButton = new CheckboxMenuItem("Crosshair");
+		crosshairButton = new CheckboxMenuItem("Show Crosshair");
 		crosshairButton.setEnabled(true);
 		crosshairButton.setState(true);
-		graphicsMenu.add(crosshairButton);
+		cartographyMenu.add(crosshairButton);
 		crosshairButton.addItemListener(this);
 		
-		bearingButton = new CheckboxMenuItem("Antenna Bearing");
+		bearingButton = new CheckboxMenuItem("Show Antenna Bearing");
 		bearingButton.setEnabled(true);
 		bearingButton.setState(false);
-		graphicsMenu.add(bearingButton);
+		cartographyMenu.add(bearingButton);
 		bearingButton.addItemListener(this);
 		
 		Menu dragMenu = new Menu("Mouse Drag Action");
 		menu.add(dragMenu);
-		for (int i = 0; i < totalMouseActions; ++i) {
-			mouseActionCheck[i] = new CheckboxMenuItem(mouseActionDescription[i]);
-			checkboxMenuItem = mouseActionCheck[i];
-			checkboxMenuItem.setEnabled(true);
-			checkboxMenuItem.setState(i == currentMouseAction);
-			dragMenu.add(checkboxMenuItem);
-			checkboxMenuItem.addItemListener(this);
-		}
-		if (northUpButton.isEnabled())
-			mouseActionCheck[ROT_Z].setEnabled(false);
-		// mouseActionCheck[ROT_XYZ].setEnabled(false);
+		addMouseActionItem(dragMenu, "Rotate XY", true);
+		addMouseActionItem(dragMenu, "Zoom", true);
+		boolean doIRotateZ = true;
+		if (northUpButton.isEnabled()) doIRotateZ = false;
+		addMouseActionItem(dragMenu, "Rotate Z", doIRotateZ);
+		mouseActionGroup.getItem("Rotate XY").setState(true); // Set initial mouse to rot XY
+		
+		Menu detailMenu = new Menu("Detail Level");
+		menu.add(detailMenu);
+		
+		CheckboxMenuItem lowDetailButton = new CheckboxMenuItem("Coarse Detail");
+		lowDetailButton.setEnabled(true);
+		lowDetailButton.setState(false);
+		detailMenu.add(lowDetailButton);
+		lowDetailButton.addItemListener(this);
+		detailGroup.add(lowDetailButton);
+
+		CheckboxMenuItem mediumDetailButton = new CheckboxMenuItem("Normal Detail");
+		mediumDetailButton.setEnabled(true);
+		mediumDetailButton.setState(true);
+		detailMenu.add(mediumDetailButton);
+		mediumDetailButton.addItemListener(this);
+		detailGroup.add(mediumDetailButton);
+
+		CheckboxMenuItem highDetailButton = new CheckboxMenuItem("Fine Detail");
+		highDetailButton.setEnabled(true);
+		highDetailButton.setState(false);
+		detailMenu.add(highDetailButton);
+		highDetailButton.addItemListener(this);
+		detailGroup.add(highDetailButton);
 		
 		menuItem = new MenuItem("-"); // Separator
 		menu.add(menuItem);
@@ -213,23 +223,29 @@ public class GlobeView extends Frame
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
 		
-		// menu = new Menu("Projection");
-		// menuBar.add(menu);
 		int i; 
-		Menu projectionMenu = new Menu("Projection");
-		menu = projectionMenu;
+		Menu projectionMenu = new Menu("MapProjection");
 		menuBar.add(projectionMenu);
-		// menu.add(projectionMenu);
 		
-		for (i = 0; i < totalProjections; ++i) {
-			checkboxMenuItem = new CheckboxMenuItem(projectionDescription[i]);
-			checkboxMenuItem.setEnabled(true);
-			checkboxMenuItem.setState(i == currentProjection);
-			projectionMenu.add(checkboxMenuItem);
-			checkboxMenuItem.addItemListener(this);
-			projectionCheck[i] = checkboxMenuItem;
-		}
+		addProjectionMenuItem(projectionMenu, "Azimuthal Equal Area", true);
+		addProjectionMenuItem(projectionMenu, "Azimuthal Equidistant", true);
+		addProjectionMenuItem(projectionMenu, "Equirectangular", true);
+		addProjectionMenuItem(projectionMenu, "Gnomonic", true);
+		addProjectionMenuItem(projectionMenu, "Mercator", true);
+		addProjectionMenuItem(projectionMenu, "Orthographic", true);
 
+		Menu perspectiveMenu = new Menu("Perspective");
+		projectionMenu.add(perspectiveMenu);
+
+		addProjectionMenuItem(perspectiveMenu, "Normal Monoscopic Perspective", true);
+		addProjectionMenuItem(perspectiveMenu, "Cross-Eye 3D", true);
+		addProjectionMenuItem(perspectiveMenu, "Wall-Eye 3D", false);
+		addProjectionMenuItem(perspectiveMenu, "Red/Blue 3D", false);
+		addProjectionMenuItem(perspectiveMenu, "Interlaced 3D", false);		
+
+		addProjectionMenuItem(projectionMenu, "Sinusoidal", true);
+		addProjectionMenuItem(projectionMenu, "Stereographic", true);
+				
 		menu = new Menu("Help");
 		menuBar.setHelpMenu(menu);
 		menuItem = new MenuItem("GlobeView Help");
@@ -246,7 +262,7 @@ public class GlobeView extends Frame
 		menu.add(menuItem);
 		
 		// Canvas, which actually implements most of the hard stuff
-		canvas = new GeoCanvas(canvasStartSize, canvasStartSize, this);
+		canvas = new GeoCanvas(canvasStartWidth, canvasStartHeight, this);
 		canvas.setMouseAction("mouseRotateXY");
 		
 		try {
@@ -263,7 +279,7 @@ public class GlobeView extends Frame
 		helpDialog = new HelpDialog(this);
 		
 		// IE does not "pack" correctly, so try something reasonable
-		setSize(canvasStartSize + 15, canvasStartSize + 65);
+		setSize(canvasStartWidth + 15, canvasStartHeight + 65);
 		pack();
 		
 		// Center on screen
@@ -275,6 +291,31 @@ public class GlobeView extends Frame
 		setLocation(locX, locY);
     }
 
+	void addProjectionMenuItem(Menu m, String projectionName, boolean enabled) {
+
+		Projection p = Projection.getByName(projectionName);
+		if (p == null) // There is no such projection
+			throw new NoSuchElementException("No such projection " + projectionName);
+		projectionNames.put(p, projectionName);
+		
+		CheckboxMenuItem checkboxMenuItem = new CheckboxMenuItem(projectionName);
+		checkboxMenuItem.setEnabled(enabled);
+		checkboxMenuItem.setState(false);
+		m.add(checkboxMenuItem);
+		checkboxMenuItem.addItemListener(this);
+		projectionGroup.add(checkboxMenuItem);
+	}
+	
+	void addMouseActionItem(Menu m, String mouseActionName, boolean enabled) {
+		CheckboxMenuItem mouseActionCheck = new CheckboxMenuItem(mouseActionName);
+		mouseActionCheck.setEnabled(enabled);
+		mouseActionCheck.setState(false);
+		m.add(mouseActionCheck);
+		mouseActionCheck.addItemListener(this);
+		mouseActionGroup.add(mouseActionCheck);
+		mouseActionNames.put(mouseActionName, "No value");
+	}
+	
     // ***********************
     // *** Menu selections ***
     // ***********************
@@ -295,33 +336,27 @@ public class GlobeView extends Frame
 		}
     }
 
-    public void updateProjectionMenu() {
-	// enforce "radio button" behavior
-	int j;
-	for (j = 0; j < totalProjections; ++j)
-	    projectionCheck[j].setState(j == currentProjection);
-    }
-
 	void setNorthUp(boolean status) {
 		northUpButton.setState(status);
+		CheckboxMenuItem rotateZMenu = mouseActionGroup.getItem("Rotate Z");
 		if (status) {
-			mouseActionCheck[ROT_Z].setEnabled(false);
-			if (mouseActionCheck[ROT_Z].getState()) {
-				mouseActionCheck[ROT_Z].setState(false);
-				mouseActionCheck[ROT_XY].setState(true);				
+			rotateZMenu.setEnabled(false);
+			if (rotateZMenu.getState()) {
+				mouseActionGroup.set("Rotate XY");
 				canvas.setMouseAction("mouseRotateXY");
 			}
 		}
 		else {
-			mouseActionCheck[ROT_Z].setEnabled(true);
+			rotateZMenu.setEnabled(true);
 		}
 	}
 	
     // Handle checkbox menu items
     public void itemStateChanged(ItemEvent e) {
 		int i, j;
+		String itemName = (String) e.getItem();
 		
-		if (e.getItem() == "Force North Up") {
+		if (itemName.equals("Force North Up")) {
 			if (e.getStateChange() == ItemEvent.SELECTED) {
 				canvas.setNorthUp(true);
 				setNorthUp(true);
@@ -333,201 +368,184 @@ public class GlobeView extends Frame
 			}
 			return;
 		}
+		
+		if (itemName.equals("Darken Night Side")) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				canvas.dayNight = true;
+				canvas.fullRepaint();
+			}
+			else {
+				canvas.dayNight = false;
+				canvas.fullRepaint();
+			}
+			return;
+		}
 
-	if (e.getItem() == "Show Day/Night") {
-	    if (e.getStateChange() == ItemEvent.SELECTED) {
-		canvas.dayNight = true;
-		canvas.fullRepaint();
-	    }
-	    else {
-		canvas.dayNight = false;
-		canvas.fullRepaint();
-	    }
-	    return;
-	}
-
-	if (e.getItem() == "Graticule") {
-	    if (e.getStateChange() == ItemEvent.SELECTED) {
-			canvas.drawGraticule = true;
-			canvas.fullRepaint();
-	    }
-	    else {
-			canvas.drawGraticule = false;
-			canvas.fullRepaint();
-	    }
-	    return;
-	}
+		if (itemName.equals("Show Graticule")) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				canvas.drawGraticule = true;
+				canvas.fullRepaint();
+			}
+			else {
+				canvas.drawGraticule = false;
+				canvas.fullRepaint();
+			}
+			return;
+		}
+		
+		if (itemName.equals("Show Place Names")) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				canvas.drawLabels = true;
+				canvas.fullRepaint();
+			}
+			else {
+				canvas.drawLabels = false;
+				canvas.fullRepaint();
+			}
+			return;
+		}
+		
+		if (itemName.equals("Show Coast Lines")) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				canvas.drawCoastLines = true;
+				canvas.fullRepaint();
+			}
+			else {
+				canvas.drawCoastLines = false;
+				canvas.fullRepaint();
+			}
+			return;
+		}
 	
-	if (e.getItem() == "Place Names") {
-	    if (e.getStateChange() == ItemEvent.SELECTED) {
-			canvas.drawLabels = true;
-			canvas.fullRepaint();
-	    }
-	    else {
-			canvas.drawLabels = false;
-			canvas.fullRepaint();
-	    }
-	    return;
-	}
+		if (itemName.equals("Show Rivers")) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				canvas.drawRivers = true;
+				canvas.fullRepaint();
+			}
+			else {
+				canvas.drawRivers = false;
+				canvas.fullRepaint();
+			}
+			return;
+		}
+		
+		if (itemName.equals("Show Planet Image")) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				canvas.drawSatelliteImage = true;
+				canvas.fullRepaint();
+			}
+			else {
+				canvas.drawSatelliteImage = false;
+				canvas.fullRepaint();
+			}
+			return;
+		}
+		
+		if (itemName.equals("Show Crosshair")) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				canvas.drawCrosshair = true;
+				canvas.fullRepaint();
+			}
+			else {
+				canvas.drawCrosshair = false;
+				canvas.fullRepaint();
+			}
+			return;
+		}
+		
+		if (itemName.equals("Show Scale Bar")) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				canvas.drawScaleBar = true;
+				canvas.fullRepaint();
+			}
+			else {
+				canvas.drawScaleBar = false;
+				canvas.fullRepaint();
+			}
+			return;
+		}
 	
-	if (e.getItem() == "Coast Lines") {
-	    if (e.getStateChange() == ItemEvent.SELECTED) {
-			canvas.drawCoastLines = true;
+		if (itemName.equals("Show Antenna Bearing")) {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				canvas.drawBearing = true;
+				canvas.fullRepaint();
+			}
+			else {
+				canvas.drawBearing = false;
+				canvas.fullRepaint();
+			}
+			return;
+		}
+		
+		if (itemName.equals("Coarse Detail")) {
+			detailGroup.set(itemName);
+			canvas.genGlobe.setDetailLevel(0.5);
 			canvas.fullRepaint();
-	    }
-	    else {
-			canvas.drawCoastLines = false;
+			return;
+		}
+		if (itemName.equals("Normal Detail")) {
+			detailGroup.set(itemName);
+			canvas.genGlobe.setDetailLevel(1.0);
 			canvas.fullRepaint();
-	    }
-	    return;
-	}
-	
-	if (e.getItem() == "Satellite Image") {
-	    if (e.getStateChange() == ItemEvent.SELECTED) {
-			canvas.drawSatelliteImage = true;
+			return;
+		}
+		if (itemName.equals("Fine Detail")) {
+			detailGroup.set(itemName);
+			canvas.genGlobe.setDetailLevel(2.0);
 			canvas.fullRepaint();
-	    }
-	    else {
-			canvas.drawSatelliteImage = false;
-			canvas.fullRepaint();
-	    }
-	    return;
-	}
-	
-	if (e.getItem() == "Crosshair") {
-	    if (e.getStateChange() == ItemEvent.SELECTED) {
-			canvas.drawCrosshair = true;
-			canvas.fullRepaint();
-	    }
-	    else {
-			canvas.drawCrosshair = false;
-			canvas.fullRepaint();
-	    }
-	    return;
-	}
-	
-	if (e.getItem() == "Scale Bar") {
-	    if (e.getStateChange() == ItemEvent.SELECTED) {
-			canvas.drawScaleBar = true;
-			canvas.fullRepaint();
-	    }
-	    else {
-			canvas.drawScaleBar = false;
-			canvas.fullRepaint();
-	    }
-	    return;
-	}
-	
-	if (e.getItem() == "Antenna Bearing") {
-	    if (e.getStateChange() == ItemEvent.SELECTED) {
-			canvas.drawBearing = true;
-			canvas.fullRepaint();
-	    }
-	    else {
-			canvas.drawBearing = false;
-			canvas.fullRepaint();
-	    }
-	    return;
-	}
+			return;
+		}
+		
+		// Projections
+		Projection p = Projection.getByName(itemName);
+		if (p != null) {
+			if (canvas.projection != p) { // Projection actually changed
+				canvas.setProjection(p);
+				projectionGroup.set(itemName);
+				canvas.fullRepaint();
+			}
+			return;
+		}		
 
-	// Projections
-	for (i = 0; i < totalProjections; ++i) {
-	    if (e.getItem() == projectionDescription[i]) {
-		currentProjection = i;
+		// Mouse Actions
+		if (mouseActionNames.get(itemName) != null) {
 
-		if (e.getItem() == "Orthographic") {
-		    // canvas.projection = canvas.orthographic;
-		    canvas.projection = Projection.ORTHOGRAPHIC;
-		}
-		else if (e.getItem() == "Azimuthal Equal Area") {
-		    canvas.projection = Projection.AZIMUTHALEQUALAREA;
-		}
-		else if (e.getItem() == "Azimuthal Equidistant") {
-		    canvas.projection = Projection.AZIMUTHALEQUIDISTANT;
-		}
-		else if (e.getItem() == "Mercator") {
-		    canvas.projection = Projection.MERCATOR;
-		}
-		else if (e.getItem() == "Perspective") {
-		    canvas.projection = Projection.PERSPECTIVE;
-		}
-		else if (e.getItem() == "Equirectangular") {
-		    canvas.projection = Projection.EQUIRECTANGULAR;
-		}
-		else if (e.getItem() == "Gnomonic") {
-		    canvas.projection = Projection.GNOMONIC;
-		}
-		else if (e.getItem() == "Sinusoidal") {
-		    canvas.projection = Projection.SINUSOIDAL;
-		}
-		else if (e.getItem() == "Stereographic") {
-		    canvas.projection = Projection.STEREOGRAPHIC;
-		}
+			if (itemName.equals("Rotate XY"))
+				canvas.setMouseAction("mouseRotateXY");
+			else if (itemName.equals("Rotate Z"))
+				canvas.setMouseAction("mouseRotateZ");
+			else if (itemName.equals("Rotate XYZ"))
+				canvas.setMouseAction("mouseRotateXYZ");
+			else if (itemName.equals("Zoom"))
+				canvas.setMouseAction("mouseZoom");
+			else if (itemName.equals("Pan XY"))
+				canvas.setMouseAction("mousePanXY");
 
-		updateProjectionMenu();
-
-		canvas.fullRepaint();
-		return;
-	    }
-	}
-
-	// Mouse Actions
-	for (i = 0; i < totalMouseActions; ++i) {
-	    if (e.getItem() == mouseActionDescription[i]) {
-		currentMouseAction = i;
-
-		if (e.getItem() == "Rotate XY")
-		    canvas.setMouseAction("mouseRotateXY");
-		else if (e.getItem() == "Rotate Z")
-		    canvas.setMouseAction("mouseRotateZ");
-		else if (e.getItem() == "Rotate XYZ")
-		    canvas.setMouseAction("mouseRotateXYZ");
-		else if (e.getItem() == "Zoom")
-		    canvas.setMouseAction("mouseZoom");
-		else if (e.getItem() == "Pan XY")
-		    canvas.setMouseAction("mousePanXY");
-
-		// enforce "radio button" behavior
-		for (j = 0; j < totalMouseActions; ++j)
-		    mouseActionCheck[j].setState(j == currentMouseAction);
-		canvas.fastRepaint();
-		return;
-	    }
-	}
-
+			mouseActionGroup.set(itemName);
+			canvas.fastRepaint();
+			return;
+		}
     }
-
-    // Try to make a new function to update canvas, menu, etc.
-    public void setProjection(Projection p) {
-        // 1) update currentProjection index variable
-        if (p == Projection.AZIMUTHALEQUALAREA) currentProjection = AZIMUTHALEQUALAREA;
-        else if (p == Projection.AZIMUTHALEQUIDISTANT) currentProjection = AZIMUTHALEQUIDISTANT;
-        else if (p == Projection.EQUIRECTANGULAR) currentProjection = EQUIRECTANGULAR;
-        else if (p == Projection.GNOMONIC) currentProjection = GNOMONIC;
-        else if (p == Projection.MERCATOR) currentProjection = MERCATOR;
-        else if (p == Projection.ORTHOGRAPHIC) currentProjection = ORTHOGRAPHIC;
-        else if (p == Projection.PERSPECTIVE) currentProjection = PERSPECTIVE;
-        else if (p == Projection.SINUSOIDAL) currentProjection = SINUSOIDAL;
-        else if (p == Projection.STEREOGRAPHIC) currentProjection = STEREOGRAPHIC;
-        else System.err.println("ERROR, Unknown projection");
-
-        // 2) update canvas subobject
+	
+	void setProjection(Projection p) {
+		if (p == null) return;
+		String projectionName = (String)projectionNames.get(p);
+		if (projectionName == null)
+			throw new NoSuchElementException("Projection name not found for " +
+											 p.getName());
+		projectionGroup.set(projectionName);
 		canvas.projection = p;
+	}
 
-        // 3) update projection menu
-        int i;
-        for (i = 0; i < totalProjections; ++i) {
-            projectionCheck[i].setState(i == currentProjection);
-        }
-    }
-	
 	public void stop() { // What to do when parent applet gets stop()
 		hide();
 		canvas.stopBitmapThread();
 		canvas.stopNightUpdateThread();
+		canvas.stopProgressBarThread();
 	}
 	public void start() { // What to do when parent applet gets stop()
 		canvas.startNightUpdateThread();
+		canvas.startProgressBarThread();
 		show();
 	}
 }
