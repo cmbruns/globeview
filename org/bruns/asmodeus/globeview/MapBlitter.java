@@ -2,6 +2,11 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/13 22:09:56  cmbruns
+// Changes to permit dynamic loading and unloading of images to and from memory.
+// Changes to permit blurring of boundaries between pixels at hyper zoom levels.
+// Minor improvement to the accuracy of pixel lookup.
+//
 // Revision 1.5  2005/03/11 00:14:43  cmbruns
 // Removed some unused code and structures in preparation for more careful image loading
 // Changed calling signature of readMap to have longitude precede latitude
@@ -32,7 +37,7 @@ public class MapBlitter extends GeoObject
 	GeoCanvas canvas;
     int width;
     int height;
-    int pixelArray[];
+    int pixelArray[] = null;
 	URL imageURL; // Use to reconstruct after memory flushes?
 
     double dX; // coordinate of long 0
@@ -40,32 +45,9 @@ public class MapBlitter extends GeoObject
     double kX; // radians per pixel north/south
     double kY; // radians per pixel east/west
 	double minLat, maxLat, minLon, maxLon;
-
-    MapBlitter(String imageFileName, GeoCanvas geoCanvas, 
-		double minLong, double maxLong, double minLati, double maxLati) {
-
-		minLat = minLati;
-		maxLat = maxLati;
-		minLon = minLong;
-		maxLon = maxLong;
-
-		setResolution(0.001, 0.001, 100.0, 100.0); // TODO for testing
-		canvas = geoCanvas;
-		Image rawImage;
-		try {
-			rawImage = Toolkit.getDefaultToolkit().getImage(imageFileName);
-		} catch (Exception ex) {
-			rawImage = null;
-			pixelArray = null;
-			return;
-		}
-		width = rawImage.getWidth(null);
-		height = rawImage.getHeight(null);
-		
-		setLonLatRange(minLon, maxLon, minLat, maxLat);
-		processImage(rawImage, canvas);
-    }
 	
+	long timeOfPreviousUse = 0; // For manual garbage collection
+
     MapBlitter(URL url, 
 			   GeoCanvas geoCanvas,
 			   double minLong, double maxLong, double minLati, double maxLati) {
@@ -76,36 +58,32 @@ public class MapBlitter extends GeoObject
 		maxLon = maxLong;
 		imageURL = url;
 
-		// setResolution(0.001, 0.001, 100.0, 100.0); // TODO for testing
 		canvas = geoCanvas;
-		Image rawImage;
-		try {
-			rawImage = Toolkit.getDefaultToolkit().getImage(url);
-		} catch (Exception ex) {
-			System.err.println(ex);
-			rawImage = null;
-			pixelArray = null;
-			return;
-		}
-		width = rawImage.getWidth(null);
-		height = rawImage.getHeight(null);
+
+		// Populate parameters
+		pixelArray = null;
 		
 		setLonLatRange(minLon, maxLon, minLat, maxLat);
-		processImage(rawImage, canvas);
     }
 	
-	void processImage(Image image, GeoCanvas geoCanvas) {
-		canvas = geoCanvas;
+	void loadImagePixels() throws InterruptedException {
+		canvas.setWait("BUSY: Loading Image...");
+
+		Image image = Toolkit.getDefaultToolkit().getImage(imageURL);
+		pixelArray = null;
+		
 		MediaTracker mt = new MediaTracker(canvas);
 		mt.addImage(image,1);
-		try {
-			mt.waitForAll();
-		} catch (Exception e) {
-			System.err.println(e);
-			image = null;
-		}
+		mt.waitForAll(); // InterruptedException could be thrown here
+
+		// Set image parameters
 		width = image.getWidth(null);
 		height = image.getHeight(null);
+		// System.out.println("Image width = "+width+", height = "+height);
+		kX = width / (maxLon - minLon);
+		kY = height / (maxLat - minLat);
+		dX = -minLon * kX - 0.5; // 0.5 is half a pixel to the left of the middle of pixel 0
+		dY = maxLat * kY - 0.5;
 		
 		pixelArray = new int[height * width];
 		PixelGrabber pixelGrabber = new PixelGrabber
@@ -113,53 +91,78 @@ public class MapBlitter extends GeoObject
 			 pixelArray, 0, width);
 		try {
 			pixelGrabber.grabPixels();
-		} catch (Exception e) {
-			System.out.println(e);
+		}
+		catch (InterruptedException e) {
+			pixelArray = null; // Did not complete load
+			throw e;
 		}
 
-		// Efficiency variables
-		//   Scale in pixels per radian
-		kX = width / (maxLon - minLon);
-		kY = height / (maxLat - minLat);
-		//   Coordinates of 0,0
-		// dX = width/2; // -minLon * kX;
-		// dY = height/2; // -minLat * kY;
-		dX = -minLon * kX;
-		dY = maxLat * kY;
+		canvas.setWait("BUSY: Drawing Image...");
     }
 
-    Color getColor(Vector3D v, double resolution) {
-		int intColor = getPixel(v, resolution);
+    Color getColor(Vector3D v) throws InterruptedException {
+		int intColor = getPixel(v);
 		if (intColor < 0) return null;
 		return new Color(intColor);
     }
 
-    int getPixel(Vector3D v, double resolution) {
-		if (pixelArray == null) return 0;
+	// pixel Size is used to blur hyper zoomed pixels
+    int getPixel(Vector3D v, double pixelSize) throws InterruptedException {
 
-		int x, y;
-			
-		double lambda = Math.atan2(v.x(), v.z());
-		if (lambda < minLon) return 0;
-		if (lambda > maxLon) return 0;
-
-		double fx = dX + lambda * kX;
-		x = (int) (fx);
-		
-		double phi = Math.asin(v.y());
+		double phi = v.getLatitude();
 		if (phi < minLat) return 0;
 		if (phi > maxLat) return 0;
+		
+		double lambda = v.getLongitude();
+		if (lambda < minLon) return 0;
+		if (lambda > maxLon) return 0;
+		
+		return getPixel(lambda, phi, pixelSize);
+	}
+		
+    int getPixel(Vector3D v) throws InterruptedException {		
+		return getPixel(v, 0);
+	}
+		
+    int getPixel(double lambda, double phi) throws InterruptedException {
+		return getPixel(lambda, phi, 0);
+	}
+	
+    int getPixel(double lambda, double phi, double pixelSize) throws InterruptedException {
 
+		// Only load image if we get to this point
+		if (pixelArray == null) {
+			loadImagePixels();
+		}
+		
+		double fx = dX + lambda * kX;
 		double fy = dY - phi * kY;
-		// if (fy < 0) fy -= 0.5; // So integer truncation is as accurate as possible
-		// else fy += 0.5;
-		y = (int) (fy);
+
+		if (fx < -0.5) return 0;
+		if (fx > (width - 0.5)) return 0;
+		if (fy < -0.5) return 0;
+		if (fy > (height - 0.5)) return 0;
 		
-		if (x < 0) return 0;
-		if (x >= width) return 0;
-		if (y < 0) return 0;
-		if (y >= height) return 0;
+		// Blur hyper zoomed pixels
+		if (pixelSize > 0) {
+			// How far from the center of the bitmap pixel are we?
+			// Want chance of shift to go from zero at center to 0.5 at edge
+			if (1/kY > (2 * pixelSize))
+				fy += (Math.random() - 0.5);
+			if (Math.cos(phi)/kX > (2 * pixelSize))
+				fx += (Math.random() - 0.5);
+		}
 		
+		int x, y;
+		
+		x = (int) Math.round(fx);		
+		y = (int) Math.round(fy);
+		
+		if (x < 0) x = 0;
+		if (x >= width) x = width - 1;
+		if (y < 0) y = 0;
+		if (y >= height) y = height - 1;
+
 		int intColor = pixelArray[x + y * width];
 		
 		return intColor;
@@ -175,14 +178,14 @@ public class MapBlitter extends GeoObject
 	static MapBlitter readMap(URL url, GeoCanvas geoCanvas,
 							  double minLon, double maxLon, double minLat, double maxLat) {
 		MapBlitter mapBlitter = null;
-		try {
+		// try {
 			// mapURL = new URL("file:/home/bruns/public_html/pacbell/images/bs_0.3deg.jpg");
 			mapBlitter = new MapBlitter(url, geoCanvas,
 										minLon, maxLon, minLat, maxLat);
-		} catch (Exception exception) {
-			System.out.println(exception);
-			System.out.println("Could not find image " + url);
-		}
+		// } catch (Exception exception) {
+		// 	System.out.println(exception);
+		// 	System.out.println("Could not find image " + url);
+		// }
 		return mapBlitter;
 	}
 
