@@ -2,6 +2,10 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/28 01:48:25  cmbruns
+// Pass canvas as constructor argument
+// Extend interval from 30 seconds to 60 seconds
+//
 // Revision 1.3  2005/03/14 04:25:24  cmbruns
 // Permit stopping of nightUpdateThread by unsetting canvas.keepNightUpdate variable.
 //
@@ -24,15 +28,16 @@ extends Thread
 {
     GeoCanvas canvas; // So we can manipulate image
 	
-    public NightUpdateThread(String str) {
-        super(str);
+    public NightUpdateThread(GeoCanvas geoCanvas) {
+        super("NightUpdateThread");
+		canvas = geoCanvas;
     }
 	
     // Extend run method to perform action
     public void run() {
 		while (true) {
 			try {
-				sleep((long)30000); // Wait 30 seconds
+				sleep((long)60000); // Wait 60 seconds
 				if (canvas != null) {
 					if (!canvas.keepNightUpdate) return;
 					if (canvas.dayNight) {
