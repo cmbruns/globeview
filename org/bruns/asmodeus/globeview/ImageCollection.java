@@ -8,6 +8,10 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.2  2005/03/11 00:10:30  cmbruns
+//  Added printline about image count for debugging memory
+//  Removed reference to MapBlitter.rawImage in check
+//
 //  Revision 1.1  2005/03/05 00:08:58  cmbruns
 //  New data structure for painting multiple satellite images.
 //  Incorporates the loop the goes over all canvas pixels,
@@ -43,6 +47,8 @@ public class ImageCollection extends GeoCollection {
     int stripWidth = 10; // How often to update progress on-screen
     Vector3D sunVector;
 	void paint(Graphics onScreenGraphics, GenGlobe genGlobe, Projection projection, LensRegion viewLens) {
+		System.out.println("" + elementCount() + " images loaded");
+		
 		// This is cheating, not using arguments to pass this Graphics, but I don't want to
 		// change the paint signature for all GeoObjects
 		Graphics offScreenGraphics = canvas.offScreenGraphics;
@@ -57,7 +63,6 @@ IMAGES:
 			for (int i = 0; i < subObject.size(); i++) {
 				MapBlitter mapBlitter = (MapBlitter) subObject.elementAt(i);
 				if ((mapBlitter != null) && 
-					(mapBlitter.rawImage != null) && 
 					mapBlitter.usableResolution(genGlobe) &&
 					mapBlitter.overlaps(viewLens)) {
 						usableBitmaps.addElement(mapBlitter);
