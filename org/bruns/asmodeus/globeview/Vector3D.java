@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/11 00:19:31  cmbruns
+// Added toString() method
+//
 // Revision 1.3  2005/03/05 00:21:05  cmbruns
 // Added Vector3D(longitude, latitude) constructor
 //
@@ -97,5 +100,9 @@ public class Vector3D {
 	Vector3D unit() {
 		double len = length();
 		return new Vector3D(x()/len, y()/len, z()/len);
+	}
+	
+	public String toString() {
+		return "("+x()+", "+y()+", "+z()+")";
 	}
 }
