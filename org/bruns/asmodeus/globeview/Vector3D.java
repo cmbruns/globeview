@@ -2,6 +2,10 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/13 22:14:31  cmbruns
+// Added minus(v) method
+// Added getLongitude() and getLatitude() methods
+//
 // Revision 1.4  2005/03/11 00:19:31  cmbruns
 // Added toString() method
 //
@@ -67,6 +71,16 @@ public class Vector3D {
     double y() {return element[1];}
     double z() {return element[2];}
 
+    // Subtract one vector from another
+    Vector3D minus(Vector3D v2) {
+		Vector3D answer = new Vector3D();
+		Vector3D v = this;
+		answer.setX(v.x() - v2.x());
+		answer.setY(v.y() - v2.y());
+		answer.setZ(v.z() - v2.z());
+		return answer;
+	}
+	
     // scale
     Vector3D mult(double r) {
 		return new Vector3D(x()*r, y()*r, z()*r);
@@ -104,5 +118,14 @@ public class Vector3D {
 	
 	public String toString() {
 		return "("+x()+", "+y()+", "+z()+")";
+	}
+
+	// Assume unit vector, return longitude on surface of sphere
+	double getLongitude() {
+		return Math.atan2(x(), z());
+	}
+	// Assume unit vector, return latitude on surface of sphere
+	double getLatitude() {
+		return Math.asin(y());
 	}
 }
