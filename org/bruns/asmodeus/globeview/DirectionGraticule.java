@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/13 21:40:42  cmbruns
+// Added maxDistance argument to constructor, for creating higher resolution bearing lines.
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -18,7 +21,7 @@ public class DirectionGraticule
 extends GeoCollection
 {
 	
-	DirectionGraticule(double distanceIncrement, double angleIncrement, GenGlobe genGlobe) {
+	DirectionGraticule(double distanceIncrement, double angleIncrement, GenGlobe genGlobe, double maxDistance) {
 		// Firefox JVM doesn't understand Color.GRAY
 		Color graticuleColor = new Color(128, 128, 128); // Is this the same as GRAY?
 		Color northGraticuleColor = new Color(255, 255, 255); // Is this the same as WHITE?
@@ -27,7 +30,7 @@ extends GeoCollection
 		double planetRadius = genGlobe.getPlanetRadius();
 		double ringDistance; // angular distance on a unit sphere, in radians
 		for (ringDistance = distanceIncrement/planetRadius; 
-			ringDistance < Math.PI; 
+			ringDistance < maxDistance/planetRadius; 
 			ringDistance += distanceIncrement/planetRadius) 
 		{
 			// Distance rings in kilometers
