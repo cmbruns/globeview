@@ -10,6 +10,9 @@ package org.bruns.asmodeus.globeview;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/28 01:04:45  cmbruns
+// Changed checkResolution() routine to use new genglobe->getAdustedResolution() method so that the new DetailLevel option will work.
+//
 // Revision 1.5  2005/03/11 00:05:45  cmbruns
 // made boundingLens public
 // fixed a bug in overlaps()
@@ -93,23 +96,23 @@ public class GeoObject
 	}
 
 	boolean usableResolution(GenGlobe genGlobe) {
-		if ((minResolution > 0) && (minResolution > genGlobe.getResolution())) return false;
-		if ((maxResolution > 0) && (maxResolution < genGlobe.getResolution())) return false;
+		if ((minResolution > 0) && (minResolution > genGlobe.getAdjustedResolution())) return false;
+		if ((maxResolution > 0) && (maxResolution < genGlobe.getAdjustedResolution())) return false;
 		return true;
 	}
 
 	// To avoid popups, include alpha component near resolution boundaries
 	// Range is 0-255
 	int alphaResolution(GenGlobe genGlobe) {
-		if ((minFullResolution <= genGlobe.getResolution()) && (maxFullResolution >= genGlobe.getResolution())) {
+		if ((minFullResolution <= genGlobe.getAdjustedResolution()) && (maxFullResolution >= genGlobe.getAdjustedResolution())) {
 			return 255; // solidly within resolution range
 		}
 		if (!usableResolution(genGlobe)) return 0; // outside of resolution range
 		double alpha = 0;
-		if (genGlobe.getResolution() < minFullResolution) {
-			alpha = (genGlobe.getResolution() - minResolution)/(minFullResolution - minResolution);
+		if (genGlobe.getAdjustedResolution() < minFullResolution) {
+			alpha = (genGlobe.getAdjustedResolution() - minResolution)/(minFullResolution - minResolution);
 		}
-		else {alpha = (genGlobe.getResolution() - maxResolution)/(maxFullResolution - maxResolution);}
+		else {alpha = (genGlobe.getAdjustedResolution() - maxResolution)/(maxFullResolution - maxResolution);}
 		if (alpha < 0) return 0;
 		if (alpha > 1) return 255;
 		int intAlpha = (int) (255.0 * alpha);
