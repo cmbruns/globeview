@@ -2,6 +2,11 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/05 00:07:26  cmbruns
+// Changed signature to take only parameter file, not individual file URLS
+//
+// Uncommented block for failed GlobeView load.
+//
 // Revision 1.3  2005/03/02 01:55:11  cmbruns
 // Added loading of new ParameterFile
 // Improved thrown error checking
@@ -72,40 +77,8 @@ public class GlobeViewFrameApplet extends Applet
 			}
 		}
 		
-		String sitesString = getParameter("siteLabels");
-		if (sitesString != null) {
-			try {siteURL = new URL(sitesString);
-			} catch (java.net.MalformedURLException ex) {
-				System.out.println("Problem with URL for site labels. " + 
-								   ex +
-								   "  URL: " + siteURL);
-				siteURL = null;
-			}
-		}
-		
-		String imageString = getParameter("imagemap");
-		if (imageString != null) {
-			try {mapURL = new URL(getParameter("imagemap"));
-			} catch (java.net.MalformedURLException ex) {
-				System.out.println("Problem with URL for satelite map. " + 
-								   ex +
-								   "  URL: " + mapURL);
-				mapURL = null;
-			}
-		}
-		
-		String borderString = getParameter("boundaries");
-		if (borderString != null) {
-			try {borderURL = new URL(borderString);
-			} catch (java.net.MalformedURLException ex) {
-				System.out.println("Problem with URL for boundaries. " + 
-								   ex +
-								   "  URL: " + borderURL);
-				borderURL = null;
-			}
-		}
-		
-		frame = new GlobeView(mapURL, siteURL, borderURL, parameterURL);
+		try {
+			frame = new GlobeView(parameterURL);
 
 		    // Check for projection option
                     // TODO - this is causing some kind of permission error
@@ -132,14 +105,17 @@ public class GlobeViewFrameApplet extends Applet
 				else if (projectionName.equals("stereographic"))
 					frame.setProjection(Projection.STEREOGRAPHIC);
 			}
+			else 
+				if ((frame != null) && (frame.canvas != null) && (frame.canvas.projection != null))
+					frame.setProjection(frame.canvas.projection);
 			//
-//		} catch (Exception exception) {
-//		    System.out.println(e);
-//		    setCursor(defaultCursor);
-//		    button.setCursor(defaultCursor);
-//		    button.setLabel("Globeview failed");
-//		    System.exit(1);
-//		}
+		} catch (Exception exception) {
+		    System.out.println(e);
+		    setCursor(defaultCursor);
+		    button.setCursor(defaultCursor);
+		    button.setLabel("Globeview failed");
+		    System.exit(1);
+		}
 
 		// Re-activate the button
 		button.addActionListener(this);
