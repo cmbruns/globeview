@@ -13,6 +13,11 @@ import java.text.*;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/11 00:03:17  cmbruns
+// Created distance scale bar
+// Added more tests to prevent crazy zoom changes
+// Repaint foreground before time consuming redraws
+//
 // Revision 1.4  2005/03/05 00:55:25  cmbruns
 // Implemented separate DrawBitmapThread to handle drawing the satellite and day/night images.  Gave public
 // access to offscreen buffers for this purpose.  Made some
@@ -94,6 +99,8 @@ implements MouseListener, MouseMotionListener
     Color backgroundColor = Color.black;
 	Color borderColor = new Color(120,180,50);
 	int backgroundColorInt = 0xFF000000;
+	Color scaleBarColor = new Color(255, 220, 220); // Pink
+	Color shadeBoxColor = new Color(0, 0, 0, 128); // transparent Black
 	
     // Define what kinds of objects will be drawn
     volatile boolean fullUpdateNow = true; // Want to draw satellite image on startup
@@ -103,6 +110,7 @@ implements MouseListener, MouseMotionListener
 	boolean drawGraticule = true;
 	boolean drawBearing = false;
 	boolean drawCoastLines = true;
+	boolean drawScaleBar = true;
 	
     int canvasWidth, canvasHeight;	
 	
@@ -116,7 +124,6 @@ implements MouseListener, MouseMotionListener
 	
 	DirectionGraticule directionGraticule = new DirectionGraticule(2000, 15, genGlobe);
 
-	// For dynamically loaded parameter files
 	GeoCollection graticule = new GeoCollection();
 	
     // Vector siteLabels; // All the city labels we are using
@@ -333,11 +340,77 @@ implements MouseListener, MouseMotionListener
 		// Draw city labels
 		if (drawLabels) siteLabels.paint(g, genGlobe, projection, viewLens);
 		
+		if (drawScaleBar) paintScaleBar(g, genGlobe, projection, viewLens);
+		
 		// Cross-hair at center
 		g.setColor(crosshairColor);
 		g.drawLine(genGlobe.centerX, genGlobe.centerY - 5, genGlobe.centerX, genGlobe.centerY + 5);
 		g.drawLine(genGlobe.centerX - 5, genGlobe.centerY, genGlobe.centerX + 5, genGlobe.centerY);
     }
+	
+	// Paint a scale bar in the lower right corner
+	void paintScaleBar(Graphics g, GenGlobe genGlobe, Projection projection, LensRegion viewLens) {
+		// What is the longest round distance less than 150 pixels?
+		int maxPixelsPerBar = 120;
+		double kilometersPerPixel = 1.0 / genGlobe.getResolution();
+		double maxBarDistance = kilometersPerPixel * maxPixelsPerBar;
+		double logMaxDistance = Math.log(maxBarDistance) / Math.log(10.0);
+
+		int exponent = (int) logMaxDistance;
+		double logMantissa = logMaxDistance - exponent;
+		if (logMaxDistance < 0) {
+			exponent -= 1;
+			logMantissa = 2.0 - logMantissa;
+		}
+
+		int mantissa = (int) (Math.pow(10.0, logMantissa)); // Should be between 1 and 9;
+		// Restrict to 1, 2, and 5
+		if (mantissa >= 5) mantissa = 5;
+		else if (mantissa >= 2) mantissa = 2;
+		else mantissa = 1;
+		
+		double barDistance = mantissa * Math.pow(10.0, exponent);
+		int barPixels = (int) (barDistance/kilometersPerPixel);
+
+		int unitCount = (int)(barDistance + 0.5);
+		String units = "km";
+		if (exponent < 0) {
+			units = "m";
+			unitCount = (int)(barDistance*1000 + 0.5);
+		}
+		if (exponent >=6) {
+			units = "*10^6km";
+			unitCount = (int)(barDistance/1000000 + 0.5);
+		}
+		
+		int startX = canvasWidth - 40 - maxPixelsPerBar;
+		int startY = canvasHeight - 20;
+		
+		// Shade box for light backgrounds
+		g.setColor(shadeBoxColor);
+		g.fillRect(startX - 8, startY - 8, canvasWidth - startX + 8, canvasHeight - startY + 8);
+		
+		g.setColor(scaleBarColor);
+		
+		g.drawLine(startX, startY, startX + barPixels, startY); // line
+		g.drawLine(startX, startY - 5, startX, startY + 2); // left pip
+		g.drawLine(startX + barPixels, startY - 5, startX + barPixels, startY + 2); // right pip
+		
+		if (mantissa == 5) {
+			double interval = barPixels / 5.0;
+			for (int i = 1; i <= 4; i++) {
+				int ticX = (int)(startX + i * interval);
+				g.drawLine(ticX, startY, ticX, startY - 2);
+			}
+		}
+		else { // mantissa = 1 or 2
+			int ticX = (int)(startX + barPixels/2.0);
+			g.drawLine(ticX, startY, ticX, startY - 2);
+		}
+		
+		g.drawString("0", startX - 4, startY + 16); // left distance
+		g.drawString("" + unitCount + units, startX + barPixels - 4, startY + 16); // right distance
+	}
 	
 	LensRegion getViewLens() {
 		// For clipping
@@ -419,6 +492,13 @@ implements MouseListener, MouseMotionListener
 		}
     }
 	
+    void setScaleBar(boolean state) {
+		drawScaleBar = state;
+		if ((globeViewFrame != null) && (globeViewFrame.scaleBarButton != null)) {
+			globeViewFrame.scaleBarButton.setState(state);
+		}
+    }
+	
     void setBearing(boolean state) {
 		drawBearing = state;
 		if ((globeViewFrame != null) && (globeViewFrame.bearingButton != null)) {
@@ -496,8 +576,12 @@ implements MouseListener, MouseMotionListener
 
 		checkOffScreenImage();
 		LensRegion viewLens = getViewLens();
-		if (fullUpdateNow)  // Check for new data to load
+		if (fullUpdateNow) { // Check for new data to load
 			paramFiles.paint(g, genGlobe, projection, viewLens);
+			
+			// In case something new was loaded - instant feedback of foreground
+			paintForeground(g, viewLens);
+		}
 		
 		// Do we need time consuming draw operation?
 		if (drawSatelliteImage || dayNight) {
@@ -555,11 +639,14 @@ implements MouseListener, MouseMotionListener
 							GenGlobe genGlobe, 
 							Projection projection, 
 							LensRegion viewLens) {
-		images.paint(onScreenGraphics, genGlobe, projection, viewLens); 
+		images.paint(onScreenGraphics, genGlobe, projection, viewLens);
 	}
 	
     public void setBounds(Rectangle r) {
 		super.setBounds(r);
+		
+		stopBitmapThread();
+		
 		// Resize event is captured here
 		Dimension d = getSize();
 		canvasWidth = d.width;
@@ -573,6 +660,9 @@ implements MouseListener, MouseMotionListener
     public void setBounds(int x, int y, int width,  int height) {
 		super.setBounds(x,y,width,height);
 		// Resize event is captured here
+
+		stopBitmapThread();
+		
 		Dimension d = getSize();
 		canvasWidth = d.width;
 		canvasHeight = d.height;
@@ -660,6 +750,7 @@ implements MouseListener, MouseMotionListener
     public void mouseReleased(MouseEvent e) {
 		useOldMouse = false;
 		if (isDragging) {
+			if (stopBitmapThread()) fastRepaint(); // For quick feedback
 			fullRepaint();
 			isDragging = false;
 		}
@@ -868,11 +959,14 @@ implements MouseListener, MouseMotionListener
 		double screenScale = getSize().width + getSize().height;
 		double zoomScale = (deltaX - deltaY) * 3;
 		
+		if (zoomScale > screenScale) return;
+		if (zoomScale < -screenScale/2) return;
+		
 		double zoomRadius = 
 			genGlobe.getPixelRadius() *
 			(screenScale + zoomScale) / screenScale;
 		// Don't let radius go negative, or even ridiculously small
-		if (zoomRadius < 1) zoomRadius = 1;
+		if (zoomRadius < 10) zoomRadius = 10;
 		genGlobe.setPixelRadius(zoomRadius);
     }
 }
