@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/13 22:06:32  cmbruns
+// Minor comment change
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -44,7 +47,7 @@ extends GeoCollection
 		GeoPath path;
 		double latitude, longitude;
 		
-		// TODO - break everything into 30 degree segments
+		// Break everything into 30 degree segments
 		double graticuleSegmentSize = Math.PI / 2.9999;
 
 		// Equator
