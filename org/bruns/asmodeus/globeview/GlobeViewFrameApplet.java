@@ -2,6 +2,10 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.8  2005/03/28 01:13:19  cmbruns
+// Removed support for projection parameter
+// Added frame.start() to start() method
+//
 // Revision 1.7  2005/03/14 04:22:48  cmbruns
 // Changed so that parameterURL can be relative to the enclosing document
 // Changed applet start(), stop(), init(), and destroy() routines to be a bit nicer, and to stop all Canvas threads when appropriate
@@ -86,45 +90,10 @@ public class GlobeViewFrameApplet extends Applet
 			}
 		}
 		
-		// try {
-			frame = new GlobeView(parameterURL);
+		frame = new GlobeView(parameterURL);
 
-		    // Check for projection option
-                    // TODO - this is causing some kind of permission error
-                    // frame.setProjection(Projection.AZIMUTHALEQUIDISTANT);
-  		    String projectionName = getParameter("projection");
-			if (projectionName != null) {
-				projectionName = projectionName.toLowerCase(); // Convert to lower case
-				if (projectionName.equals("azimuthal equidistant"))
-					frame.setProjection(Projection.AZIMUTHALEQUIDISTANT);
-				else if (projectionName.equals("orthographic")) 
-					frame.setProjection(Projection.ORTHOGRAPHIC);
-				else if (projectionName.equals("azimuthal equal area")) 
-					frame.setProjection(Projection.AZIMUTHALEQUALAREA);
-				else if (projectionName.equals("mercator")) 
-					frame.setProjection(Projection.MERCATOR);
-				else if (projectionName.equals("perspective")) 
-					frame.setProjection(Projection.PERSPECTIVE);
-				else if (projectionName.equals("equirectangular")) 
-					frame.setProjection(Projection.EQUIRECTANGULAR);
-				else if (projectionName.equals("gnomonic")) 
-					frame.setProjection(Projection.GNOMONIC);
-				else if (projectionName.equals("sinusoidal")) 
-					frame.setProjection(Projection.SINUSOIDAL);
-				else if (projectionName.equals("stereographic"))
-					frame.setProjection(Projection.STEREOGRAPHIC);
-			}
-			else 
-				if ((frame != null) && (frame.canvas != null) && (frame.canvas.projection != null))
-					frame.setProjection(frame.canvas.projection);
-			//
-		// } catch (Exception exception) {
-		//     System.out.println(e);
-		//     setCursor(defaultCursor);
-		//     button.setCursor(defaultCursor);
-		//    button.setLabel("Globeview failed");
-		//     System.exit(1);
-		// }
+		if ((frame != null) && (frame.canvas != null) && (frame.canvas.projection != null))
+			frame.setProjection(frame.canvas.projection);
 
 		// Re-activate the button
 		button.addActionListener(this);
@@ -159,6 +128,7 @@ public class GlobeViewFrameApplet extends Applet
     public void start() {
 		super.start();
 		
+		if (frame != null) frame.start();
 		if (button == null) {
 			button = new Button("Launch GlobeView");
 			button.setActionCommand("Launch GlobeView");
