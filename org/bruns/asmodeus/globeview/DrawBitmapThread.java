@@ -8,6 +8,11 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.3  2005/03/27 21:40:00  cmbruns
+//  Added handling of drawNothing variable TODO is this used?
+//  Set progress bar to 100 percent when bombing out
+//  update two image sources when drawing stereoscopic
+//
 //  Revision 1.2  2005/03/13 21:41:44  cmbruns
 //  run() method now catches OutOfMemoryError
 //
@@ -39,26 +44,48 @@ extends Thread
 	
     // Extend run method to perform action
     public void run() {
-		if (!canvas.images.keepDrawing) return;
+		canvas.drawNothing = true;
+		if (!canvas.images.keepDrawing) {
+			canvas.unsetWait();
+			canvas.drawProgress = 100;
+			canvas.drawNothing = false;
+			return;
+		}
 		
 		try {
 			canvas.setWait("BUSY: DRAWING IMAGE..."); // Could be slow
 			canvas.paintBitmap(canvas.offScreenGraphics, graphics, canvas.genGlobe, canvas.projection, viewLens);
 			if (!canvas.images.keepDrawing) {
 				canvas.unsetWait();
+				canvas.drawProgress = 100;
+				canvas.drawNothing = false;
 				return;
 			}
 
 			canvas.fullUpdateNow = false;
-			canvas.offScreenSource.newPixels();
-			canvas.offScreenGraphics.drawImage(canvas.memOffScreenImage, 0, 0, null);		
-			canvas.paintForeground(canvas.offScreenGraphics, viewLens);
-			graphics.drawImage(canvas.offScreenImage, 0, 0, canvas);
+
+			if (canvas.drawStereoscopic) {
+				canvas.offScreenSource.newPixels();			
+				canvas.leftEyeSource.newPixels();			
+				canvas.updateOffScreen(viewLens);				
+			}
+			else {
+				canvas.offScreenSource.newPixels();			
+				canvas.updateOffScreen(viewLens);
+			}
+
+			canvas.updateOnScreen(graphics);
+
 			canvas.unsetWait();
+			canvas.drawProgress = 100;
 		}
 		catch (OutOfMemoryError e) {
 			canvas.respondToOutOfMemory(e);
-			return;
+			canvas.drawProgress = 100;
+			canvas.drawNothing = false;
+			throw e;
 		}
+		canvas.drawNothing = false;
+		return;
 	}
 }
