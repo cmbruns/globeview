@@ -2,6 +2,13 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/05 00:21:05  cmbruns
+// Added Vector3D(longitude, latitude) constructor
+//
+// Added .unit() routine
+//
+// Added .mult(double) routine
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -16,9 +23,16 @@ public class Vector3D {
     }
 
     Vector3D(double x, double y, double z) {
-	set(x, y, z);
+		set(x, y, z);
     }
 
+	Vector3D(double longitude, double latitude) {
+	    double latcoeff = Math.cos(latitude);
+		set(Math.sin(longitude) * latcoeff,
+			Math.sin(latitude),
+			Math.cos(longitude) * latcoeff);
+	}
+	
     // Copy the contents of another vector into this one
     Vector3D copy(Vector3D v2) {
 	if (v2 == null) return null;
@@ -50,6 +64,11 @@ public class Vector3D {
     double y() {return element[1];}
     double z() {return element[2];}
 
+    // scale
+    Vector3D mult(double r) {
+		return new Vector3D(x()*r, y()*r, z()*r);
+    }
+    
     // Cross Product
     Vector3D cross(Vector3D v2) {
 	Vector3D answer = new Vector3D();
@@ -73,4 +92,10 @@ public class Vector3D {
     double length() {
 	return Math.sqrt(this.dot(this));
     }
+
+	// Normalize to unit length
+	Vector3D unit() {
+		double len = length();
+		return new Vector3D(x()/len, y()/len, z()/len);
+	}
 }
