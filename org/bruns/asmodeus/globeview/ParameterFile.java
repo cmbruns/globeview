@@ -10,6 +10,9 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.5  2005/03/28 01:49:43  cmbruns
+//  Alphabetize the parameter names, to make this more self-documenting
+//
 //  Revision 1.4  2005/03/13 22:12:29  cmbruns
 //  Added CROSSHAIR keyword.
 //  Added SIZE keyword.
@@ -76,23 +79,29 @@ PARAMETER_LINE:
 			// Branch on record keyword
 			if (false) {} // So I won't keep copy/pasting the if without the else
 
-			else if (keyWord.equals("DAYNIGHT"))  {canvas.setDayNight(true);}
-			else if (keyWord.equals("!DAYNIGHT")) {canvas.setDayNight(false);}
-
-			else if (keyWord.equals("NORTHUP"))  {canvas.setNorthUp(true);}
-			else if (keyWord.equals("!NORTHUP")) {canvas.setNorthUp(false);}
+			else if (keyWord.equals("BEARING"))  {canvas.setBearing(true);}
+			else if (keyWord.equals("!BEARING")) {canvas.setBearing(false);}
+			
+			else if (keyWord.equals("BORDERS"))  {canvas.setBorders(true);}
+			else if (keyWord.equals("!BORDERS")) {canvas.setBorders(false);}
 			
 			else if (keyWord.equals("COASTLINES"))  {canvas.setCoastLines(true);}
 			else if (keyWord.equals("!COASTLINES")) {canvas.setCoastLines(false);}
 			
-			else if (keyWord.equals("SITELABELS"))  {canvas.setSiteLabels(true);}
-			else if (keyWord.equals("!SITELABELS")) {canvas.setSiteLabels(false);}
+			else if (keyWord.equals("CROSSHAIR"))  {canvas.setCrosshair(true);}
+			else if (keyWord.equals("!CROSSHAIR")) {canvas.setCrosshair(false);}
 			
+			else if (keyWord.equals("DAYNIGHT"))  {canvas.setDayNight(true);}
+			else if (keyWord.equals("!DAYNIGHT")) {canvas.setDayNight(false);}
+
 			else if (keyWord.equals("GRATICULES"))  {canvas.setGraticules(true);}
 			else if (keyWord.equals("!GRATICULES")) {canvas.setGraticules(false);}
 			
-			else if (keyWord.equals("BEARING"))  {canvas.setBearing(true);}
-			else if (keyWord.equals("!BEARING")) {canvas.setBearing(false);}
+			else if (keyWord.equals("NORTHUP"))  {canvas.setNorthUp(true);}
+			else if (keyWord.equals("!NORTHUP")) {canvas.setNorthUp(false);}
+			
+			else if (keyWord.equals("RIVERS"))  {canvas.setSatellites(true);}
+			else if (keyWord.equals("!RIVERS")) {canvas.setSatellites(false);}
 			
 			else if (keyWord.equals("SATELLITES"))  {canvas.setSatellites(true);}
 			else if (keyWord.equals("!SATELLITES")) {canvas.setSatellites(false);}
@@ -100,61 +109,29 @@ PARAMETER_LINE:
 			else if (keyWord.equals("SCALEBAR"))  {canvas.setScaleBar(true);}
 			else if (keyWord.equals("!SCALEBAR")) {canvas.setScaleBar(false);}
 			
-			else if (keyWord.equals("CROSSHAIR"))  {canvas.setCrosshair(true);}
-			else if (keyWord.equals("!CROSSHAIR")) {canvas.setCrosshair(false);}
+			else if (keyWord.equals("SITELABELS"))  {canvas.setSiteLabels(true);}
+			else if (keyWord.equals("!SITELABELS")) {canvas.setSiteLabels(false);}
 			
-			// Consider loading another parameter file
-			else if (keyWord.equals("PARAM")) {
-				String paramFileName = tokenizer.nextToken();
+			// Read in a political boundary file
+			else if (keyWord.equals("BORDER")) {
+				// Load a borderline file
+				String borderFileName = tokenizer.nextToken();
 				double minRes = (new Double(tokenizer.nextToken())).doubleValue();
 				double maxRes = (new Double(tokenizer.nextToken())).doubleValue();
-				double minLon = (new Double(tokenizer.nextToken())).doubleValue();
-				double maxLon = (new Double(tokenizer.nextToken())).doubleValue();
-				double minLat = (new Double(tokenizer.nextToken())).doubleValue();
-				double maxLat = (new Double(tokenizer.nextToken())).doubleValue();
-
-				URL paramURL;
-				paramURL = new URL(url, paramFileName);
-				ParameterFile param = new ParameterFile(paramURL, canvas);
 				GeoObject resolution = new GeoObject(minRes, minRes, maxRes, maxRes);
-				
-				if (param != null) {
-					param.setResolution(resolution);
-					param.setLonLatRange(d2r*minLon, d2r*maxLon, d2r*minLat, d2r*maxLat);
-					canvas.paramFiles.addElement(param);
-				}
+				URL borderURL;
+				borderURL = new URL(url, borderFileName);
+				GeoPathCollection border = 
+					new GeoPathCollection(borderURL, resolution, canvas.borderColor,
+										  boundingLens, canvas); // Use bounds of param file
+				canvas.borders.addElement(border);
 			}
-
+			
 			// Center on position
 			else if (keyWord.equals("CENTER")) {
 				double longitude = (new Double(tokenizer.nextToken())).doubleValue();
 				double latitude = (new Double(tokenizer.nextToken())).doubleValue();
 				canvas.centerOnPosition(d2r*longitude, d2r*latitude);
-				viewLens.changeValues(canvas.getViewLens());
-			}
-			
-			// Set zoom level
-			else if (keyWord.equals("SCALE")) {
-				double scale = (new Double(tokenizer.nextToken())).doubleValue();
-				canvas.genGlobe.setResolution(scale); // pixels per kilometer
-				viewLens.changeValues(canvas.getViewLens());
-			}
-			
-			// Set window size
-			else if (keyWord.equals("SIZE")) {
-				int width = (new Integer(tokenizer.nextToken())).intValue();
-				int height = (new Integer(tokenizer.nextToken())).intValue();
-				canvas.globeViewFrame.setSize(width, height); // pixels per kilometer
-				viewLens.changeValues(canvas.getViewLens());
-			}
-			
-			// Set projection
-			else if (keyWord.equals("PROJECTION")) {
-				String projectionName = tokenizer.nextToken();
-				Projection projection = Projection.getByName(projectionName);
-				if (projection != null) {
-					canvas.setProjection(projection);
-				}
 				viewLens.changeValues(canvas.getViewLens());
 			}
 			
@@ -168,14 +145,14 @@ PARAMETER_LINE:
 				URL coastURL;
 				coastURL = new URL(url, coastFileName);
 				GeoPathCollection coast = 
-					new GeoPathCollection(coastURL, resolution, canvas.borderColor,
+					new GeoPathCollection(coastURL, resolution, canvas.coastColor,
 										  boundingLens, canvas); // Use bounds of param file
-				canvas.borders.addElement(coast);
+				canvas.coasts.addElement(coast);
 			}
-
+			
 			// TODO - set longitude/latitude limits on graticule
 			else if (keyWord.equals("GRATI")) { // graticule
-				// Create a graticule
+												// Create a graticule
 				double minRes = (new Double(tokenizer.nextToken())).doubleValue();
 				double maxRes = (new Double(tokenizer.nextToken())).doubleValue();
 				double interval = (new Double(tokenizer.nextToken())).doubleValue();
@@ -208,6 +185,60 @@ PARAMETER_LINE:
 				}
 			}
 			
+			// Consider loading another parameter file
+			else if (keyWord.equals("PARAM")) {
+				String paramFileName = tokenizer.nextToken();
+				double minRes = (new Double(tokenizer.nextToken())).doubleValue();
+				double maxRes = (new Double(tokenizer.nextToken())).doubleValue();
+				double minLon = (new Double(tokenizer.nextToken())).doubleValue();
+				double maxLon = (new Double(tokenizer.nextToken())).doubleValue();
+				double minLat = (new Double(tokenizer.nextToken())).doubleValue();
+				double maxLat = (new Double(tokenizer.nextToken())).doubleValue();
+
+				URL paramURL;
+				paramURL = new URL(url, paramFileName);
+				ParameterFile param = new ParameterFile(paramURL, canvas);
+				GeoObject resolution = new GeoObject(minRes, minRes, maxRes, maxRes);
+				
+				if (param != null) {
+					param.setResolution(resolution);
+					param.setLonLatRange(d2r*minLon, d2r*maxLon, d2r*minLat, d2r*maxLat);
+					canvas.paramFiles.addElement(param);
+				}
+			}
+
+			else if (keyWord.equals("PROJECTION")) {
+				String projectionName = tokenizer.nextToken();
+				Projection projection = Projection.getByName(projectionName);
+				if (projection != null) {
+					canvas.setProjection(projection);
+				}
+				viewLens.changeValues(canvas.getViewLens());
+			}
+			
+			// Read in a coastline file
+			else if (keyWord.equals("RIVER")) {
+				// Load a riverline file
+				String riverFileName = tokenizer.nextToken();
+				double minRes = (new Double(tokenizer.nextToken())).doubleValue();
+				double maxRes = (new Double(tokenizer.nextToken())).doubleValue();
+				GeoObject resolution = new GeoObject(minRes, minRes, maxRes, maxRes);
+				URL riverURL;
+				riverURL = new URL(url, riverFileName);
+				GeoPathCollection river = 
+					new GeoPathCollection(riverURL, resolution, canvas.riverColor,
+										  boundingLens, canvas); // Use bounds of param file
+				canvas.rivers.addElement(river);
+			}
+			
+			// Set zoom level
+			else if (keyWord.equals("SCALE")) {
+				double scale = (new Double(tokenizer.nextToken())).doubleValue();
+				canvas.genGlobe.setResolution(scale); // pixels per kilometer
+				viewLens.changeValues(canvas.getViewLens());
+			}
+			
+			// Set projection
 			else if (keyWord.equals("SITES")) {
 				// Load a city/sites file
 				String sitesFileName = tokenizer.nextToken();
@@ -217,6 +248,14 @@ PARAMETER_LINE:
 				canvas.siteLabels.addElement(sites);
 			}
 
+			// Set window size
+			else if (keyWord.equals("SIZE")) {
+				int width = (new Integer(tokenizer.nextToken())).intValue();
+				int height = (new Integer(tokenizer.nextToken())).intValue();
+				canvas.globeViewFrame.setSize(width, height); // pixels per kilometer
+				viewLens.changeValues(canvas.getViewLens());
+			}
+			
 			else if (keyWord.equals("#")) {} // comment
 			
 			else System.out.println(inputLine + "#" + keyWord); // Unrecognized lines
