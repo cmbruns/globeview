@@ -9,6 +9,13 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/05 00:11:01  cmbruns
+// Added new functions:
+//   getPlanePoint()
+//   addBoundingLens()
+//   lonLatRange()
+//   planeHeight()
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -74,11 +81,110 @@ public class LensRegion {
 	double getNearCosAngleRadius() {return nearCosAngleRadius;}
 	double getSinAngleRadius() {return sinAngleRadius;}
 	Vector3D getUnitVector() {return unitVector;}
+	Vector3D getPlanePoint() {return getUnitVector().mult(getCosAngleRadius());}
 	
 	boolean overlaps(LensRegion otherLens) {
 		double cosAngleRadiusSum = getCosAngleRadius() * otherLens.getCosAngleRadius() - getSinAngleRadius() * otherLens.getSinAngleRadius();
 		double cosVectorAngle = getUnitVector().dot(otherLens.getUnitVector());
 		if (cosAngleRadiusSum <= cosVectorAngle) return true;
 		else return false;
+	}
+	
+	void addBoundingLens(LensRegion otherLens) {
+		// Identify the smaller angle radius a1, and the larger a2
+		// The angle between the unitVectors is a3
+		// If a2 > (a1 + a3), then LensRegion2 contains both LensRegions
+		// Otherwise, the angle radius of the combined regions is (a1 + a2 + a3) / 2
+		// And the central vector is v2 rotated by (a1 - a2 + a3)/2 toward v1
+		double a1, a2, a3;
+		Vector3D v1, v2;
+		if (getAngleRadius() >= otherLens.getAngleRadius()) {
+			a1 = otherLens.getAngleRadius();
+			v1 = otherLens.getUnitVector();
+			a2 = getAngleRadius();
+			v2 = getUnitVector();
+		}
+		else {
+			a2 = otherLens.getAngleRadius();
+			v2 = otherLens.getUnitVector();
+			a1 = getAngleRadius();
+			v1 = getUnitVector();			
+		}
+		a3 = Math.acos(v1.dot(v2));
+
+		if (a2 > (a1 + a3)) {
+			setUnitVector(v2);
+			setAngleRadius(a2);
+			return;
+		}
+		
+		else {
+			double newAngleRadius = (a1 + a2 + a3) / 2.0;
+
+			Matrix3D rotMat = new Matrix3D();
+			Vector3D axis = v1.cross(v2).unit(); // TODO Is this backwards?
+			double shiftAngle = (a1 - a2 + a3) / 2.0;
+			rotMat.setAxisAngle(axis, shiftAngle);
+			Vector3D newUnitVector = rotMat.mult(v2).unit();
+
+			// Did I get the rotation backwards?
+			if (newUnitVector.dot(v1) < v2.dot(v1)) {
+				System.out.println("ERROR: rotation is backwards for combining LensRegions!!!");
+			}
+			
+			setAngleRadius(newAngleRadius);
+			setUnitVector(newUnitVector);
+			return;
+		}
+	}
+	
+	// Generate a lensRegion enclosing a range of latitudes/longitudes
+	static LensRegion lonLatRange(double minLon, double maxLon, double minLat, double maxLat) {
+
+		// Though not perfect, this should be OK as the central vector of the lens
+		double centerLon = (maxLon - minLon) / 2.0;
+		double centerLat = (maxLat - minLat) / 2.0;
+		Vector3D centerVec = new Vector3D(centerLon, centerLat);
+
+		double height = 1.0; // Start with infinitesimal lens
+		double testHeight = 2.0;
+
+		// Corners
+		testHeight = planeHeight(minLon, minLat, centerVec);
+		if (testHeight < height) height = testHeight;
+
+		testHeight = planeHeight(minLon, maxLat, centerVec);
+		if (testHeight < height) height = testHeight;
+		
+		testHeight = planeHeight(maxLon, minLat, centerVec);
+		if (testHeight < height) height = testHeight;
+		
+		testHeight = planeHeight(maxLon, maxLat, centerVec);
+		if (testHeight < height) height = testHeight;
+		
+		// Middles
+		testHeight = planeHeight(centerLon, minLat, centerVec);
+		if (testHeight < height) height = testHeight;
+		
+		testHeight = planeHeight(centerLon, maxLat, centerVec);
+		if (testHeight < height) height = testHeight;
+		
+		testHeight = planeHeight(maxLon, centerLat, centerVec);
+		if (testHeight < height) height = testHeight;
+		
+		testHeight = planeHeight(maxLon, centerLat, centerVec);
+		if (testHeight < height) height = testHeight;
+		
+		// For very large ranges (greater than PI) that are asymmetric, the
+		// above points are not enough, but ehhh, close enough
+		
+		Vector3D planePoint = centerVec.mult(testHeight);
+		
+		return new LensRegion(planePoint, centerVec);
+	}
+	// For use by LatLonRange
+	static double planeHeight(double lon, double lat, Vector3D center) {
+		Vector3D testVec = new Vector3D(lon, lat);
+		return testVec.dot(center);
 	}
 }
