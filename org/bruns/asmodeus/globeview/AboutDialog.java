@@ -10,6 +10,10 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/13 21:39:49  cmbruns
+// Changed version number to 1.1.1
+// Credited census 2000 gazetteer site data
+//
 // Revision 1.5  2005/03/11 00:00:00  cmbruns
 // Now descends from InfoDialog class
 // New credit for city data
@@ -35,7 +39,7 @@ public class AboutDialog extends InfoDialog {
 	AboutDialog(Frame frame) {
 		super(frame, "About GlobeView", true); // modal dialog
 
-		addLine("Globevew version 1.10 by Chris Bruns");
+		addLine("Globevew version 1.1.1 by Chris Bruns");
 		addLine("Copyright \u00A9 2001-2005 all rights reserved");
 		addLine("http://bruns.homeip.net/~bruns/globeview.html");
 		addLine("cmbruns@comcast.net");
@@ -50,7 +54,9 @@ public class AboutDialog extends InfoDialog {
 		addLine(" ");		
 		addLine("City data courtesy of:");		
 		addLine("  Stefan Helders, World Gazetteer");
-		addLine("  http://www.world-gazetteer.com/");
+		addLine("    http://www.world-gazetteer.com/");
+		addLine("  and the US Census Bureau");
+		addLine("    http://www.census.gov/geo/www/gazetteer/places2k.html");
 		addLine(" ");		
 		addLine("Coast line data courtesy of:");		
 		addLine("  United States Central Intelligence Agency (CIA)");
