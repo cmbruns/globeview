@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/05 00:01:03  cmbruns
+// Changed nearlyOverlaps() routine to better handle things that are on the far side of the planet.
+//
 // Revision 1.2  2005/03/01 02:13:13  cmbruns
 // added cvs headers
 //
@@ -53,8 +56,9 @@ public class GeoPosition
 	}
 	boolean nearlyOverlaps(LensRegion lens) {
 		// If there is uncertainty, return true
-		if (lens == null) return true;		
+		if (lens == null) return true;
 		if (getSpherePoint().dot(lens.getUnitVector()) > (lens.getNearCosAngleRadius())) return true;
+		if (lens.getNearCosAngleRadius() < -0.60) return true; // If almost the whole planet is shown, everything is "near"
 		else return false;
 	}
 }
