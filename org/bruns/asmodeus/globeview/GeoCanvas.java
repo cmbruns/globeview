@@ -13,6 +13,10 @@ import java.text.*;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.7  2005/03/14 04:19:14  cmbruns
+// Created mechanism for turning nightUpdateThread on and off
+// Wrapped shadeBoxColor initialization so that it goes to black if the Java version does not have transparency
+//
 // Revision 1.6  2005/03/13 21:51:18  cmbruns
 // Created outOfMemoryDialog
 // Made rendering of crosshair optional
@@ -95,6 +99,7 @@ implements MouseListener, MouseMotionListener
     // double planetRadius = 6371; // Radius of earth in kilometers
 	
     NightUpdateThread nightUpdateThread;
+	volatile boolean keepNightUpdate = true;
 	DrawBitmapThread drawBitmapThread;
 	String busyString = "";
 	InfoDialog outOfMemoryDialog;
@@ -113,7 +118,7 @@ implements MouseListener, MouseMotionListener
 	Color borderColor = new Color(120,180,50);
 	int backgroundColorInt = 0xFF000000;
 	Color scaleBarColor = new Color(255, 220, 220); // Pink
-	Color shadeBoxColor = new Color(0, 0, 0, 128); // transparent Black
+	Color shadeBoxColor;
 	
     // Define what kinds of objects will be drawn
     volatile boolean fullUpdateNow = true; // Want to draw satellite image on startup
@@ -189,10 +194,11 @@ implements MouseListener, MouseMotionListener
 		globeViewFrame = parent;
 		
 		// Automatically updates image periodically, if dayNight is set
-		nightUpdateThread = new NightUpdateThread("nightUpdateThread");
-		nightUpdateThread.start();
+		startNightUpdateThread();
 		
 		labelColors = SiteLabel.fadeColors(new Color(100, 255, 255));
+		try {shadeBoxColor = new Color(0, 0, 0, 128);} // transparent black
+		catch (NoSuchMethodError e) {shadeBoxColor = new Color(0,0,0);} // solid black
 		
 		genGlobe.setPixelRadius((width < height) ? width/2.0 : height/2.0);
 		
@@ -219,6 +225,44 @@ implements MouseListener, MouseMotionListener
 		
 		createOffScreen(width, height);		
     }
+	
+	boolean stopNightUpdateThread() {
+		keepNightUpdate = false;
+		if ((nightUpdateThread != null) && (nightUpdateThread.isAlive())) {
+			// Java bug causes exception to be thrown when thread is not running
+			try {nightUpdateThread.interrupt();}
+			// catch (java.security.AccessControlException e) {} // netscape has a conniption
+			catch (Exception e) {}
+
+			try {nightUpdateThread.join(2000); // Wait up to two seconds for it to die
+			} catch (InterruptedException e) {}
+		}
+		if ((nightUpdateThread != null) && (nightUpdateThread.isAlive())) return false; // Did not stop
+		return true;
+	}
+	
+	void startNightUpdateThread() {
+		stopNightUpdateThread();
+		keepNightUpdate = true;
+		nightUpdateThread = new NightUpdateThread("nightUpdateThread");
+		nightUpdateThread.start();
+	}
+	
+	public boolean stopBitmapThread() {
+		images.keepDrawing = false; // set variable first, then interrupt
+		if ((drawBitmapThread != null) && (drawBitmapThread.isAlive())) {
+			
+			// Java bug causes exception to be thrown when thread is not running
+			try {drawBitmapThread.interrupt();}
+			// catch (AccessControlException e) {}
+			catch (Exception e) {}
+			
+			try {drawBitmapThread.join(2000); // Wait up to two seconds for it to die
+			} catch (InterruptedException e) {}
+		}
+		if ((drawBitmapThread != null) && (drawBitmapThread.isAlive())) return false; // Did not stop
+		return true;
+	}
 	
     public void fastRepaint() {
 		// Most repaints should postpone auto-painting
@@ -592,21 +636,6 @@ implements MouseListener, MouseMotionListener
 		return elapsedTime;
 	}
 
-	public boolean stopBitmapThread() {
-		if ((drawBitmapThread != null) && (drawBitmapThread.isAlive())) {
-			images.keepDrawing = false; // set variable first, then interrupt
-
-			// Java bug causes exception to be thrown when thread is not running
-			try {drawBitmapThread.interrupt();}
-			catch (java.security.AccessControlException e) {}
-			
-			try {drawBitmapThread.join(2000); // Wait up to two seconds for it to die
-			} catch (InterruptedException e) {}
-		}
-		if ((drawBitmapThread != null) && (drawBitmapThread.isAlive())) return false; // Did not stop
-		return true;
-	}
-	
     // Paint should only be called during infrequent window expose events
     // (because we have redefined update() to not call paint())
     // It is also called to paint the initial image
