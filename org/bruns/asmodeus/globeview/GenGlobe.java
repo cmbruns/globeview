@@ -8,6 +8,12 @@ package org.bruns.asmodeus.globeview;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/27 21:44:53  cmbruns
+// Added rotateY method for use in 3D
+// Added copy() method for use in creating left and right eye views
+// Added detailLevel and getAdjustedResolution to support changing the level of detail
+// Added offsetX to kludge drawing two images in stereo window.  TODO - this should be made a more general viewport operation.
+//
 // Revision 1.3  2005/03/04 23:56:50  cmbruns
 // created setResolution(d) function
 //
@@ -22,6 +28,9 @@ class GenGlobe {
     private double planetRadius; // in kilometers
     int centerX;
     int centerY;
+	private double detailLevel = 1.0; // Factor to bias detail level
+	
+	int offsetX = 0; // translate result this many pixels, for stereoscopic
 
     // Local matrix variables for speed
     double i00;
@@ -49,6 +58,7 @@ class GenGlobe {
     // Local variables for the NorthUp calculation
     private Vector3D zAxis;
     private Vector3D xAxis;
+	private Vector3D yAxis = new Vector3D(0,1,0);
     private Vector3D axis;
     private Matrix3D diffMat;
     double angle;
@@ -63,16 +73,42 @@ class GenGlobe {
 
     GenGlobe(double radius) {
         planetRadius = radius;
-	obliqueOrientation = new Matrix3D();
-	inverseOrientation = new Matrix3D();
-
-	diffMat = new Matrix3D();
-	zAxis = new Vector3D(0.0, 0.0, 1.0);
-	xAxis = new Vector3D(1.0, 0.0, 0.0);
-	axis = new Vector3D(0,0,0);
-	updateLocals();
+		obliqueOrientation = new Matrix3D();
+		inverseOrientation = new Matrix3D();
+		
+		diffMat = new Matrix3D();
+		zAxis = new Vector3D(0.0, 0.0, 1.0);
+		xAxis = new Vector3D(1.0, 0.0, 0.0);
+		axis = new Vector3D(0,0,0);
+		updateLocals();
     }
 
+	GenGlobe copy() {
+		GenGlobe answer = new GenGlobe(getKmRadius());
+
+		answer.obliqueOrientation = obliqueOrientation.copy();
+		answer.inverseOrientation = inverseOrientation.copy();
+		answer.northUp = northUp;
+		answer.centerX = centerX;
+		answer.centerY = centerY;
+		answer.detailLevel = detailLevel;
+		answer.pixelRadius = pixelRadius;
+		answer.invPixelRadius = invPixelRadius;
+		answer.resolution = resolution;
+
+		answer.updateLocals();
+		return answer;
+	}
+
+	// For stereoscopic display, rotate about Y axis
+	void rotateY(double angle) {
+		Matrix3D yRot = new Matrix3D();
+		yRot.setAxisAngle(yAxis, angle);
+		obliqueOrientation = yRot.mult(obliqueOrientation);
+		inverseOrientation = obliqueOrientation.transpose();
+		updateLocals();
+	}
+	
 	double getPlanetRadius() {return planetRadius;}
 	
 	double northAngle() // angle to north, from center point, in radians
@@ -88,9 +124,9 @@ class GenGlobe {
 		return angle;
 	}
 	
-    int screenX(double x) {return (int) (x * getPixelRadius()) + centerX;}
+    int screenX(double x) {return (int) (x * getPixelRadius()) + centerX + offsetX;}
     int screenY(double y) {return centerY - (int) (y * getPixelRadius());}
-    double planeX(int x) {return (double)(x - centerX) * getInvPixelRadius();}
+    double planeX(int x) {return (double)(x - centerX - offsetX) * getInvPixelRadius();}
     double planeY(int y) {return (double)(centerY - y) * getInvPixelRadius();}
  
     Vector3D utilityVector3D = new Vector3D();
@@ -268,7 +304,7 @@ class GenGlobe {
 
     void setPixelRadius(double r) {
 		pixelRadius = r;
-		invPixelRadius = 1.0/r;
+		invPixelRadius = 1.0/pixelRadius;
 		if (pixelRadius < 1) {
 			pixelRadius = 1.0;
 			invPixelRadius = 1.0;
@@ -280,12 +316,20 @@ class GenGlobe {
 		setPixelRadius(r * planetRadius);
 	}
 	
+	void setDetailLevel(double d) {
+		detailLevel = d;
+	}
+	
+	double getDetailLevel() {
+		return detailLevel;
+	}
+
     double getInvPixelRadius() {
-	return invPixelRadius;
+		return 1.0/getPixelRadius();
     }
 
     double getPixelRadius() {
-	return pixelRadius;
+		return pixelRadius;
     }
 
     void setKmRadius(double r) {
@@ -297,16 +341,16 @@ class GenGlobe {
     }
 
     double getResolution() {
-	return resolution;
+		return resolution;
     }
 
+	// For nudging detail level
+    double getAdjustedResolution() {
+		return resolution * detailLevel;
+    }
+	
     Matrix3D getOrientation() {
 	return obliqueOrientation;
-    }
-
-    // FIXME - deprecated, don't use this anymore
-    Matrix3D getScaledOrientation() {
-	return obliqueOrientation.mult(pixelRadius);
     }
 
     Matrix3D getInverseOrientation() {
