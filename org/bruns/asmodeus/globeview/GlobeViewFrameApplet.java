@@ -2,6 +2,11 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/02 01:55:11  cmbruns
+// Added loading of new ParameterFile
+// Improved thrown error checking
+// Converted projection parameter to lower case before checking
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -51,32 +56,63 @@ public class GlobeViewFrameApplet extends Applet
 		button.removeActionListener(this);
 
 		// Create a whole new Application
+		URL parameterURL = null;
 		URL mapURL = null;
 		URL siteURL = null;
 		URL borderURL = null;
-		try {siteURL = new URL(getParameter("sitelabels"));
-		} catch (Exception ex1) {System.out.println("Problem with URL for site labels. " + 
-													ex1 +
-													"  URL: " + siteURL);
-		}
-		try {mapURL = new URL(getParameter("imagemap"));
-		} catch (Exception ex2) {System.out.println("Problem with URL for satelite map. " + 
-													ex2 +
-													"  URL: " + mapURL);
-		}
-		try {borderURL = new URL(getParameter("boundaries"));
-		} catch (Exception ex2) {System.out.println("Problem with URL for boundaries. " + 
-													ex2 +
-													"  URL: " + borderURL);
+
+		String parameterString = getParameter("parameters");
+		if (parameterString != null) {
+			try {parameterURL = new URL(parameterString);
+			} catch (java.net.MalformedURLException ex) {
+				System.out.println("Problem with URL for parameters. " + 
+								   ex +
+								   "  URL: " + parameterURL);
+				parameterURL = null;
+			}
 		}
 		
-		frame = new GlobeView(mapURL, siteURL, borderURL);
+		String sitesString = getParameter("siteLabels");
+		if (sitesString != null) {
+			try {siteURL = new URL(sitesString);
+			} catch (java.net.MalformedURLException ex) {
+				System.out.println("Problem with URL for site labels. " + 
+								   ex +
+								   "  URL: " + siteURL);
+				siteURL = null;
+			}
+		}
+		
+		String imageString = getParameter("imagemap");
+		if (imageString != null) {
+			try {mapURL = new URL(getParameter("imagemap"));
+			} catch (java.net.MalformedURLException ex) {
+				System.out.println("Problem with URL for satelite map. " + 
+								   ex +
+								   "  URL: " + mapURL);
+				mapURL = null;
+			}
+		}
+		
+		String borderString = getParameter("boundaries");
+		if (borderString != null) {
+			try {borderURL = new URL(borderString);
+			} catch (java.net.MalformedURLException ex) {
+				System.out.println("Problem with URL for boundaries. " + 
+								   ex +
+								   "  URL: " + borderURL);
+				borderURL = null;
+			}
+		}
+		
+		frame = new GlobeView(mapURL, siteURL, borderURL, parameterURL);
 
 		    // Check for projection option
                     // TODO - this is causing some kind of permission error
                     // frame.setProjection(Projection.AZIMUTHALEQUIDISTANT);
   		    String projectionName = getParameter("projection");
 			if (projectionName != null) {
+				projectionName = projectionName.toLowerCase(); // Convert to lower case
 				if (projectionName.equals("azimuthal equidistant"))
 					frame.setProjection(Projection.AZIMUTHALEQUIDISTANT);
 				else if (projectionName.equals("orthographic")) 

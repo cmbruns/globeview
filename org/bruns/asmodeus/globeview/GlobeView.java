@@ -2,6 +2,11 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/02 01:55:11  cmbruns
+// Added loading of new ParameterFile
+// Improved thrown error checking
+// Converted projection parameter to lower case before checking
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -52,7 +57,8 @@ public class GlobeView extends Frame
 	    URL mapURL = new URL(arg[0]);
 	    URL siteURL = new URL(arg[1]);
 		URL borderURL = new URL(arg[3]);
-	    GlobeView frame = new GlobeView(mapURL, siteURL, borderURL);
+		URL parameterURL = new URL(arg[4]);
+	    GlobeView frame = new GlobeView(mapURL, siteURL, borderURL, parameterURL);
 	    frame.show();
 	} catch (Exception exception) {
 	    System.out.println(exception);
@@ -60,148 +66,151 @@ public class GlobeView extends Frame
 	}
     }
 
-    GlobeView(URL mapURL, URL siteURL, URL borderURL) {
-	super("GlobeView by Chris Bruns");
-
-	// Make window close when it should
-	addWindowListener(new WindowAdapter() {
-		public void windowClosing(WindowEvent e) {
-		    try {
-			System.exit(0); // Kill the program
-		    } catch (Exception exception) {
-			hide(); // OK, just hide it then
-		    }
-		}});
+    GlobeView(URL mapURL, URL siteURL, URL borderURL, URL parameterURL) {
+		super("GlobeView by Chris Bruns");
+		
+		// Make window close when it should
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				try {
+					System.exit(0); // Kill the program
+				} catch (Exception exception) {
+					hide(); // OK, just hide it then
+				}
+			}});
 	
-	// Canvas, which actually implements most of the hard stuff
-	canvas = new GeoCanvas(canvasStartSize, canvasStartSize, mapURL, siteURL, borderURL);
-	canvas.setMouseAction("mouseRotateXY");
+		// Canvas, which actually implements most of the hard stuff
+		canvas = new GeoCanvas(canvasStartSize, canvasStartSize, mapURL, siteURL, borderURL);
+		canvas.setMouseAction("mouseRotateXY");
 
-  	projectionDescription[AZIMUTHALEQUALAREA] = "Azimuthal Equal Area";
-  	projectionDescription[AZIMUTHALEQUIDISTANT] = "Azimuthal Equidistant";
-  	projectionDescription[EQUIRECTANGULAR] = "Equirectangular";
-  	projectionDescription[GNOMONIC]        = "Gnomonic";
-  	projectionDescription[MERCATOR]        = "Mercator";
-  	projectionDescription[ORTHOGRAPHIC]    = "Orthographic";
-  	projectionDescription[PERSPECTIVE]     = "Perspective";
-  	projectionDescription[SINUSOIDAL]      = "Sinusoidal";
-  	projectionDescription[STEREOGRAPHIC]      = "Stereographic";
+		try {ParameterFile parameterFile = new ParameterFile(parameterURL, canvas);}
+		catch (java.io.IOException e) {System.out.println("Parameter file failed, URL: " + parameterURL);}
+		
+		projectionDescription[AZIMUTHALEQUALAREA] = "Azimuthal Equal Area";
+		projectionDescription[AZIMUTHALEQUIDISTANT] = "Azimuthal Equidistant";
+		projectionDescription[EQUIRECTANGULAR] = "Equirectangular";
+		projectionDescription[GNOMONIC]        = "Gnomonic";
+		projectionDescription[MERCATOR]        = "Mercator";
+		projectionDescription[ORTHOGRAPHIC]    = "Orthographic";
+		projectionDescription[PERSPECTIVE]     = "Perspective";
+		projectionDescription[SINUSOIDAL]      = "Sinusoidal";
+		projectionDescription[STEREOGRAPHIC]      = "Stereographic";
+		
+		mouseActionDescription[ROT_XY]  = "Rotate XY";
+		// mouseActionDescription[ROT_Z]   = "Rotate Z";
+		// mouseActionDescription[ROT_XYZ] = "Rotate XYZ";
+		mouseActionDescription[ZOOM]    = "Zoom";
+		
+		// Menus
+		MenuBar menuBar;
+		Menu menu;
+		MenuItem menuItem;
+		CheckboxMenuItem checkboxMenuItem;
+		
+		menuBar = new MenuBar();
+		setMenuBar(menuBar);
+		
+		menu = new Menu("GlobeView");
+		menuBar.add(menu);
+		
+		checkboxMenuItem = new CheckboxMenuItem("North Up");
+		checkboxMenuItem.setEnabled(true);
+		checkboxMenuItem.setState(true);
+		menu.add(checkboxMenuItem);
+		checkboxMenuItem.addItemListener(this);
+		
+		checkboxMenuItem = new CheckboxMenuItem("Day/Night");
+		checkboxMenuItem.setEnabled(true);
+		checkboxMenuItem.setState(true);
+		menu.add(checkboxMenuItem);
+		checkboxMenuItem.addItemListener(this);
+		
+		checkboxMenuItem = new CheckboxMenuItem("Place Names");
+		checkboxMenuItem.setEnabled(true);
+		checkboxMenuItem.setState(true);
+		menu.add(checkboxMenuItem);
+		checkboxMenuItem.addItemListener(this);
+		
+		checkboxMenuItem = new CheckboxMenuItem("Satellite Image");
+		checkboxMenuItem.setEnabled(true);
+		checkboxMenuItem.setState(true);
+		menu.add(checkboxMenuItem);
+		checkboxMenuItem.addItemListener(this);
+		
+		checkboxMenuItem = new CheckboxMenuItem("Coast Lines");
+		checkboxMenuItem.setEnabled(true);
+		checkboxMenuItem.setState(true);
+		menu.add(checkboxMenuItem);
+		checkboxMenuItem.addItemListener(this);
+		
+		checkboxMenuItem = new CheckboxMenuItem("Graticule");
+		checkboxMenuItem.setEnabled(true);
+		checkboxMenuItem.setState(true);
+		menu.add(checkboxMenuItem);
+		checkboxMenuItem.addItemListener(this);
+		
+		checkboxMenuItem = new CheckboxMenuItem("Antenna Bearing");
+		checkboxMenuItem.setEnabled(true);
+		checkboxMenuItem.setState(false);
+		menu.add(checkboxMenuItem);
+		checkboxMenuItem.addItemListener(this);
+		
+		menuItem = new MenuItem("-"); // Separator
+		menu.add(menuItem);
+		
+		menuItem = new MenuItem("Quit");
+		menuItem.setEnabled(true);
+		menuItem.addActionListener(this);
+		menu.add(menuItem);
+		
+		// menu = new Menu("Projection");
+		// menuBar.add(menu);
+		int i; 
+		Menu projectionMenu = new Menu("Projection");
+		menu = projectionMenu;
+		menuBar.add(projectionMenu);
+		// menu.add(projectionMenu);
+		
+		for (i = 0; i < totalProjections; ++i) {
+			checkboxMenuItem = new CheckboxMenuItem(projectionDescription[i]);
+			checkboxMenuItem.setEnabled(true);
+			checkboxMenuItem.setState(i == currentProjection);
+			projectionMenu.add(checkboxMenuItem);
+			checkboxMenuItem.addItemListener(this);
+			projectionCheck[i] = checkboxMenuItem;
+		}
 
-  	mouseActionDescription[ROT_XY]  = "Rotate XY";
-  	// mouseActionDescription[ROT_Z]   = "Rotate Z";
-  	// mouseActionDescription[ROT_XYZ] = "Rotate XYZ";
-  	mouseActionDescription[ZOOM]    = "Zoom";
-
-	// Menus
-	MenuBar menuBar;
-	Menu menu;
-	MenuItem menuItem;
-	CheckboxMenuItem checkboxMenuItem;
-
-	menuBar = new MenuBar();
-	setMenuBar(menuBar);
-
-	menu = new Menu("GlobeView");
-	menuBar.add(menu);
-	
-	checkboxMenuItem = new CheckboxMenuItem("North Up");
-	checkboxMenuItem.setEnabled(true);
-	checkboxMenuItem.setState(true);
-	menu.add(checkboxMenuItem);
-	checkboxMenuItem.addItemListener(this);
-	
-	checkboxMenuItem = new CheckboxMenuItem("Day/Night");
-	checkboxMenuItem.setEnabled(true);
-	checkboxMenuItem.setState(true);
-	menu.add(checkboxMenuItem);
-	checkboxMenuItem.addItemListener(this);
-
-	checkboxMenuItem = new CheckboxMenuItem("Place Names");
-	checkboxMenuItem.setEnabled(true);
-	checkboxMenuItem.setState(true);
-	menu.add(checkboxMenuItem);
-	checkboxMenuItem.addItemListener(this);
-	
-	checkboxMenuItem = new CheckboxMenuItem("Satellite Image");
-	checkboxMenuItem.setEnabled(true);
-	checkboxMenuItem.setState(true);
-	menu.add(checkboxMenuItem);
-	checkboxMenuItem.addItemListener(this);
-	
-	checkboxMenuItem = new CheckboxMenuItem("Coast Lines");
-	checkboxMenuItem.setEnabled(true);
-	checkboxMenuItem.setState(true);
-	menu.add(checkboxMenuItem);
-	checkboxMenuItem.addItemListener(this);
-
-	checkboxMenuItem = new CheckboxMenuItem("Graticule");
-	checkboxMenuItem.setEnabled(true);
-	checkboxMenuItem.setState(true);
-	menu.add(checkboxMenuItem);
-	checkboxMenuItem.addItemListener(this);
-	
-	checkboxMenuItem = new CheckboxMenuItem("Antenna Bearing");
-	checkboxMenuItem.setEnabled(true);
-	checkboxMenuItem.setState(false);
-	menu.add(checkboxMenuItem);
-	checkboxMenuItem.addItemListener(this);
-	
-	menuItem = new MenuItem("-"); // Separator
-	menu.add(menuItem);
-
-	menuItem = new MenuItem("Quit");
-	menuItem.setEnabled(true);
-	menuItem.addActionListener(this);
-	menu.add(menuItem);
-
-	// menu = new Menu("Projection");
-	// menuBar.add(menu);
-	int i; 
-	Menu projectionMenu = new Menu("Projection");
-	menu = projectionMenu;
-	menuBar.add(projectionMenu);
-	// menu.add(projectionMenu);
-
-  	for (i = 0; i < totalProjections; ++i) {
-  	    checkboxMenuItem = new CheckboxMenuItem(projectionDescription[i]);
-  	    checkboxMenuItem.setEnabled(true);
-  	    checkboxMenuItem.setState(i == currentProjection);
-  	    projectionMenu.add(checkboxMenuItem);
-  	    checkboxMenuItem.addItemListener(this);
-  	    projectionCheck[i] = checkboxMenuItem;
-  	}
-
-	menu = new Menu("MouseDrag");
-	menuBar.add(menu);
-  	for (i = 0; i < totalMouseActions; ++i) {
-  	    mouseActionCheck[i] = new CheckboxMenuItem(mouseActionDescription[i]);
-  	    checkboxMenuItem = mouseActionCheck[i];
-  	    checkboxMenuItem.setEnabled(true);
-  	    checkboxMenuItem.setState(i == currentMouseAction);
-  	    menu.add(checkboxMenuItem);
-  	    checkboxMenuItem.addItemListener(this);
-  	}
-	// mouseActionCheck[ROT_XYZ].setEnabled(false);
-
-	menu = new Menu("Help");
-	menuBar.setHelpMenu(menu);
-	menuItem = new MenuItem("Help");
-	menuItem.setEnabled(false);
-	menu.add(menuItem);
-	menuItem = new MenuItem("About GlobeView");
-	menuItem.addActionListener(this);
-	menuItem.setEnabled(true);
-	menu.add(menuItem);
-
-	add(canvas);
-	add("South", canvas.messageArea);
-	canvas.nightUpdateThread.canvas = canvas;
-
-	aboutDialog = new AboutDialog(this);
-
-	// IE does not "pack" correctly, so try something reasonable
-	setSize(canvasStartSize + 15, canvasStartSize + 65);
-	pack();
+		menu = new Menu("MouseDrag");
+		menuBar.add(menu);
+		for (i = 0; i < totalMouseActions; ++i) {
+			mouseActionCheck[i] = new CheckboxMenuItem(mouseActionDescription[i]);
+			checkboxMenuItem = mouseActionCheck[i];
+			checkboxMenuItem.setEnabled(true);
+			checkboxMenuItem.setState(i == currentMouseAction);
+			menu.add(checkboxMenuItem);
+			checkboxMenuItem.addItemListener(this);
+		}
+		// mouseActionCheck[ROT_XYZ].setEnabled(false);
+		
+		menu = new Menu("Help");
+		menuBar.setHelpMenu(menu);
+		menuItem = new MenuItem("Help");
+		menuItem.setEnabled(false);
+		menu.add(menuItem);
+		menuItem = new MenuItem("About GlobeView");
+		menuItem.addActionListener(this);
+		menuItem.setEnabled(true);
+		menu.add(menuItem);
+		
+		add(canvas);
+		add("South", canvas.messageArea);
+		canvas.nightUpdateThread.canvas = canvas;
+		
+		aboutDialog = new AboutDialog(this);
+		
+		// IE does not "pack" correctly, so try something reasonable
+		setSize(canvasStartSize + 15, canvasStartSize + 65);
+		pack();
     }
 
     // ***********************
