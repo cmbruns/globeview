@@ -2,6 +2,10 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/28 01:53:13  cmbruns
+// Created four separate static instances of Perspective projection for 3D stereoscopic modes
+// Enhanced getByName() method to work for Orthographic and some of the stereoscopic modes
+//
 // Revision 1.3  2005/03/05 00:19:28  cmbruns
 // Added getName() function to each projection, but didn't really use it yet.
 //
@@ -51,6 +55,10 @@ abstract class Projection {
     static PerspectiveProjection          PERSPECTIVE          = new PerspectiveProjection();
     static SinusoidalProjection           SINUSOIDAL           = new SinusoidalProjection();
     static StereographicProjection        STEREOGRAPHIC        = new StereographicProjection();
+    static PerspectiveProjection          WALLEYE3D       = new PerspectiveProjection();
+    static PerspectiveProjection          CROSSEYE3D       = new PerspectiveProjection();
+    static PerspectiveProjection          REDBLUE3D       = new PerspectiveProjection();
+    static PerspectiveProjection          INTERLACED3D       = new PerspectiveProjection();
 
 	static Projection getByName(String projectionName) {
 		String lowerName = projectionName.toLowerCase();
@@ -73,10 +81,25 @@ abstract class Projection {
 		if (lowerName.equals("mercator")) return MERCATOR;
 
 		if (lowerName.equals("perspective")) return PERSPECTIVE;
+		if (lowerName.equals("normal monoscopic perspective")) return PERSPECTIVE;
 		
+		if (lowerName.equals("orthographic")) return ORTHOGRAPHIC;
+
 		if (lowerName.equals("sinusoidal")) return SINUSOIDAL;
 
 		if (lowerName.equals("stereographic")) return STEREOGRAPHIC;
+
+		if (lowerName.equals("cross-eye 3d")) return CROSSEYE3D;
+		if (lowerName.equals("stereoscopic")) return CROSSEYE3D;
+		if (lowerName.equals("stereoscopic3d")) return CROSSEYE3D;
+		if (lowerName.equals("stereoscopic 3d")) return CROSSEYE3D;
+		if (lowerName.equals("stereoscopic_3d")) return CROSSEYE3D;
+		
+		if (lowerName.equals("wall-eye 3d")) return WALLEYE3D;
+		
+		if (lowerName.equals("red/blue 3d")) return REDBLUE3D;
+		
+		if (lowerName.equals("interlaced 3d")) return INTERLACED3D;
 		
 		return null; // if all else fails
 	}
