@@ -8,6 +8,10 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.2  2005/03/13 22:03:31  cmbruns
+//  Added suggestion to find your home town.
+//  Wrapped call to Java 1.4 setUndecorated() method in catch NoSuchMethodException
+//
 //  Revision 1.1  2005/03/11 00:08:58  cmbruns
 //  New help dialog when user clicks Help->Globeview Help
 //
@@ -28,12 +32,14 @@ public class HelpDialog extends InfoDialog {
 		addLine(" ");		
 		addLine("Zoom out until you can see most of the earth.");
 		addLine("Then experiment with the different options in the PROJECTION menu");
+		addLine("Next, zoom in and find your home town");
 		addLine(" ");		
 		addLine("For more information:");
 		addLine("  READ http://bruns.homeip.net/~bruns/globeview.html");
 		addLine("  CONTACT Chris Bruns cmbruns@comcast.net");
 		
-		setUndecorated(false);  // So we can drag it around
+		try {setUndecorated(false);}  // So we can drag it around
+		catch (java.lang.NoSuchMethodError e) {} // Only works in Java 1.4
 
 		finalizeDialog();
 	}
