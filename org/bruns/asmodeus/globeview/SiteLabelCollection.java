@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/14 04:26:47  cmbruns
+// Catch IllegalArgumentException and let Java 1.1 screw up the UTF-8 city labels
+//
 // Revision 1.4  2005/03/13 22:13:34  cmbruns
 // Replace generic exception catches with specific ones.
 //
@@ -35,12 +38,18 @@ public class SiteLabelCollection extends GeoCollection {
 		
 		try {
 			BufferedReader in;
-			try {
-				in = new BufferedReader(new InputStreamReader(siteURL.openStream(),"UTF-8"));		
-			} catch (UnsupportedEncodingException e) {
+			InputStream is = siteURL.openStream();
+			InputStreamReader isr;
+			try {isr = new InputStreamReader(is,"UTF-8");} 
+			catch (UnsupportedEncodingException e) {
 				// City names will be ugly if UTF-8 is not available...
-				in = new BufferedReader(new InputStreamReader(siteURL.openStream()));		
+				isr = new InputStreamReader(is);		
 			}
+			catch (IllegalArgumentException e) {
+				// City names will be ugly if UTF-8 is not available...
+				isr = new InputStreamReader(is);		
+			}
+			in = new BufferedReader(isr);
 			String inputLine;		
 			while ((inputLine = in.readLine()) != null) {
 				StringTokenizer tokenizer = new StringTokenizer(inputLine, "\t");
