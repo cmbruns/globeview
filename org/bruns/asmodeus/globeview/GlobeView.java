@@ -2,6 +2,11 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/11 00:07:32  cmbruns
+// Added Help dialog
+// Added support for scale bar on canvas
+// Window now centers on the users screen
+//
 // Revision 1.4  2005/03/05 00:05:09  cmbruns
 // Changed signature to take only parameter file, not individual file URLS
 //
@@ -30,6 +35,7 @@ public class GlobeView extends Frame
     GeoCanvas canvas;
     int canvasStartSize = 300;
     AboutDialog aboutDialog;
+    HelpDialog helpDialog;
 
 	// Supported projections
     static final int AZIMUTHALEQUALAREA   = 0;
@@ -54,6 +60,7 @@ public class GlobeView extends Frame
 	CheckboxMenuItem bearingButton;
 	CheckboxMenuItem imagesButton;
 	CheckboxMenuItem sitesButton;
+	CheckboxMenuItem scaleBarButton;
     
     // Supported mouseActions
     static final int ROT_XY  = 0;
@@ -152,6 +159,12 @@ public class GlobeView extends Frame
 		menu.add(graticulesButton);
 		graticulesButton.addItemListener(this);
 		
+		scaleBarButton = new CheckboxMenuItem("Scale Bar");
+		scaleBarButton.setEnabled(true);
+		scaleBarButton.setState(true);
+		menu.add(scaleBarButton);
+		scaleBarButton.addItemListener(this);
+		
 		bearingButton = new CheckboxMenuItem("Antenna Bearing");
 		bearingButton.setEnabled(true);
 		bearingButton.setState(false);
@@ -161,7 +174,7 @@ public class GlobeView extends Frame
 		menuItem = new MenuItem("-"); // Separator
 		menu.add(menuItem);
 		
-		menuItem = new MenuItem("Quit");
+		menuItem = new MenuItem("Quit GlobeView");
 		menuItem.setEnabled(true);
 		menuItem.addActionListener(this);
 		menu.add(menuItem);
@@ -197,9 +210,14 @@ public class GlobeView extends Frame
 		
 		menu = new Menu("Help");
 		menuBar.setHelpMenu(menu);
-		menuItem = new MenuItem("Help");
-		menuItem.setEnabled(false);
+		menuItem = new MenuItem("GlobeView Help");
+		menuItem.addActionListener(this);
+		menuItem.setEnabled(true);
 		menu.add(menuItem);
+
+		menuItem = new MenuItem("-"); // Separator
+		menu.add(menuItem);
+		
 		menuItem = new MenuItem("About GlobeView");
 		menuItem.addActionListener(this);
 		menuItem.setEnabled(true);
@@ -220,28 +238,42 @@ public class GlobeView extends Frame
 		canvas.nightUpdateThread.canvas = canvas;
 		
 		aboutDialog = new AboutDialog(this);
+		helpDialog = new HelpDialog(this);
 		
 		// IE does not "pack" correctly, so try something reasonable
 		setSize(canvasStartSize + 15, canvasStartSize + 65);
 		pack();
+		
+		// Center on screen
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int locX = screenSize.width/2 - getSize().width/2;
+		int locY = screenSize.height/2 - getSize().height/2;
+		if (locX < 0) locX = 0;
+		if (locY < 0) locY = 0;
+		setLocation(locX, locY);
     }
 
     // ***********************
     // *** Menu selections ***
     // ***********************
     public void actionPerformed(ActionEvent e) {
-	if (e.getActionCommand() == "Quit") {
-	    try {
-		System.exit(0); // Kill the program
-	    } catch (Exception exception) {
-		hide(); // At least hide it, anyway
-	    }
-	}
-	if (e.getActionCommand() == "About GlobeView") {
-	    // TODO - get about dialog working
-	    aboutDialog.show();
-	    // System.out.println("Tell me about globeview");
-	}
+		if (e.getActionCommand() == "Quit GlobeView") {
+			try {
+				System.exit(0); // Kill the program
+			} catch (Exception exception) {
+				hide(); // At least hide it, anyway
+			}
+		}
+		if (e.getActionCommand() == "About GlobeView") {
+			// TODO - get about dialog working
+			aboutDialog.showDialog();
+			// System.out.println("Tell me about globeview");
+		}
+		if (e.getActionCommand() == "GlobeView Help") {
+			// TODO - get about dialog working
+			helpDialog.showDialog();
+			// System.out.println("Tell me about globeview");
+		}
     }
 
     public void updateProjectionMenu() {
@@ -321,6 +353,18 @@ public class GlobeView extends Frame
 	    }
 	    else {
 			canvas.drawSatelliteImage = false;
+			canvas.fullRepaint();
+	    }
+	    return;
+	}
+	
+	if (e.getItem() == "Scale Bar") {
+	    if (e.getStateChange() == ItemEvent.SELECTED) {
+			canvas.drawScaleBar = true;
+			canvas.fullRepaint();
+	    }
+	    else {
+			canvas.drawScaleBar = false;
 			canvas.fullRepaint();
 	    }
 	    return;
