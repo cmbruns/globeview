@@ -2,6 +2,11 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/05 00:05:09  cmbruns
+// Changed signature to take only parameter file, not individual file URLS
+//
+// Created persistent variables for checkBoxMenuItems, so that changes from ParameterFiles can be reflected in the menu selections.
+//
 // Revision 1.3  2005/03/02 01:55:11  cmbruns
 // Added loading of new ParameterFile
 // Improved thrown error checking
@@ -26,7 +31,7 @@ public class GlobeView extends Frame
     int canvasStartSize = 300;
     AboutDialog aboutDialog;
 
-    // Supported projections
+	// Supported projections
     static final int AZIMUTHALEQUALAREA   = 0;
     static final int AZIMUTHALEQUIDISTANT = 1;
     static final int EQUIRECTANGULAR      = 2;
@@ -42,6 +47,14 @@ public class GlobeView extends Frame
     CheckboxMenuItem[] projectionCheck = new CheckboxMenuItem[totalProjections];
     static String[] projectionDescription = new String[totalProjections];
 
+	CheckboxMenuItem northUpButton;
+	CheckboxMenuItem dayNightButton;
+	CheckboxMenuItem graticulesButton;
+	CheckboxMenuItem coastsButton;
+	CheckboxMenuItem bearingButton;
+	CheckboxMenuItem imagesButton;
+	CheckboxMenuItem sitesButton;
+    
     // Supported mouseActions
     static final int ROT_XY  = 0;
     static final int ZOOM    = 1;
@@ -54,11 +67,8 @@ public class GlobeView extends Frame
 
     public static void main(String arg[]) {
 	try {
-	    URL mapURL = new URL(arg[0]);
-	    URL siteURL = new URL(arg[1]);
-		URL borderURL = new URL(arg[3]);
-		URL parameterURL = new URL(arg[4]);
-	    GlobeView frame = new GlobeView(mapURL, siteURL, borderURL, parameterURL);
+		URL parameterURL = new URL(arg[0]);
+	    GlobeView frame = new GlobeView(parameterURL);
 	    frame.show();
 	} catch (Exception exception) {
 	    System.out.println(exception);
@@ -66,7 +76,7 @@ public class GlobeView extends Frame
 	}
     }
 
-    GlobeView(URL mapURL, URL siteURL, URL borderURL, URL parameterURL) {
+    GlobeView(URL parameterURL) {
 		super("GlobeView by Chris Bruns");
 		
 		// Make window close when it should
@@ -79,13 +89,6 @@ public class GlobeView extends Frame
 				}
 			}});
 	
-		// Canvas, which actually implements most of the hard stuff
-		canvas = new GeoCanvas(canvasStartSize, canvasStartSize, mapURL, siteURL, borderURL);
-		canvas.setMouseAction("mouseRotateXY");
-
-		try {ParameterFile parameterFile = new ParameterFile(parameterURL, canvas);}
-		catch (java.io.IOException e) {System.out.println("Parameter file failed, URL: " + parameterURL);}
-		
 		projectionDescription[AZIMUTHALEQUALAREA] = "Azimuthal Equal Area";
 		projectionDescription[AZIMUTHALEQUIDISTANT] = "Azimuthal Equidistant";
 		projectionDescription[EQUIRECTANGULAR] = "Equirectangular";
@@ -113,47 +116,47 @@ public class GlobeView extends Frame
 		menu = new Menu("GlobeView");
 		menuBar.add(menu);
 		
-		checkboxMenuItem = new CheckboxMenuItem("North Up");
-		checkboxMenuItem.setEnabled(true);
-		checkboxMenuItem.setState(true);
-		menu.add(checkboxMenuItem);
-		checkboxMenuItem.addItemListener(this);
+		northUpButton = new CheckboxMenuItem("North Up");
+		northUpButton.setEnabled(true);
+		northUpButton.setState(true);
+		menu.add(northUpButton);
+		northUpButton.addItemListener(this);
 		
-		checkboxMenuItem = new CheckboxMenuItem("Day/Night");
-		checkboxMenuItem.setEnabled(true);
-		checkboxMenuItem.setState(true);
-		menu.add(checkboxMenuItem);
-		checkboxMenuItem.addItemListener(this);
+		dayNightButton = new CheckboxMenuItem("Day/Night");
+		dayNightButton.setEnabled(true);
+		dayNightButton.setState(true);
+		menu.add(dayNightButton);
+		dayNightButton.addItemListener(this);
 		
-		checkboxMenuItem = new CheckboxMenuItem("Place Names");
-		checkboxMenuItem.setEnabled(true);
-		checkboxMenuItem.setState(true);
-		menu.add(checkboxMenuItem);
-		checkboxMenuItem.addItemListener(this);
+		sitesButton = new CheckboxMenuItem("Place Names");
+		sitesButton.setEnabled(true);
+		sitesButton.setState(true);
+		menu.add(sitesButton);
+		sitesButton.addItemListener(this);
 		
-		checkboxMenuItem = new CheckboxMenuItem("Satellite Image");
-		checkboxMenuItem.setEnabled(true);
-		checkboxMenuItem.setState(true);
-		menu.add(checkboxMenuItem);
-		checkboxMenuItem.addItemListener(this);
+		imagesButton = new CheckboxMenuItem("Satellite Image");
+		imagesButton.setEnabled(true);
+		imagesButton.setState(true);
+		menu.add(imagesButton);
+		imagesButton.addItemListener(this);
 		
-		checkboxMenuItem = new CheckboxMenuItem("Coast Lines");
-		checkboxMenuItem.setEnabled(true);
-		checkboxMenuItem.setState(true);
-		menu.add(checkboxMenuItem);
-		checkboxMenuItem.addItemListener(this);
+		coastsButton = new CheckboxMenuItem("Coast Lines");
+		coastsButton.setEnabled(true);
+		coastsButton.setState(true);
+		menu.add(coastsButton);
+		coastsButton.addItemListener(this);
 		
-		checkboxMenuItem = new CheckboxMenuItem("Graticule");
-		checkboxMenuItem.setEnabled(true);
-		checkboxMenuItem.setState(true);
-		menu.add(checkboxMenuItem);
-		checkboxMenuItem.addItemListener(this);
+		graticulesButton = new CheckboxMenuItem("Graticule");
+		graticulesButton.setEnabled(true);
+		graticulesButton.setState(true);
+		menu.add(graticulesButton);
+		graticulesButton.addItemListener(this);
 		
-		checkboxMenuItem = new CheckboxMenuItem("Antenna Bearing");
-		checkboxMenuItem.setEnabled(true);
-		checkboxMenuItem.setState(false);
-		menu.add(checkboxMenuItem);
-		checkboxMenuItem.addItemListener(this);
+		bearingButton = new CheckboxMenuItem("Antenna Bearing");
+		bearingButton.setEnabled(true);
+		bearingButton.setState(false);
+		menu.add(bearingButton);
+		bearingButton.addItemListener(this);
 		
 		menuItem = new MenuItem("-"); // Separator
 		menu.add(menuItem);
@@ -202,6 +205,16 @@ public class GlobeView extends Frame
 		menuItem.setEnabled(true);
 		menu.add(menuItem);
 		
+		// Canvas, which actually implements most of the hard stuff
+		canvas = new GeoCanvas(canvasStartSize, canvasStartSize, this);
+		canvas.setMouseAction("mouseRotateXY");
+		
+		try {
+			ParameterFile parameterFile = new ParameterFile(parameterURL, canvas);
+			canvas.paramFiles.addElement(parameterFile);
+		}
+		catch (java.io.IOException e) {System.out.println("Parameter file failed, URL: " + parameterURL);}
+		
 		add(canvas);
 		add("South", canvas.messageArea);
 		canvas.nightUpdateThread.canvas = canvas;
@@ -244,11 +257,11 @@ public class GlobeView extends Frame
 
 	if (e.getItem() == "North Up") {
 	    if (e.getStateChange() == ItemEvent.SELECTED) {
-		canvas.setNorthUp(true);
-		canvas.fullRepaint();
+			canvas.setNorthUp(true);
+			canvas.fullRepaint();
 	    }
 	    else {
-		canvas.setNorthUp(false);
+			canvas.setNorthUp(false);
 	    }
 	    return;
 	}
@@ -407,7 +420,7 @@ public class GlobeView extends Frame
         else System.err.println("ERROR, Unknown projection");
 
         // 2) update canvas subobject
-	canvas.projection = p;
+		canvas.projection = p;
 
         // 3) update projection menu
         int i;
