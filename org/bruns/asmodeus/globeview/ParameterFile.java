@@ -10,6 +10,12 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.4  2005/03/13 22:12:29  cmbruns
+//  Added CROSSHAIR keyword.
+//  Added SIZE keyword.
+//  Changes to update parent canvas viewLens at the time certain parameters are changed.
+//  New canvas parameter for GeoPathCollection constructor.
+//
 //  Revision 1.3  2005/03/11 00:17:14  cmbruns
 //  Added SCALEBAR parameter
 //  Corrected setLatLon call to send radians, not degrees
@@ -45,7 +51,7 @@ public class ParameterFile extends GeoObject {
 		// loadData();
 	}
 	
-	void loadData() throws IOException {
+	void loadData(LensRegion viewLens) throws IOException {
 		loadedData = true;
 		// Open file
 		BufferedReader in;
@@ -67,8 +73,7 @@ PARAMETER_LINE:
 			}
 			keyWord = keyWord.toUpperCase();
 			
-			// TODO - put lots of cool stuff here
-
+			// Branch on record keyword
 			if (false) {} // So I won't keep copy/pasting the if without the else
 
 			else if (keyWord.equals("DAYNIGHT"))  {canvas.setDayNight(true);}
@@ -94,6 +99,9 @@ PARAMETER_LINE:
 			
 			else if (keyWord.equals("SCALEBAR"))  {canvas.setScaleBar(true);}
 			else if (keyWord.equals("!SCALEBAR")) {canvas.setScaleBar(false);}
+			
+			else if (keyWord.equals("CROSSHAIR"))  {canvas.setCrosshair(true);}
+			else if (keyWord.equals("!CROSSHAIR")) {canvas.setCrosshair(false);}
 			
 			// Consider loading another parameter file
 			else if (keyWord.equals("PARAM")) {
@@ -122,12 +130,22 @@ PARAMETER_LINE:
 				double longitude = (new Double(tokenizer.nextToken())).doubleValue();
 				double latitude = (new Double(tokenizer.nextToken())).doubleValue();
 				canvas.centerOnPosition(d2r*longitude, d2r*latitude);
+				viewLens.changeValues(canvas.getViewLens());
 			}
 			
 			// Set zoom level
 			else if (keyWord.equals("SCALE")) {
 				double scale = (new Double(tokenizer.nextToken())).doubleValue();
 				canvas.genGlobe.setResolution(scale); // pixels per kilometer
+				viewLens.changeValues(canvas.getViewLens());
+			}
+			
+			// Set window size
+			else if (keyWord.equals("SIZE")) {
+				int width = (new Integer(tokenizer.nextToken())).intValue();
+				int height = (new Integer(tokenizer.nextToken())).intValue();
+				canvas.globeViewFrame.setSize(width, height); // pixels per kilometer
+				viewLens.changeValues(canvas.getViewLens());
 			}
 			
 			// Set projection
@@ -137,6 +155,7 @@ PARAMETER_LINE:
 				if (projection != null) {
 					canvas.setProjection(projection);
 				}
+				viewLens.changeValues(canvas.getViewLens());
 			}
 			
 			// Read in a coastline file
@@ -148,10 +167,13 @@ PARAMETER_LINE:
 				GeoObject resolution = new GeoObject(minRes, minRes, maxRes, maxRes);
 				URL coastURL;
 				coastURL = new URL(url, coastFileName);
-				GeoPathCollection coast = new GeoPathCollection(coastURL, resolution, canvas.borderColor);
+				GeoPathCollection coast = 
+					new GeoPathCollection(coastURL, resolution, canvas.borderColor,
+										  boundingLens, canvas); // Use bounds of param file
 				canvas.borders.addElement(coast);
 			}
 
+			// TODO - set longitude/latitude limits on graticule
 			else if (keyWord.equals("GRATI")) { // graticule
 				// Create a graticule
 				double minRes = (new Double(tokenizer.nextToken())).doubleValue();
@@ -219,7 +241,7 @@ PARAMETER_LINE:
 		if (!overlaps(viewLens)) return;
 		// If we get this far, it's time to load the data from this parameter file
 		canvas.setWait("BUSY: LOADING DATA...");
-		try {loadData();}
+		try {loadData(viewLens);}
 		catch (IOException e) {
 			System.out.println("Error loading parameter file: " + e);
 		}
