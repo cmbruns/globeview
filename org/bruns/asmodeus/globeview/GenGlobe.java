@@ -8,6 +8,9 @@ package org.bruns.asmodeus.globeview;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/04 23:56:50  cmbruns
+// created setResolution(d) function
+//
 // Revision 1.2  2005/03/01 02:13:13  cmbruns
 // added cvs headers
 //
@@ -264,15 +267,19 @@ class GenGlobe {
     }
 
     void setPixelRadius(double r) {
-	pixelRadius = r;
-	invPixelRadius = 1.0/r;
-	if (pixelRadius < 1) {
-	    pixelRadius = 1.0;
-	    invPixelRadius = 1.0;
-	}
+		pixelRadius = r;
+		invPixelRadius = 1.0/r;
+		if (pixelRadius < 1) {
+			pixelRadius = 1.0;
+			invPixelRadius = 1.0;
+		}
         resolution = pixelRadius / planetRadius;
     }
 
+	void setResolution(double r) {
+		setPixelRadius(r * planetRadius);
+	}
+	
     double getInvPixelRadius() {
 	return invPixelRadius;
     }
