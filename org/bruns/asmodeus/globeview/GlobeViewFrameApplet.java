@@ -2,6 +2,10 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.7  2005/03/14 04:22:48  cmbruns
+// Changed so that parameterURL can be relative to the enclosing document
+// Changed applet start(), stop(), init(), and destroy() routines to be a bit nicer, and to stop all Canvas threads when appropriate
+//
 // Revision 1.6  2005/03/13 22:02:20  cmbruns
 // Replaced generic exception catches with specific ones.
 //
@@ -44,15 +48,17 @@ public class GlobeViewFrameApplet extends Applet
     Cursor waitCursor = new Cursor(Cursor.WAIT_CURSOR);
 
     public void init() {
+		super.init();
+		
         // Avoid default gray behind launch button
         Color buttonBackgroundColor = stringToColor(getParameter("button_background"));
         if (buttonBackgroundColor != null) setBackground(buttonBackgroundColor);
         else setBackground(Color.white);
 
-	button = new Button("Launch GlobeView");
-	button.setActionCommand("Launch GlobeView");
-	button.addActionListener(this);
-	add(button);
+		button = new Button("Launch GlobeView");
+		button.setActionCommand("Launch GlobeView");
+		button.addActionListener(this);
+		add(button);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -68,13 +74,10 @@ public class GlobeViewFrameApplet extends Applet
 
 		// Create a whole new Application
 		URL parameterURL = null;
-		URL mapURL = null;
-		URL siteURL = null;
-		URL borderURL = null;
 
 		String parameterString = getParameter("parameters");
 		if (parameterString != null) {
-			try {parameterURL = new URL(parameterString);
+			try {parameterURL = new URL(getDocumentBase(), parameterString);
 			} catch (java.net.MalformedURLException ex) {
 				System.out.println("Problem with URL for parameters. " + 
 								   ex +
@@ -154,18 +157,27 @@ public class GlobeViewFrameApplet extends Applet
     }
 
     public void start() {
-	if (button == null) {
-	    button = new Button("Launch GlobeView");
-	    button.setActionCommand("Launch GlobeView");
-	    button.addActionListener(this);
-	    add(button);
-	}
+		super.start();
+		
+		if (button == null) {
+			button = new Button("Launch GlobeView");
+			button.setActionCommand("Launch GlobeView");
+			button.addActionListener(this);
+			add(button);
+		}
     }
 
     public void stop() {
-		if (frame != null) frame.hide();
-		frame = null;
+		if (frame != null) frame.stop();
+		super.stop();
     }
+	
+	public void destroy() {
+		stop();
+		button = null;
+		frame = null;
+		super.destroy();
+	}
 
     // Returns a Color based on 'colorName' which must be one
     // of the predefined colors in java.awt.Color.
