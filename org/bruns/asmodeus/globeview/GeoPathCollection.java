@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/28 01:06:01  cmbruns
+// Use new MeasuredInputStream class so that load progress can be monitored
+//
 // Revision 1.5  2005/03/14 05:06:57  cmbruns
 // Changed autocreated copyright text from __MyCompanyName__ to Christopher Bruns
 //
@@ -58,7 +61,7 @@ public class GeoPathCollection extends GeoCollection
 
 		canvas.setWait("BUSY: Loading coast line file...");
 		try {
-			InputStream urlStream = url.openStream();
+			MeasuredInputStream urlStream = new MeasuredInputStream(url, canvas);
 			InputStream uncompressedStream;
 			GZIPInputStream gzipStream = new GZIPInputStream(urlStream);
 			uncompressedStream = gzipStream;
@@ -102,6 +105,7 @@ public class GeoPathCollection extends GeoCollection
 				addElement(path);
 			}
 			in.close();
+			urlStream.close();
 		} catch (IOException ex) {
 			System.out.println("Problem reading paths URL: " + ex + " URL: " + url);
 		}
