@@ -13,6 +13,18 @@ import java.text.*;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/13 21:51:18  cmbruns
+// Created outOfMemoryDialog
+// Made rendering of crosshair optional
+// Created 3 levels of DirectionGraticule detail
+// flushSomeImages() after full repaint
+// Catch buggy AccessControlException in stopBitmapThread()
+// Catch OutOfMemoryError in update() [still needs to do smarter stuff here though TODO]
+// Update viewLens after loading parameter files [may not be necessary, as parameter file loading should take care of this]
+// Don't do full repaint on resizing [TODO this is not very nice]
+// Replaced all generic exception catch statements with specific ones.
+// Improved support for mouse rotateZ action
+//
 // Revision 1.5  2005/03/11 00:03:17  cmbruns
 // Created distance scale bar
 // Added more tests to prevent crazy zoom changes
@@ -85,6 +97,7 @@ implements MouseListener, MouseMotionListener
     NightUpdateThread nightUpdateThread;
 	DrawBitmapThread drawBitmapThread;
 	String busyString = "";
+	InfoDialog outOfMemoryDialog;
 	
     int colorResolution = 30;
     // Colors of different transparency for labels
@@ -111,6 +124,7 @@ implements MouseListener, MouseMotionListener
 	boolean drawBearing = false;
 	boolean drawCoastLines = true;
 	boolean drawScaleBar = true;
+	boolean drawCrosshair = true;
 	
     int canvasWidth, canvasHeight;	
 	
@@ -122,7 +136,7 @@ implements MouseListener, MouseMotionListener
 	GeoObject lowResolution = new GeoObject(0.005, 0.005, 0.150, 0.150);
 	GeoObject highResolution = new GeoObject(0.150, 0.150, -1, -1);
 	
-	DirectionGraticule directionGraticule = new DirectionGraticule(2000, 15, genGlobe);
+	GeoCollection directionGraticule = new GeoCollection();
 
 	GeoCollection graticule = new GeoCollection();
 	
@@ -188,6 +202,21 @@ implements MouseListener, MouseMotionListener
 		addMouseListener(this);
 		addMouseMotionListener(this);
 
+		DirectionGraticule directionGraticule1 = new DirectionGraticule(2000, 15, genGlobe, genGlobe.getKmRadius()*Math.PI);
+		DirectionGraticule directionGraticule2 = new DirectionGraticule(500, 15, genGlobe, 5000);
+		DirectionGraticule directionGraticule3 = new DirectionGraticule(100, 15, genGlobe, 500);
+		directionGraticule1.setResolution(0.003, 0.003, 1.0, 1.0);
+		directionGraticule2.setResolution(0.100, 0.100, 4.0, 4.0);
+		directionGraticule3.setResolution(0.500, 0.500, 20.0, 20.0);
+		directionGraticule.addElement(directionGraticule1);
+		directionGraticule.addElement(directionGraticule2);
+		directionGraticule.addElement(directionGraticule3);
+		
+		outOfMemoryDialog = new InfoDialog(globeViewFrame, "GlobeView out of Memory Error!", true);
+		outOfMemoryDialog.okButton.setLabel("Bummer!");
+		outOfMemoryDialog.addLine("GlobeView ran out of memory!");
+		outOfMemoryDialog.finalizeDialog();
+		
 		createOffScreen(width, height);		
     }
 	
@@ -209,6 +238,7 @@ implements MouseListener, MouseMotionListener
 		if (!stopBitmapThread()) return; // Painting thread would not stop
 		fullUpdateNow = true;
 		repaint();
+		images.flushSomeImages(); // Try to reclaim some memory
 		// nightUpdateThread.interrupt();
     }
 	
@@ -343,9 +373,11 @@ implements MouseListener, MouseMotionListener
 		if (drawScaleBar) paintScaleBar(g, genGlobe, projection, viewLens);
 		
 		// Cross-hair at center
-		g.setColor(crosshairColor);
-		g.drawLine(genGlobe.centerX, genGlobe.centerY - 5, genGlobe.centerX, genGlobe.centerY + 5);
-		g.drawLine(genGlobe.centerX - 5, genGlobe.centerY, genGlobe.centerX + 5, genGlobe.centerY);
+		if (drawCrosshair) {
+			g.setColor(crosshairColor);
+			g.drawLine(genGlobe.centerX, genGlobe.centerY - 5, genGlobe.centerX, genGlobe.centerY + 5);
+			g.drawLine(genGlobe.centerX - 5, genGlobe.centerY, genGlobe.centerX + 5, genGlobe.centerY);
+		}
     }
 	
 	// Paint a scale bar in the lower right corner
@@ -453,7 +485,14 @@ implements MouseListener, MouseMotionListener
     void setNorthUp(boolean state) {
 		genGlobe.setNorthUp(state);
 		if ((globeViewFrame != null) && (globeViewFrame.northUpButton != null)) {
-			globeViewFrame.northUpButton.setState(state);
+			globeViewFrame.setNorthUp(state);
+		}
+    }
+	
+    void setCrosshair(boolean state) {
+		drawCrosshair = state;
+		if ((globeViewFrame != null) && (globeViewFrame.crosshairButton != null)) {
+			globeViewFrame.crosshairButton.setState(state);
 		}
     }
 	
@@ -555,8 +594,12 @@ implements MouseListener, MouseMotionListener
 
 	public boolean stopBitmapThread() {
 		if ((drawBitmapThread != null) && (drawBitmapThread.isAlive())) {
-			images.keepDrawing = false;
-			drawBitmapThread.interrupt();
+			images.keepDrawing = false; // set variable first, then interrupt
+
+			// Java bug causes exception to be thrown when thread is not running
+			try {drawBitmapThread.interrupt();}
+			catch (java.security.AccessControlException e) {}
+			
 			try {drawBitmapThread.join(2000); // Wait up to two seconds for it to die
 			} catch (InterruptedException e) {}
 		}
@@ -568,8 +611,20 @@ implements MouseListener, MouseMotionListener
     // (because we have redefined update() to not call paint())
     // It is also called to paint the initial image
     public void update(Graphics g) {
-		paint(g);
+		try {
+			paint(g);
+		}
+		catch (OutOfMemoryError e) {
+			respondToOutOfMemory(e);
+		}
     }
+	
+	void respondToOutOfMemory(OutOfMemoryError e) {
+		outOfMemoryDialog.show();
+		images.flushSomeImages();
+		throw e;
+		// TODO - take more drastic measures
+	}
 	
     public void paint(Graphics g) {
 		if (!stopBitmapThread()) return; // thread did not stop
@@ -578,6 +633,7 @@ implements MouseListener, MouseMotionListener
 		LensRegion viewLens = getViewLens();
 		if (fullUpdateNow) { // Check for new data to load
 			paramFiles.paint(g, genGlobe, projection, viewLens);
+			viewLens = getViewLens(); // update in case scale or center has changed
 			
 			// In case something new was loaded - instant feedback of foreground
 			paintForeground(g, viewLens);
@@ -642,10 +698,12 @@ implements MouseListener, MouseMotionListener
 		images.paint(onScreenGraphics, genGlobe, projection, viewLens);
 	}
 	
+	// TODO resizing is slow
     public void setBounds(Rectangle r) {
 		super.setBounds(r);
 		
 		stopBitmapThread();
+		fullUpdateNow = false;
 		
 		// Resize event is captured here
 		Dimension d = getSize();
@@ -662,6 +720,7 @@ implements MouseListener, MouseMotionListener
 		// Resize event is captured here
 
 		stopBitmapThread();
+		fullUpdateNow = false;
 		
 		Dimension d = getSize();
 		canvasWidth = d.width;
@@ -777,8 +836,12 @@ implements MouseListener, MouseMotionListener
 			MouseEvent argArray[] = {e};
 			try {
 				mouseAction.invoke(this, argArray);
-			} catch (Exception ex) {
-				System.out.println("1" + ex);
+			} 
+			catch (IllegalAccessException ex) {
+			 	System.out.println("1" + ex);
+			}
+			catch (InvocationTargetException ex) {
+			 	System.out.println("1" + ex);
 			}
 			if (stopBitmapThread()) fastRepaint();
 		}
@@ -881,7 +944,7 @@ implements MouseListener, MouseMotionListener
 		try {
 			whatTheMouseDoes = canvasClass.getMethod(actionName, 
 													 mouseMethodArgs);
-		} catch (Exception ex) {
+		} catch (NoSuchMethodException ex) {
 			System.out.println("2" + ex);
 		}
     }
@@ -892,6 +955,7 @@ implements MouseListener, MouseMotionListener
 												   false)).getClass()};
 		Method rotateXY;
 		Method zoom;	
+		Method rotateZ;
 		try {
 			whatTheMouseDoes = canvasClass.getMethod(actionName, 
 													 mouseMethodArgs);
@@ -900,11 +964,16 @@ implements MouseListener, MouseMotionListener
 			
 			rotateXY = canvasClass.getMethod("mouseRotateXY", mouseMethodArgs);
 			zoom = canvasClass.getMethod("mouseZoom", mouseMethodArgs);
+			rotateXY = canvasClass.getMethod("mouseRotateZ", mouseMethodArgs);
+
 			if (actionName == "mouseZoom")
 				whatTheModifiedMouseDoes = rotateXY;
 			if (actionName == "mouseRotateXY")
 				whatTheModifiedMouseDoes = zoom;
-		} catch (Exception ex) {
+			if (actionName == "mouseRotateZ")
+				whatTheModifiedMouseDoes = rotateXY;
+
+		} catch (NoSuchMethodException ex) {
 			System.out.println("2" + ex);
 		}
     }
