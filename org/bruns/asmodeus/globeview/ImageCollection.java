@@ -8,6 +8,9 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.4  2005/03/14 04:24:14  cmbruns
+//  Removed Vector.addAll() call and replaced it with explicit code, to make it Java 1.1 compliant for Netscape 4.7
+//
 //  Revision 1.3  2005/03/13 22:06:03  cmbruns
 //  Changes to keep track of which images are most recently used, and to delete the stalest ones.
 //  Changes to blur the pixel boundaries at hyper zoomed zoom levels.
@@ -106,9 +109,12 @@ public class ImageCollection extends GeoCollection {
 		lessVector = quickSortImages(lessVector);
 		greaterVector = quickSortImages(greaterVector);
 		
-		// Combine into one vector
-		lessVector.addAll(equalVector);
-		lessVector.addAll(greaterVector);
+		// Combine into one vector [.addAll() is Java 1.2]
+		for (int i = 0; i < equalVector.size(); i++)
+			lessVector.addElement(equalVector.elementAt(i));
+		for (int i = 0; i < greaterVector.size(); i++)
+			lessVector.addElement(greaterVector.elementAt(i));
+
 		return lessVector;
 	}
 	
