@@ -2,6 +2,10 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/11 00:14:43  cmbruns
+// Removed some unused code and structures in preparation for more careful image loading
+// Changed calling signature of readMap to have longitude precede latitude
+//
 // Revision 1.4  2005/03/05 00:14:05  cmbruns
 // Made MapBlitter a derived class of GeoObject
 // Many changes to permit varied latitude/longitude ranges in MapBlitters
@@ -26,25 +30,19 @@ import org.bruns.asmodeus.globeview.*;
 public class MapBlitter extends GeoObject
 {
 	GeoCanvas canvas;
-    Image rawImage;
     int width;
     int height;
-    Color colorArray[][];
     int pixelArray[];
-
-    // Efficiency variables to minimize computations in getColor
-    int xPixelIndex[]; // 
-    double yPixelIndex[];
+	URL imageURL; // Use to reconstruct after memory flushes?
 
     double dX; // coordinate of long 0
     double dY; // coordinate of lat 0
-    double kX;
-    double kY;
-    double yScale;
+    double kX; // radians per pixel north/south
+    double kY; // radians per pixel east/west
 	double minLat, maxLat, minLon, maxLon;
 
     MapBlitter(String imageFileName, GeoCanvas geoCanvas, 
-		double minLati, double maxLati, double minLong, double maxLong) {
+		double minLong, double maxLong, double minLati, double maxLati) {
 
 		minLat = minLati;
 		maxLat = maxLati;
@@ -53,6 +51,7 @@ public class MapBlitter extends GeoObject
 
 		setResolution(0.001, 0.001, 100.0, 100.0); // TODO for testing
 		canvas = geoCanvas;
+		Image rawImage;
 		try {
 			rawImage = Toolkit.getDefaultToolkit().getImage(imageFileName);
 		} catch (Exception ex) {
@@ -60,29 +59,37 @@ public class MapBlitter extends GeoObject
 			pixelArray = null;
 			return;
 		}
+		width = rawImage.getWidth(null);
+		height = rawImage.getHeight(null);
+		
 		setLonLatRange(minLon, maxLon, minLat, maxLat);
 		processImage(rawImage, canvas);
     }
 	
-    MapBlitter(URL imageURL, 
+    MapBlitter(URL url, 
 			   GeoCanvas geoCanvas,
-			   double minLati, double maxLati, double minLong, double maxLong) {
+			   double minLong, double maxLong, double minLati, double maxLati) {
 		
 		minLat = minLati;
 		maxLat = maxLati;
 		minLon = minLong;
 		maxLon = maxLong;
+		imageURL = url;
 
-		setResolution(0.001, 0.001, 100.0, 100.0); // TODO for testing
+		// setResolution(0.001, 0.001, 100.0, 100.0); // TODO for testing
 		canvas = geoCanvas;
+		Image rawImage;
 		try {
-			rawImage = Toolkit.getDefaultToolkit().getImage(imageURL);
+			rawImage = Toolkit.getDefaultToolkit().getImage(url);
 		} catch (Exception ex) {
 			System.err.println(ex);
 			rawImage = null;
 			pixelArray = null;
 			return;
 		}
+		width = rawImage.getWidth(null);
+		height = rawImage.getHeight(null);
+		
 		setLonLatRange(minLon, maxLon, minLat, maxLat);
 		processImage(rawImage, canvas);
     }
@@ -119,15 +126,6 @@ public class MapBlitter extends GeoObject
 		// dY = height/2; // -minLat * kY;
 		dX = -minLon * kX;
 		dY = maxLat * kY;
-
-		yScale = 4 * height;
-		yPixelIndex = new double[(int)(2 * yScale)];
-		int i;
-		for (i = 0; i < 2 * yScale; ++i) {
-			// index of color at yScale*y() + yScale
-			yPixelIndex[i] = ((height - 1) / 2.0) * 
-			Math.asin((i - yScale)/yScale) * 2.0 / (maxLat - minLat);
-		}
     }
 
     Color getColor(Vector3D v, double resolution) {
@@ -138,58 +136,52 @@ public class MapBlitter extends GeoObject
 
     int getPixel(Vector3D v, double resolution) {
 		if (pixelArray == null) return 0;
-		try {
-			int x, y;
-			
-			double lambda = Math.atan2(v.x(), v.z());
-			if (lambda < minLon) return 0;
-			if (lambda > maxLon) return 0;
 
-			double fx = dX + lambda * kX;
-			// if (fx < 0) fx -= 0.5; // So integer truncation is as accurate as possible
-			// else fx += 0.5;
-			x = (int) (fx);
+		int x, y;
 			
-			double phi = Math.asin(v.y());
-			if (phi < minLat) return 0;
-			if (phi > maxLat) return 0;
+		double lambda = Math.atan2(v.x(), v.z());
+		if (lambda < minLon) return 0;
+		if (lambda > maxLon) return 0;
 
-			double fy = dY - phi * kY;
-			// if (fy < 0) fy -= 0.5; // So integer truncation is as accurate as possible
-			// else fy += 0.5;
-			y = (int) (fy);
-			
-			if (x < 0) return 0;
-			if (x >= width) return 0;
-			if (y < 0) return 0;
-			if (y >= height) return 0;
-			
-			int intColor = pixelArray[x + y * width];
-			
-			return intColor;
-			
-		} catch (Exception e) {
-			return 0;
-		}
+		double fx = dX + lambda * kX;
+		x = (int) (fx);
+		
+		double phi = Math.asin(v.y());
+		if (phi < minLat) return 0;
+		if (phi > maxLat) return 0;
+
+		double fy = dY - phi * kY;
+		// if (fy < 0) fy -= 0.5; // So integer truncation is as accurate as possible
+		// else fy += 0.5;
+		y = (int) (fy);
+		
+		if (x < 0) return 0;
+		if (x >= width) return 0;
+		if (y < 0) return 0;
+		if (y >= height) return 0;
+		
+		int intColor = pixelArray[x + y * width];
+		
+		return intColor;
     }
 	
-	static MapBlitter readMap(URL mapURL, GeoCanvas geoCanvas) {
+	static MapBlitter readMap(URL url, GeoCanvas geoCanvas) {
 		double d2r = Math.PI / 180.0;
 		// Default is entire planet surface
-		return readMap(mapURL, geoCanvas, 
-					   -90.0*d2r, 90.0*d2r, -180.0*d2r, 180.0*d2r);
+		return readMap(url, geoCanvas, 
+					   -180.0*d2r, 180.0*d2r, -90.0*d2r, 90.0*d2r);
 	}
 	
-	static MapBlitter readMap(URL mapURL, GeoCanvas geoCanvas,
-							  double minLat, double maxLat, double minLon, double maxLon) {
+	static MapBlitter readMap(URL url, GeoCanvas geoCanvas,
+							  double minLon, double maxLon, double minLat, double maxLat) {
 		MapBlitter mapBlitter = null;
 		try {
 			// mapURL = new URL("file:/home/bruns/public_html/pacbell/images/bs_0.3deg.jpg");
-			mapBlitter = new MapBlitter(mapURL, geoCanvas,
-										minLat, maxLat, minLon, maxLon);
+			mapBlitter = new MapBlitter(url, geoCanvas,
+										minLon, maxLon, minLat, maxLat);
 		} catch (Exception exception) {
 			System.out.println(exception);
-			System.out.println("Could not find image " + mapURL);
+			System.out.println("Could not find image " + url);
 		}
 		return mapBlitter;
 	}
