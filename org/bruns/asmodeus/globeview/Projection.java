@@ -2,6 +2,13 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/05 00:19:28  cmbruns
+// Added getName() function to each projection, but didn't really use it yet.
+//
+// Added static getByName() function to Projection class
+//
+// use getMinimumZ() routine in checking clipping
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -25,6 +32,8 @@ abstract class Projection {
     abstract int getBackgroundType(); // Circle? InfinitePlane? Vertical Stripe? Sinusoid? Rectangle?
     abstract double getBackgroundParameter();
 	abstract double getMinimumZ(); // Least z coordinate that might be drawn
+	
+	abstract String getName();
 
 	// Shapes that the whole map can have in different projections
     static int BKGD_CIRCLE    = 1; // orthographic, azimuthals, perspective
@@ -42,22 +51,52 @@ abstract class Projection {
     static PerspectiveProjection          PERSPECTIVE          = new PerspectiveProjection();
     static SinusoidalProjection           SINUSOIDAL           = new SinusoidalProjection();
     static StereographicProjection        STEREOGRAPHIC        = new StereographicProjection();
+
+	static Projection getByName(String projectionName) {
+		String lowerName = projectionName.toLowerCase();
+
+		if (lowerName.equals("azimuthal equal area")) return AZIMUTHALEQUALAREA;
+		if (lowerName.equals("azimuthal_equal_area")) return AZIMUTHALEQUALAREA;
+		if (lowerName.equals("azimuthalequalarea")) return AZIMUTHALEQUALAREA;
+
+		if (lowerName.equals("azimuthal equidistant")) return AZIMUTHALEQUIDISTANT;		
+		if (lowerName.equals("azimuthal_equidistant")) return AZIMUTHALEQUIDISTANT;		
+		if (lowerName.equals("azimuthalequidistant")) return AZIMUTHALEQUIDISTANT;		
+
+		if (lowerName.equals("equirectangular")) return EQUIRECTANGULAR;
+		if (lowerName.equals("plate caree")) return EQUIRECTANGULAR;
+		if (lowerName.equals("plate_caree")) return EQUIRECTANGULAR;
+		if (lowerName.equals("platecaree")) return EQUIRECTANGULAR;
+
+		if (lowerName.equals("gnomonic")) return GNOMONIC;
+
+		if (lowerName.equals("mercator")) return MERCATOR;
+
+		if (lowerName.equals("perspective")) return PERSPECTIVE;
+		
+		if (lowerName.equals("sinusoidal")) return SINUSOIDAL;
+
+		if (lowerName.equals("stereographic")) return STEREOGRAPHIC;
+		
+		return null; // if all else fails
+	}
 }
     
-
-    // **************************** //
-    // *** Azimuthal Equal Area *** //
-    // **************************** //
-    class AzimuthalEqualAreaProjection extends Projection {
+// **************************** //
+// *** Azimuthal Equal Area *** //
+// **************************** //
+class AzimuthalEqualAreaProjection extends Projection {
 	double z;
 
+	String getName() {return "Azimuthal Equal Area";}
+	
 	double getMinimumZ() { // Least z coordinate that might be drawn
 		return -0.99;
 	}
 	
 	Vector2D vec3DTo2D(double x, double y, double z, Vector2D v) {
 	    // Clipping - stay away from the edges
-	    if (z < -0.99) return null;
+	    if (z < getMinimumZ()) return null;
 
 	    double denominator = Math.sqrt((1.0 + z) / 2.0);
 
@@ -99,13 +138,15 @@ abstract class Projection {
     class AzimuthalEquidistantProjection extends Projection {
 	double z;
 
+	String getName() {return "Azimuthal Equidistant";}
+	
 	double getMinimumZ() { // Least z coordinate that might be drawn
 		return -0.99;
 	}
 	
 	Vector2D vec3DTo2D(double x, double y, double z, Vector2D v) {
 	    // Clipping - stay away from the edges
-	    if (z < -0.99) return null;
+	    if (z < getMinimumZ()) return null;
 
 	    double denominator = 1.0;
 	    double rho = Math.acos(z);
@@ -149,11 +190,16 @@ abstract class Projection {
     class EquirectangularProjection extends Projection {
 	Vector2D corner = new Vector2D(0,0);
 
+	String getName() {return "Equirectangular";}
+
 	double getMinimumZ() { // Least z coordinate that might be drawn
 		return -0.99;
 	}
 	
 	Vector2D vec3DTo2D(double x, double y, double z, Vector2D v) {
+	    // Clipping - stay away from the edges
+	    if (z < getMinimumZ()) return null;
+
 	    // Don't cross the "seam" in the back of the planet
 	    int parity = 0;
 	    if (z < 0) {
@@ -176,10 +222,10 @@ abstract class Projection {
 	    if ((Math.PI/2.0) < y) return null;
 	    if (-(Math.PI/2.0) > y) return null;
 
-	    double latcoeff = Math.cos(y);
-
 	    if (Math.PI < x) return null;
 	    if (-Math.PI > x) return null;
+		
+	    double latcoeff = Math.cos(y);
 
 	    double x3 = Math.sin(x) * latcoeff;
 	    double y3 = Math.sin(y);
@@ -206,13 +252,15 @@ abstract class Projection {
     // **************** //
     class GnomonicProjection extends Projection {
 
+	String getName() {return "Gnomonic";}
+	
 	double getMinimumZ() { // Least z coordinate that might be drawn
-		return 0.0;
+		return 0.001;
 	}
 	
 	Vector2D vec3DTo2D(double x, double y, double z, Vector2D v) {
 	    // Clipping
-	    if (z <= 0) return null;
+	    if (z <= getMinimumZ()) return null;
 
 	    v.element[0] = x/z;
 	    v.element[1] = y/z;
@@ -241,11 +289,16 @@ abstract class Projection {
     // **************** //
     class MercatorProjection extends Projection {
 
+		String getName() {return "Mercator";}
+	
 	double getMinimumZ() { // Least z coordinate that might be drawn
 		return -0.99;
 	}
 	
 	Vector2D vec3DTo2D(double x, double y, double z, Vector2D v) {
+	    // Clipping
+	    if (z <= getMinimumZ()) return null;
+
 	    // Don't cross the "seam" in the back of the planet
 	    int parity = 0;
 	    if (z < 0) {
@@ -296,13 +349,15 @@ abstract class Projection {
     class OrthographicProjection extends Projection {
 	double z;
 
+		String getName() {return "Orthographic";}
+	
 	double getMinimumZ() { // Least z coordinate that might be drawn
-		return 0.0;
+		return 0.000;
 	}
 	
 	Vector2D vec3DTo2D(double x, double y, double z, Vector2D v) {
 	    // Clipping
-	    if (z < 0) return null;
+	    if (z < getMinimumZ()) return null;
 
 	    v.element[0] = x;
 	    v.element[1] = y;
@@ -343,6 +398,8 @@ abstract class Projection {
 	double screenRadius = 1; // Radius of image of projected globe
 	double zclip = 0; // Don't draw any points below here
 
+	String getName() {return "Perspective";}
+	
 	double getMinimumZ() { // Least z coordinate that might be drawn
 		checkRadius();
 		return zclip;
@@ -351,8 +408,7 @@ abstract class Projection {
 	Vector2D vec3DTo2D(double x, double y, double z, Vector2D v) {
 	    // Clipping
 	    if (z < 0) return null;
-	    checkRadius();
-	    if (z < zclip) return null;
+	    if (z < getMinimumZ()) return null;
 
 	    double vd = viewerDistance;
 	    double foreshortening = vd / (vd + 1.0 - z);
@@ -415,11 +471,16 @@ abstract class Projection {
     class SinusoidalProjection extends Projection {
 	Vector2D corner = new Vector2D(0,0);
 
+	String getName() {return "Sinusoidal";}
+	
 	double getMinimumZ() { // Least z coordinate that might be drawn
 		return -0.99;
 	}
 	
 	Vector2D vec3DTo2D(double x, double y, double z, Vector2D v) {
+	    // Clipping
+	    if (z < getMinimumZ()) return null;
+
 	    // Don't cross the "seam" in the back of the planet
 	    int parity = 0;
 	    if (z < 0) {
@@ -473,13 +534,15 @@ abstract class Projection {
     class StereographicProjection extends Projection {
 	double z;
 
+	String getName() {return "Stereographic";}
+	
 	double getMinimumZ() { // Least z coordinate that might be drawn
 		return -0.99;
 	}
 	
 	Vector2D vec3DTo2D(double x, double y, double z, Vector2D v) {
 	    // Clipping - stay away from the edges
-	    if (z < -0.99) return null;
+	    if (z < getMinimumZ()) return null;
 
 	    double denominator = (1.0 + z) / 2.0;
 
