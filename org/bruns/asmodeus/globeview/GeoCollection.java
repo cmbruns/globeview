@@ -3,13 +3,16 @@
 //  globeview
 //
 //  Created by Christopher Bruns on 2/21/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Copyright 2005 Christopher Bruns. All rights reserved.
 //
 //  A collection of smaller GeoObjects
 //
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/14 05:06:57  cmbruns
+// Changed autocreated copyright text from __MyCompanyName__ to Christopher Bruns
+//
 // Revision 1.5  2005/03/11 00:03:58  cmbruns
 // added elementCount() method
 //

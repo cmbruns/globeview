@@ -3,12 +3,15 @@
 //  globeview
 //
 //  Created by Christopher Bruns on 2/21/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Copyright 2005 Christopher Bruns. All rights reserved.
 //
 //
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/14 05:06:57  cmbruns
+// Changed autocreated copyright text from __MyCompanyName__ to Christopher Bruns
+//
 // Revision 1.4  2005/03/13 21:55:36  cmbruns
 // Populate boundingLens from that of parent parameter file.
 // Modified to dynamically load when needed, as is done for images.

@@ -3,11 +3,14 @@
 //  globeview
 //
 //  Created by Christopher Bruns on 3/4/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Copyright 2005 Christopher Bruns. All rights reserved.
 //
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.3  2005/03/14 05:06:57  cmbruns
+//  Changed autocreated copyright text from __MyCompanyName__ to Christopher Bruns
+//
 //  Revision 1.2  2005/03/13 22:03:31  cmbruns
 //  Added suggestion to find your home town.
 //  Wrapped call to Java 1.4 setUndecorated() method in catch NoSuchMethodException

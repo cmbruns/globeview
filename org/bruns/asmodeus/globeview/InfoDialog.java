@@ -3,13 +3,16 @@
 //  globeview
 //
 //  Created by Christopher Bruns on 3/6/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Copyright 2005 Christopher Bruns. All rights reserved.
 //
 //  InfoDialog - Parent class for help, about, and splash dialogs
 // 
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.3  2005/03/14 05:06:58  cmbruns
+//  Changed autocreated copyright text from __MyCompanyName__ to Christopher Bruns
+//
 //  Revision 1.2  2005/03/13 21:38:15  cmbruns
 //  Wrapped java 1.4 method setUndecorated to catch NoSuchMethodException
 //

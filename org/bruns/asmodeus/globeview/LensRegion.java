@@ -3,12 +3,15 @@
 //  globeview
 //
 //  Created by Christopher Bruns on 2/22/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Copyright 2005 Christopher Bruns. All rights reserved.
 //
 //
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/14 05:06:57  cmbruns
+// Changed autocreated copyright text from __MyCompanyName__ to Christopher Bruns
+//
 // Revision 1.5  2005/03/13 22:07:43  cmbruns
 // added changeValuesOf() method so that new parameter files can change the parent canvas's viewLens.
 //

@@ -3,12 +3,15 @@
 //  globeview
 //
 //  Created by Christopher Bruns on 12/23/04.
-//  Copyright 2004 __MyCompanyName__. All rights reserved.
+//  Copyright 2004 Christopher Bruns. All rights reserved.
 //
 //
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/14 05:06:57  cmbruns
+// Changed autocreated copyright text from __MyCompanyName__ to Christopher Bruns
+//
 // Revision 1.5  2005/03/13 21:52:42  cmbruns
 // Added alternate drawLine method for observing the direction of coast lines (for debugging data)
 //

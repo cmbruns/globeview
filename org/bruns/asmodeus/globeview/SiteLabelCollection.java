@@ -3,12 +3,15 @@
 //  globeview
 //
 //  Created by Christopher Bruns on 2/21/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Copyright 2005 Christopher Bruns. All rights reserved.
 //
 //
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/14 05:06:58  cmbruns
+// Changed autocreated copyright text from __MyCompanyName__ to Christopher Bruns
+//
 // Revision 1.5  2005/03/14 04:26:47  cmbruns
 // Catch IllegalArgumentException and let Java 1.1 screw up the UTF-8 city labels
 //

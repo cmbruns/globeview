@@ -3,13 +3,16 @@
 //  globeview
 //
 //  Created by Christopher Bruns on 1/8/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Copyright 2005 Christopher Bruns. All rights reserved.
 //
 // Dialog window when user selects "About Globeview"
 // 
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.8  2005/03/14 05:06:57  cmbruns
+// Changed autocreated copyright text from __MyCompanyName__ to Christopher Bruns
+//
 // Revision 1.7  2005/03/14 04:17:13  cmbruns
 // Upped version to 1.1.2
 //
