@@ -8,6 +8,9 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.2  2005/03/13 21:41:44  cmbruns
+//  run() method now catches OutOfMemoryError
+//
 //  Revision 1.1  2005/03/04 23:55:52  cmbruns
 //  Created DrawBitmapThread object to draw slow satellite and day/night updates.  This way the draw can be interrupted by the main thread when the user gets bored/frustrated/confused.
 //
@@ -38,18 +41,24 @@ extends Thread
     public void run() {
 		if (!canvas.images.keepDrawing) return;
 		
-		canvas.setWait("BUSY: DRAWING IMAGE..."); // Could be slow
-		canvas.paintBitmap(canvas.offScreenGraphics, graphics, canvas.genGlobe, canvas.projection, viewLens);
-		if (!canvas.images.keepDrawing) {
+		try {
+			canvas.setWait("BUSY: DRAWING IMAGE..."); // Could be slow
+			canvas.paintBitmap(canvas.offScreenGraphics, graphics, canvas.genGlobe, canvas.projection, viewLens);
+			if (!canvas.images.keepDrawing) {
+				canvas.unsetWait();
+				return;
+			}
+
+			canvas.fullUpdateNow = false;
+			canvas.offScreenSource.newPixels();
+			canvas.offScreenGraphics.drawImage(canvas.memOffScreenImage, 0, 0, null);		
+			canvas.paintForeground(canvas.offScreenGraphics, viewLens);
+			graphics.drawImage(canvas.offScreenImage, 0, 0, canvas);
 			canvas.unsetWait();
+		}
+		catch (OutOfMemoryError e) {
+			canvas.respondToOutOfMemory(e);
 			return;
 		}
-
-		canvas.fullUpdateNow = false;
-		canvas.offScreenSource.newPixels();
-		canvas.offScreenGraphics.drawImage(canvas.memOffScreenImage, 0, 0, null);		
-		canvas.paintForeground(canvas.offScreenGraphics, viewLens);
-		graphics.drawImage(canvas.offScreenImage, 0, 0, canvas);
-		canvas.unsetWait();
-    }
+	}
 }
