@@ -13,6 +13,9 @@ import java.text.*;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/02 01:48:23  cmbruns
+// Changed data type of borders and labels to GeoCollection, to make it easier for the new ParameterFiles to add to them.
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -63,6 +66,7 @@ implements MouseListener, MouseMotionListener
     // Color equatorColor = new Color(220, 70, 70);
     Color backgroundColor = Color.black;
 	Color borderColor = new Color(120,180,50);
+	int backgroundColorInt = 0xFF000000;
 	
     // Define what kinds of objects will be drawn
     boolean fullUpdateNow = true; // Want to draw satellite image on startup
@@ -87,7 +91,8 @@ implements MouseListener, MouseMotionListener
 	LatitudeGraticule latitudeGraticule1 = new LatitudeGraticule(Math.PI/6, lowResolution);
 	LatitudeGraticule latitudeGraticule2 = new LatitudeGraticule(Math.PI/18, highResolution);
 	
-    Vector siteLabels; // All the city labels we are using
+    // Vector siteLabels; // All the city labels we are using
+	GeoCollection siteLabels = new GeoCollection();
 	SiteLabelCollection newSiteLabels;
 	
     // For Sinusoidal Projection outline shape
@@ -98,7 +103,8 @@ implements MouseListener, MouseMotionListener
     Projection projection = Projection.ORTHOGRAPHIC;
 	
     MapBlitter mapBlitter;
-	GeoPathCollection borders;
+	GeoCollection borders = new GeoCollection();
+	// GeoPathCollection borders;
 	
     Method whatTheMouseDoes;
     Method whatTheModifiedMouseDoes;
@@ -142,8 +148,16 @@ implements MouseListener, MouseMotionListener
 		
 		mapBlitter = MapBlitter.readMap(mapURL, this);
 		// Build some city labels		
-		newSiteLabels = new SiteLabelCollection(siteURL);
-		borders = new GeoPathCollection(borderURL, lowResolution, borderColor);
+		if (siteURL != null) {
+			newSiteLabels = new SiteLabelCollection(siteURL);
+			siteLabels.addElement(newSiteLabels);
+		}
+
+		if (borderURL != null) {
+			GeoPathCollection deprecatedBorders = 
+			new GeoPathCollection(borderURL, lowResolution, borderColor);
+			if (deprecatedBorders != null) borders.addElement(deprecatedBorders);
+		}
 		
 		createOffScreen(width, height);
 		
@@ -346,7 +360,7 @@ implements MouseListener, MouseMotionListener
 		
 		// Draw city labels
 		if (drawLabels) {
-			newSiteLabels.paint(g, genGlobe, projection, viewLens);
+			siteLabels.paint(g, genGlobe, projection, viewLens);
 		}
 		if (countBenchMark) foreLabelTime += timeIncrement();
 		
@@ -580,8 +594,8 @@ implements MouseListener, MouseMotionListener
 			cx = (x - genGlobe.centerX) * rInv;
 			for (y = 0; y < yMax; ++y) {
 				mapIndex = x + y * width;
-				pixel = 0;
-				offScreenPixels[mapIndex] = pixel;
+
+				offScreenPixels[mapIndex] = 0xFF000000; // set to black?
 				
 				cy = (genGlobe.centerY - y) * rInv;
 				
@@ -591,8 +605,10 @@ implements MouseListener, MouseMotionListener
 				// Oblique transform (centers globe on point of interest)
 				v1 = genGlobe.unrotate(v1);
 				
-				if ((mapBlitter != null) && (mapBlitter.rawImage != null) && drawSatelliteImage) pixel = mapBlitter.getPixel(v1, 0);
-				else pixel = oceanColorInt; // Blue
+				pixel = 0;
+				if ((mapBlitter != null) && (mapBlitter.rawImage != null) && drawSatelliteImage) 
+					pixel = mapBlitter.getPixel(v1, 0);
+				if (pixel == 0) pixel = oceanColorInt;
 				
 				// Check for day/night
 				if (dayNight) {
