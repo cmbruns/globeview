@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/13 22:02:20  cmbruns
+// Replaced generic exception catches with specific ones.
+//
 // Revision 1.5  2005/03/11 00:08:22  cmbruns
 // New splash dialog appears when globeview is started
 //
@@ -80,7 +83,7 @@ public class GlobeViewFrameApplet extends Applet
 			}
 		}
 		
-		try {
+		// try {
 			frame = new GlobeView(parameterURL);
 
 		    // Check for projection option
@@ -112,13 +115,13 @@ public class GlobeViewFrameApplet extends Applet
 				if ((frame != null) && (frame.canvas != null) && (frame.canvas.projection != null))
 					frame.setProjection(frame.canvas.projection);
 			//
-		} catch (Exception exception) {
-		    System.out.println(e);
-		    setCursor(defaultCursor);
-		    button.setCursor(defaultCursor);
-		    button.setLabel("Globeview failed");
-		    System.exit(1);
-		}
+		// } catch (Exception exception) {
+		//     System.out.println(e);
+		//     setCursor(defaultCursor);
+		//     button.setCursor(defaultCursor);
+		//    button.setLabel("Globeview failed");
+		//     System.exit(1);
+		// }
 
 		// Re-activate the button
 		button.addActionListener(this);
@@ -172,9 +175,11 @@ public class GlobeViewFrameApplet extends Applet
             // Find the field and value of colorName
             Field field = Class.forName("java.awt.Color").getField(colorName);
             return (Color)field.get(null);
-        } catch (Exception e) {
-            return null;
-        }
+        } 
+		catch (java.lang.NoSuchFieldException e) {return null;}
+		catch (java.lang.ClassNotFoundException e) {return null;}
+		catch (java.lang.IllegalAccessException e) {return null;}
+		catch (java.lang.NullPointerException e) {return null;}
     }
 
 
