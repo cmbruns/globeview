@@ -10,6 +10,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/04 23:54:30  cmbruns
+// Added acknowledgements for image and coast data
+//
 // Revision 1.3  2005/03/01 02:06:03  cmbruns
 // minor comment change
 //
@@ -48,10 +51,21 @@ public class AboutDialog extends Dialog {
 		// Create message to display
 		Panel textPanel = new Panel();
 		textPanel.setLayout(new GridLayout(0,1,0,0)); // single column
-		textPanel.add(new Label("Globevew version 1.01 by Chris Bruns"));
+		textPanel.add(new Label("Globevew version 1.10 by Chris Bruns"));
 		textPanel.add(new Label("Copyright 2001-2005 all rights reserved"));
 		textPanel.add(new Label("http://bruns.homeip.net/~bruns/globeview.html"));
 		textPanel.add(new Label("cmbruns@comcast.net"));
+		textPanel.add(new Label(" "));		
+		textPanel.add(new Label("Satellite images from NASA courtesy of:"));		
+		textPanel.add(new Label("  Reto Stoeckli, NASA Earth Observatory"));
+		textPanel.add(new Label("  rstockli@climate.gsfc.nasa.gov"));
+		textPanel.add(new Label("  http://earthobservatory.nasa.gov/Newsroom/BlueMarble/"));
+		textPanel.add(new Label(" "));		
+		textPanel.add(new Label("Coast line data courtesy of:"));		
+		textPanel.add(new Label("  United States Central Intelligence Agency (CIA)"));
+		textPanel.add(new Label("  World Databank II"));
+		
+		// TODO - find a way to print out build time
 		// SimpleDateFormat dateFormat = new SimpleDateFormat();
 		// String dateString = dateFormat.format(new Date());
 		// textPanel.add(new Label("Build: " + dateString));
