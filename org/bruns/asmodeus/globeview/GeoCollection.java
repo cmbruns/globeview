@@ -10,6 +10,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/11 00:03:58  cmbruns
+// added elementCount() method
+//
 // Revision 1.4  2005/03/04 23:58:15  cmbruns
 // made overlap comparison to be more generic, using both LensRegions and BoundingBoxes
 //
@@ -34,6 +37,10 @@ public class GeoCollection extends GeoObject {
 		subObject = new Vector();
 	}
 
+	int elementCount() {
+		return subObject.size();
+	}
+	
 	void addElement(GeoObject geoObject) {
 		subObject.addElement(geoObject);
 		if (subObject.size() == 1) setResolution(geoObject);
