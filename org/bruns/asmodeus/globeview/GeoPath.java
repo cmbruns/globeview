@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/13 21:52:42  cmbruns
+// Added alternate drawLine method for observing the direction of coast lines (for debugging data)
+//
 // Revision 1.4  2005/03/04 23:59:22  cmbruns
 // made overlap comparison to be more generic, using both LensRegions and BoundingBoxes
 //
@@ -137,6 +140,8 @@ public class GeoPath extends GeoObject
 				}
 				else {
 					g.drawLine(lsx, lsy, nsx, nsy);
+					//  debug coast directions
+					// drawDirectionalLine(g,lsx,lsy,nsx,nsy);
 				}
 				continueLine = true;
 			}
@@ -146,5 +151,22 @@ public class GeoPath extends GeoObject
 			lastScreen = lastScreenTemp.copy(newScreen); // Copy to keep lean number of objects OK
 		}
 		continueLine = false;
+	}
+
+	// For examining direction of lines - green->yellow->red
+	Color green = new Color(0,255,0);
+	Color yellow = new Color(255,255,0);
+	Color red = new Color(255,0,0);
+	void drawDirectionalLine(Graphics g, int x1, int y1, int x2, int y2) {
+		int xa = (int)(x1 + (x2-x1)*0.33);
+		int ya = (int)(y1 + (y2-y1)*0.33);
+		int xb = (int)(x1 + (x2-x1)*0.67);
+		int yb = (int)(y1 + (y2-y1)*0.67);
+		g.setColor(green);
+		g.drawLine(x1,y1,xa,ya);
+		g.setColor(yellow);
+		g.drawLine(xa,ya,xb,yb);
+		g.setColor(red);
+		g.drawLine(xb,yb,x2,y2);
 	}
 }
