@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/13 22:07:43  cmbruns
+// added changeValuesOf() method so that new parameter files can change the parent canvas's viewLens.
+//
 // Revision 1.4  2005/03/11 00:12:21  cmbruns
 // fixed several bugs in LensRegion methods
 //
@@ -66,6 +69,12 @@ public class LensRegion {
 		setAngleRadius(Math.acos(planeCenterPoint.dot(direction)));
 	}
 
+	// Same object, different values
+	void changeValues(LensRegion l2) {
+		setUnitVector(l2.getUnitVector());
+		setAngleRadius(l2.getAngleRadius());
+	}
+	
 	void setUnitVector(Vector3D v) {
 		unitVector = v;
 	}
@@ -133,7 +142,7 @@ public class LensRegion {
 			double newAngleRadius = (a1 + a2 + a3) / 2.0;
 
 			Matrix3D rotMat = new Matrix3D();
-			Vector3D axis = v1.cross(v2).unit(); // TODO Is this backwards?
+			Vector3D axis = v1.cross(v2).unit(); // Is this backwards? (I don't think so)
 			double shiftAngle = (a1 - a2 + a3) / 2.0;
 			rotMat.setAxisAngle(axis, shiftAngle);
 			Vector3D newUnitVector = rotMat.mult(v2).unit();
