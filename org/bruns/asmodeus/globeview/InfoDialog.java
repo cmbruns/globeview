@@ -10,6 +10,9 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.2  2005/03/13 21:38:15  cmbruns
+//  Wrapped java 1.4 method setUndecorated to catch NoSuchMethodException
+//
 //  Revision 1.1  2005/03/10 23:58:30  cmbruns
 //  Parent class for splash, help, and about dialogs
 //
@@ -30,7 +33,9 @@ public class InfoDialog extends Dialog {
 	InfoDialog(Frame frame, String title, boolean isModal) {
 		super(frame, title, isModal); // modal dialog
 
-		setUndecorated(true); // no close button
+		try {setUndecorated(true);} // no close button, Java 1.4 only
+		catch (java.lang.NoSuchMethodError e) {}
+
 		setBackground(new Color(255, 255, 200));
 		
 		//Create OK button
