@@ -5,6 +5,15 @@
 //  Created by Christopher Bruns on 2/21/05.
 //  Copyright 2005 __MyCompanyName__. All rights reserved.
 //
+//
+// $Id$
+// $Header$
+// $Log$
+// Revision 1.2  2005/03/01 02:13:13  cmbruns
+// added cvs headers
+//
+//
+
 package org.bruns.asmodeus.globeview;
 
 import java.awt.*;

@@ -5,6 +5,14 @@
 //  Created by Christopher Bruns on 2/22/05.
 //  Copyright 2005 __MyCompanyName__. All rights reserved.
 //
+//
+// $Id$
+// $Header$
+// $Log$
+// Revision 1.2  2005/03/01 02:13:14  cmbruns
+// added cvs headers
+//
+//
 // Lens-shaped region of the planet formed by cutting the sphere with a plane.
 // This shape is extended to include a round-based cone with apex at the center of the planet.
 // Intended to be used to compare whether particular elements need to be drawn.

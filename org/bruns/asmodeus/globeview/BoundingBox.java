@@ -3,11 +3,19 @@
 //  globeview
 //
 //  Created by Christopher Bruns on 2/23/05.
-//  Copyright 2005 __MyCompanyName__. All rights reserved.
+//  Copyright 2005 Christopher Bruns. All rights reserved.
 //
 //  Rectangular box intersecting unit sphere that defines limits on a GeoObject
 //  May be simpler to use than the LensRegion
 //  We would like to have a comparison between a BoundingBox and a LensRegion
+//
+// $Id$
+// $Header$
+// $Log$
+// Revision 1.2  2005/03/01 02:13:14  cmbruns
+// added cvs headers
+//
+//
 
 package org.bruns.asmodeus.globeview;
 

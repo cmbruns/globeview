@@ -6,6 +6,14 @@ package org.bruns.asmodeus.globeview;
 
 // Resolution ranges are provided in order to permit resolution dependend display of objects
 // "Full" resolution ranges permit full rendering of object.  Outside of this range, objects should be rendered semi-transparently
+//
+// $Id$
+// $Header$
+// $Log$
+// Revision 1.2  2005/03/01 02:13:14  cmbruns
+// added cvs headers
+//
+//
 
 import java.awt.*;
 

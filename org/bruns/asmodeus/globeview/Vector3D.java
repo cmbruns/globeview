@@ -1,3 +1,12 @@
+//
+// $Id$
+// $Header$
+// $Log$
+// Revision 1.2  2005/03/01 02:13:14  cmbruns
+// added cvs headers
+//
+//
+
 package org.bruns.asmodeus.globeview;
 
 public class Vector3D {

@@ -6,6 +6,15 @@
 //  Copyright 2005 __MyCompanyName__. All rights reserved.
 //
 //  A collection of smaller GeoObjects
+//
+// $Id$
+// $Header$
+// $Log$
+// Revision 1.2  2005/03/01 02:13:14  cmbruns
+// added cvs headers
+//
+//
+
 package org.bruns.asmodeus.globeview;
 
 import org.bruns.asmodeus.globeview.*;

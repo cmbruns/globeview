@@ -5,6 +5,14 @@
 //  Created by Christopher Bruns on 12/23/04.
 //  Copyright 2004 __MyCompanyName__. All rights reserved.
 //
+//
+// $Id$
+// $Header$
+// $Log$
+// Revision 1.2  2005/03/01 02:13:14  cmbruns
+// added cvs headers
+//
+//
 
 // Reimplement GeoShape
 // A connected set of vectors, not necessarily closed

@@ -13,8 +13,11 @@ import java.text.*;
 // $Id$
 // $Header$
 // $Log$
-// Revision 1.1  2005/03/01 01:52:01  cmbruns
-// Initial revision
+// Revision 1.2  2005/03/01 02:13:14  cmbruns
+// added cvs headers
+//
+// Revision 1.1.1.1  2005/03/01 01:52:01  cmbruns
+// Initial cvs import of globeview on koobi
 //
 // Revision 1.5  2004/02/12 18:27:38  bruns
 // new comment about anntenna lines plans
@@ -37,7 +40,6 @@ import java.text.*;
 // Added cvs tags
 //
 
-// FIXME - draw backgrounds for new projections
 // FIXME - Implement smooth coloring for vector objects
 
 public class GeoCanvas extends Canvas 

@@ -4,6 +4,14 @@ package org.bruns.asmodeus.globeview;
 // March 22, 2001  Chris Bruns
 // Generating Globe for Projections
 // Intended to replace GeneratingGlobeTransform (which is internal to GeoCanvas)
+//
+// $Id$
+// $Header$
+// $Log$
+// Revision 1.2  2005/03/01 02:13:13  cmbruns
+// added cvs headers
+//
+//
 
 class GenGlobe {
     private Matrix3D obliqueOrientation;
