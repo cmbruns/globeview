@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/02 01:51:19  cmbruns
+// Renamed checkResolution() to usableResolution()
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -63,7 +66,7 @@ public class GeoPath extends GeoObject
 
 		if (point.size() < 1) return;
 				
-		if (!checkResolution(genGlobe)) return;
+		if (!usableResolution(genGlobe)) return;
 		if (!boundingBox.overlaps(viewLens)) return;
 		
 		g.setColor(color);
@@ -105,7 +108,7 @@ public class GeoPath extends GeoObject
 			
 			// Clip individual point on viewLens
 			Vector2D newScreen = null;
-			if (newVec.overlaps(viewLens)) {				
+			if (newVec.nearlyOverlaps(viewLens)) {				
 				// Vector3D nv = genGlobe.getOrientation().mult(newVec.getSpherePoint());
 				nv = nv.copy(newVec.getSpherePoint());
 				if (rotateNorthOnly) nv = genGlobe.rotateNorthOnly(nv);

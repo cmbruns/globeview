@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/02 01:51:19  cmbruns
+// Renamed checkResolution() to usableResolution()
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -66,7 +69,7 @@ public class SiteLabel extends GeoObject
     Vector2D tempV2 = new Vector2D();
     public void paint(Graphics g, GenGlobe genGlobe, Projection projection, LensRegion viewLens) {
 
-		if (!checkResolution(genGlobe)) return;
+		if (!usableResolution(genGlobe)) return;
 		if (!boundingBox.overlaps(viewLens)) return;
 
         double resolution = genGlobe.getResolution(); // Pixels per kilometer

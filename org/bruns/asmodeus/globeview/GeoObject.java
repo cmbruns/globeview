@@ -10,6 +10,9 @@ package org.bruns.asmodeus.globeview;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/02 01:51:19  cmbruns
+// Renamed checkResolution() to usableResolution()
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -81,7 +84,7 @@ public class GeoObject
 			setMaxFullResolution(resolutionObject.getMaxFullResolution());
 	}
 
-	boolean checkResolution(GenGlobe genGlobe) {
+	boolean usableResolution(GenGlobe genGlobe) {
 		if ((minResolution > 0) && (minResolution > genGlobe.getResolution())) return false;
 		if ((maxResolution > 0) && (maxResolution < genGlobe.getResolution())) return false;
 		return true;
@@ -93,7 +96,7 @@ public class GeoObject
 		if ((minFullResolution <= genGlobe.getResolution()) && (maxFullResolution >= genGlobe.getResolution())) {
 			return 255; // solidly within resolution range
 		}
-		if (!checkResolution(genGlobe)) return 0; // outside of resolution range
+		if (!usableResolution(genGlobe)) return 0; // outside of resolution range
 		double alpha = 0;
 		if (genGlobe.getResolution() < minFullResolution) {
 			alpha = (genGlobe.getResolution() - minResolution)/(minFullResolution - minResolution);
