@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/28 01:55:36  cmbruns
+// replace getResolution() with getAdjustedResolution() so that alpha blending is consistent with the detail level of usableResolution()
+//
 // Revision 1.4  2005/03/04 23:59:56  cmbruns
 // made overlap comparison to be more generic, using both LensRegions and BoundingBoxes
 //
@@ -75,7 +78,7 @@ public class SiteLabel extends GeoObject
 		if (!usableResolution(genGlobe)) return;
 		if (!overlaps(viewLens)) return;
 
-        double resolution = genGlobe.getResolution(); // Pixels per kilometer
+        double resolution = genGlobe.getAdjustedResolution(); // Pixels per kilometer
 
         tempV3 = tempV3.copy(getVector3D());
         tempV3 = genGlobe.rotate(tempV3);
