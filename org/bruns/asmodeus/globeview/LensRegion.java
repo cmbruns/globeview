@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/11 00:12:21  cmbruns
+// fixed several bugs in LensRegion methods
+//
 // Revision 1.3  2005/03/05 00:11:01  cmbruns
 // Added new functions:
 //   getPlanePoint()
@@ -84,6 +87,13 @@ public class LensRegion {
 	Vector3D getPlanePoint() {return getUnitVector().mult(getCosAngleRadius());}
 	
 	boolean overlaps(LensRegion otherLens) {
+		if (otherLens == null) return true;
+		
+		// Sum of radii must be less than PI for the following to work
+		if ((getAngleRadius() + otherLens.getAngleRadius()) > Math.PI)
+			return true;  // They must overlap
+
+		// This only holds when the sum of the angles is < PI
 		double cosAngleRadiusSum = getCosAngleRadius() * otherLens.getCosAngleRadius() - getSinAngleRadius() * otherLens.getSinAngleRadius();
 		double cosVectorAngle = getUnitVector().dot(otherLens.getUnitVector());
 		if (cosAngleRadiusSum <= cosVectorAngle) return true;
@@ -112,7 +122,8 @@ public class LensRegion {
 		}
 		a3 = Math.acos(v1.dot(v2));
 
-		if (a2 > (a1 + a3)) {
+		if ((a2 >= (a1 + a3)) || 
+			(a2 >= Math.PI)) {
 			setUnitVector(v2);
 			setAngleRadius(a2);
 			return;
@@ -130,10 +141,14 @@ public class LensRegion {
 			// Did I get the rotation backwards?
 			if (newUnitVector.dot(v1) < v2.dot(v1)) {
 				System.out.println("ERROR: rotation is backwards for combining LensRegions!!!");
+				System.out.println("v2  :" + v2 + a2);
+				System.out.println("v1  :" + v1 + a1);
+				System.out.println("new :" + newUnitVector + newAngleRadius);
 			}
 			
 			setAngleRadius(newAngleRadius);
 			setUnitVector(newUnitVector);
+			
 			return;
 		}
 	}
@@ -142,8 +157,8 @@ public class LensRegion {
 	static LensRegion lonLatRange(double minLon, double maxLon, double minLat, double maxLat) {
 
 		// Though not perfect, this should be OK as the central vector of the lens
-		double centerLon = (maxLon - minLon) / 2.0;
-		double centerLat = (maxLat - minLat) / 2.0;
+		double centerLon = (maxLon + minLon) / 2.0;
+		double centerLat = (maxLat + minLat) / 2.0;
 		Vector3D centerVec = new Vector3D(centerLon, centerLat);
 
 		double height = 1.0; // Start with infinitesimal lens
@@ -169,7 +184,7 @@ public class LensRegion {
 		testHeight = planeHeight(centerLon, maxLat, centerVec);
 		if (testHeight < height) height = testHeight;
 		
-		testHeight = planeHeight(maxLon, centerLat, centerVec);
+		testHeight = planeHeight(minLon, centerLat, centerVec);
 		if (testHeight < height) height = testHeight;
 		
 		testHeight = planeHeight(maxLon, centerLat, centerVec);
@@ -178,10 +193,11 @@ public class LensRegion {
 		// For very large ranges (greater than PI) that are asymmetric, the
 		// above points are not enough, but ehhh, close enough
 		
-		Vector3D planePoint = centerVec.mult(testHeight);
+		Vector3D planePoint = centerVec.mult(height);
 		
 		return new LensRegion(planePoint, centerVec);
 	}
+	
 	// For use by LatLonRange
 	static double planeHeight(double lon, double lat, Vector3D center) {
 		Vector3D testVec = new Vector3D(lon, lat);
