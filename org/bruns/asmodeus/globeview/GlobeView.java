@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.7  2005/03/14 04:20:47  cmbruns
+// Change catch of AccessControlExeception to placate Netscape 4.7, which does not understand java.security.AccessControlException, but prefers netscape.security.AccessControlException
+//
 // Revision 1.6  2005/03/13 21:58:47  cmbruns
 // Added optional crosshair menu
 // Added RotateZ option to mouse actions, but only when North is Up
@@ -98,7 +101,8 @@ public class GlobeView extends Frame
 			public void windowClosing(WindowEvent e) {
 				try {
 					System.exit(0); // Kill the program
-				} catch (java.security.AccessControlException exception) {
+				// } catch (java.security.AccessControlException exception) {
+				} catch (Exception exception) {
 				 	hide(); // OK, just hide it then
 				}
 			}});
@@ -278,7 +282,8 @@ public class GlobeView extends Frame
 		if (e.getActionCommand() == "Quit GlobeView") {
 			try {
 				System.exit(0); // Kill the program
-			} catch (java.security.AccessControlException exception) {
+			// } catch (java.security.AccessControlException exception) {
+			} catch (Exception exception) {
 				hide(); // At least hide it, anyway
 			}
 		}
@@ -515,5 +520,14 @@ public class GlobeView extends Frame
             projectionCheck[i].setState(i == currentProjection);
         }
     }
-
+	
+	public void stop() { // What to do when parent applet gets stop()
+		hide();
+		canvas.stopBitmapThread();
+		canvas.stopNightUpdateThread();
+	}
+	public void start() { // What to do when parent applet gets stop()
+		canvas.startNightUpdateThread();
+		show();
+	}
 }
