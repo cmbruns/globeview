@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.3  2005/03/14 04:25:24  cmbruns
+// Permit stopping of nightUpdateThread by unsetting canvas.keepNightUpdate variable.
+//
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
 //
@@ -31,12 +34,15 @@ extends Thread
 			try {
 				sleep((long)30000); // Wait 30 seconds
 				if (canvas != null) {
+					if (!canvas.keepNightUpdate) return;
 					if (canvas.dayNight) {
 						canvas.fullUpdateNow = true;
 						canvas.repaint();
 					}
 				}
-            } catch (InterruptedException e) {}
+            } catch (InterruptedException e) {
+				if (!canvas.keepNightUpdate) return;
+			}
         }
     }
 	
