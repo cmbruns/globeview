@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.7  2005/03/28 01:40:40  cmbruns
+// Try to use MeasuredInputStream to keep track of load progress
+//
 // Revision 1.6  2005/03/13 22:09:56  cmbruns
 // Changes to permit dynamic loading and unloading of images to and from memory.
 // Changes to permit blurring of boundaries between pixels at hyper zoom levels.
@@ -29,6 +32,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.net.*;
+import java.io.*;
+import javax.imageio.*;
 import org.bruns.asmodeus.globeview.*;
 
 // Class to deliver colors from a bitmap image to the GlobeView program
@@ -66,15 +71,33 @@ public class MapBlitter extends GeoObject
 		setLonLatRange(minLon, maxLon, minLat, maxLat);
     }
 	
-	void loadImagePixels() throws InterruptedException {
+	void loadImagePixels() throws InterruptedException, IOException {
+		canvas.loadProgress = 0;
 		canvas.setWait("BUSY: Loading Image...");
 
-		Image image = Toolkit.getDefaultToolkit().getImage(imageURL);
+		Image image;
+		try {
+			// This way the progress can be measured
+			MeasuredInputStream mis = new MeasuredInputStream(imageURL, canvas);
+			image = javax.imageio.ImageIO.read(mis);
+		}
+		catch (NoClassDefFoundError e) {
+			// TODO I don't know how to get file size for progress indicator
+			image = canvas.getToolkit().getImage(imageURL);
+			canvas.loadProgress = 22; // To give the illusion that the bar might be working
+		}
+		catch (NoSuchMethodError e) {
+			// TODO I don't know how to get file size for progress indicator
+			image = canvas.getToolkit().getImage(imageURL);
+			canvas.loadProgress = 22; // To give the illusion that the bar might be working
+		}
+		
 		pixelArray = null;
 		
 		MediaTracker mt = new MediaTracker(canvas);
 		mt.addImage(image,1);
 		mt.waitForAll(); // InterruptedException could be thrown here
+		canvas.loadProgress = 100;
 
 		// Set image parameters
 		width = image.getWidth(null);
@@ -94,20 +117,21 @@ public class MapBlitter extends GeoObject
 		}
 		catch (InterruptedException e) {
 			pixelArray = null; // Did not complete load
+			canvas.loadProgress = 100;
 			throw e;
 		}
 
 		canvas.setWait("BUSY: Drawing Image...");
     }
 
-    Color getColor(Vector3D v) throws InterruptedException {
+    Color getColor(Vector3D v) throws InterruptedException, IOException {
 		int intColor = getPixel(v);
 		if (intColor < 0) return null;
 		return new Color(intColor);
     }
 
 	// pixel Size is used to blur hyper zoomed pixels
-    int getPixel(Vector3D v, double pixelSize) throws InterruptedException {
+    int getPixel(Vector3D v, double pixelSize) throws InterruptedException, IOException {
 
 		double phi = v.getLatitude();
 		if (phi < minLat) return 0;
@@ -120,19 +144,27 @@ public class MapBlitter extends GeoObject
 		return getPixel(lambda, phi, pixelSize);
 	}
 		
-    int getPixel(Vector3D v) throws InterruptedException {		
+    int getPixel(Vector3D v) throws InterruptedException, IOException {		
 		return getPixel(v, 0);
 	}
 		
-    int getPixel(double lambda, double phi) throws InterruptedException {
+    int getPixel(double lambda, double phi) throws InterruptedException, IOException {
 		return getPixel(lambda, phi, 0);
 	}
 	
-    int getPixel(double lambda, double phi, double pixelSize) throws InterruptedException {
+    int getPixel(double lambda, double phi, double pixelSize) 
+		throws InterruptedException, IOException 
+	{
 
 		// Only load image if we get to this point
 		if (pixelArray == null) {
-			loadImagePixels();
+			try {loadImagePixels();}
+			catch (IOException e) {
+				canvas.loadProgress = 100;
+				throw e;
+				// return 0;
+			}				
+			canvas.loadProgress = 100;
 		}
 		
 		double fx = dX + lambda * kX;
