@@ -9,6 +9,11 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/13 21:55:36  cmbruns
+// Populate boundingLens from that of parent parameter file.
+// Modified to dynamically load when needed, as is done for images.
+// But only load during full image updates.
+//
 // Revision 1.3  2005/03/02 01:52:49  cmbruns
 // Set resolution of individual paths
 //
@@ -30,24 +35,30 @@ public class GeoPathCollection extends GeoCollection
 {
 	static double degreesToRadians = Math.PI / 180.0;
 	Color color;
+	URL url;
+	boolean isLoaded = false;
+	GeoCanvas canvas;
 	
-	GeoPathCollection(URL pathURL, GeoObject resolution, Color borderColor) {
-
+	GeoPathCollection(URL pathURL, GeoObject resolution, Color borderColor,
+					  LensRegion lens, GeoCanvas geoCanvas) {
+		canvas = geoCanvas;
+		url = pathURL;
 		setResolution(resolution);
 		color = borderColor;
-		if (pathURL == null) return;
+		boundingLens = lens;
+		// loadData(); // TODO - only do this when needed
+	}
+	
+	void loadData() {
+		if (!canvas.fullUpdateNow) return;
+		if (url == null) return;
 
+		canvas.setWait("BUSY: Loading coast line file...");
 		try {
-			InputStream urlStream = pathURL.openStream();
+			InputStream urlStream = url.openStream();
 			InputStream uncompressedStream;
-			try {
-				// Try to open it as a gzipped stream
-				GZIPInputStream gzipStream = new GZIPInputStream(urlStream);
-				uncompressedStream = gzipStream;
-			} catch (Exception exception) {
-				// OK, just use the stream non-gzipped
-				uncompressedStream = urlStream;
-			}
+			GZIPInputStream gzipStream = new GZIPInputStream(urlStream);
+			uncompressedStream = gzipStream;
 			
 			BufferedReader in = new BufferedReader(new InputStreamReader(uncompressedStream));
 			String inputLine;
@@ -83,13 +94,23 @@ public class GeoPathCollection extends GeoCollection
 					double longitude = (new Double(tokenizer2.nextToken())).doubleValue();
 					path.addPoint(longitude * degreesToRadians, latitude * degreesToRadians);
 				}
-				path.setResolution(resolution);
+				path.setResolution(this);
 				path.color = color;
 				addElement(path);
 			}
 			in.close();
-		} catch (Exception ex) {
-			System.out.println("Problem reading paths URL: " + ex + " URL: " + pathURL);
+		} catch (IOException ex) {
+			System.out.println("Problem reading paths URL: " + ex + " URL: " + url);
 		}
+		isLoaded = true;
+		canvas.unsetWait();
+	}
+
+	void paint(Graphics g, GenGlobe genGlobe, Projection projection, LensRegion viewLens) {		
+		if (!usableResolution(genGlobe)) return;
+		if (!overlaps(viewLens)) return;
+		if (!isLoaded) loadData();
+		if (!isLoaded) return;
+		super.paint(g,genGlobe,projection,viewLens);
 	}
 }
