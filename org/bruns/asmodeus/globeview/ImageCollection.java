@@ -8,6 +8,9 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.6  2005/03/28 01:18:10  cmbruns
+//  Created paintOneBuffer() method to contain the heavy lifting in rendering, so that the paint() method can spend its time dealing with the complexity of stereoscopic rendering.
+//
 //  Revision 1.5  2005/03/14 05:06:57  cmbruns
 //  Changed autocreated copyright text from __MyCompanyName__ to Christopher Bruns
 //
@@ -35,6 +38,7 @@ package org.bruns.asmodeus.globeview;
 import java.util.*; // Date
 import java.text.*; // SimpleDateFormat
 import java.awt.*;
+import java.io.*;
 import org.bruns.asmodeus.globeview.*;
 
 public class ImageCollection extends GeoCollection {
@@ -132,11 +136,35 @@ public class ImageCollection extends GeoCollection {
     Vector3D sunVector;
 	void paint(Graphics onScreenGraphics, GenGlobe genGlobe, Projection projection, LensRegion viewLens) 
 	{
-		// System.out.println("" + elementCount() + " images loaded");
+		if (canvas.drawStereoscopic) {
+			paintOneBuffer(canvas.leftGenGlobe, projection, viewLens,
+						   canvas.memLeftEyeImage, 
+						   canvas.leftEyeGraphics, 
+						   canvas.leftEyePixels, 
+						   2.0, 50.0);
+			paintOneBuffer(canvas.rightGenGlobe, projection, viewLens,
+						   canvas.memOffScreenImage, 
+						   canvas.offScreenGraphics, 
+						   canvas.offScreenPixels, 
+						   50.0, 98.0);
+		}
+		else {
+			paintOneBuffer(genGlobe, projection, viewLens,
+						   canvas.memOffScreenImage, 
+						   canvas.offScreenGraphics, 
+						   canvas.offScreenPixels, 
+						   2.0, 98.0);
+		}
+	}
+	
+	void paintOneBuffer (GenGlobe genGlobe, Projection projection, LensRegion viewLens, 
+						 Image memOffScreenImage, Graphics offScreenGraphics, int offScreenPixels[], 
+						 double minProgress, double maxProgress) {
 		
-		// This is cheating, not using arguments to pass this Graphics, but I don't want to
-		// change the paint signature for all GeoObjects
-		Graphics offScreenGraphics = canvas.offScreenGraphics;
+		// Assume that this loop occupies the range 5-95% of the drawing operation
+		canvas.drawProgress = minProgress;
+		
+		// System.out.println("" + elementCount() + " images loaded");
 		
 		// Clipping
 		// if (!usableResolution(genGlobe)) return;  // still needed for day night?
@@ -175,17 +203,17 @@ IMAGES:
 		
 		Color color;
 		int pixel, darkPixel, shadePixel;
-		int width = canvas.memOffScreenImage.getWidth(null);
-		int height = canvas.memOffScreenImage.getHeight(null);
+		int width = memOffScreenImage.getWidth(null);
+		int height = memOffScreenImage.getHeight(null);
 		
 		int x, y; // Actual screen coordinates
 		double cx, cy; // Scaled, translated screen coordinates
 		
 		int tx, ty; // Coordinates of texture map pixel
 		
-		Dimension d = canvas.getSize();
-		int xMax = d.width;
-		int yMax = d.height;
+		// Dimension d = canvas.getSize();
+		int xMax = memOffScreenImage.getWidth(null);
+		int yMax = memOffScreenImage.getHeight(null);
 		
 		double r = genGlobe.getPixelRadius();
 		double rInv = 1.0 / r;
@@ -207,12 +235,16 @@ IMAGES:
 		Vector3D previousSpot = new Vector3D();
 
 		for (x = 0; x < xMax; ++x) {
-			cx = (x - genGlobe.centerX) * rInv;
+
+			canvas.drawProgress = minProgress + ((maxProgress-minProgress)*x)/xMax;
+			// System.out.println(" drawProgress = "+canvas.drawProgress);
+
+			cx = (x - genGlobe.centerX - genGlobe.offsetX) * rInv;
 			previousPlot = false;
 			for (y = 0; y < yMax; ++y) {
 				mapIndex = x + y * width;
 				
-				canvas.offScreenPixels[mapIndex] = 0xFF000000; // set to black?
+				offScreenPixels[mapIndex] = 0xFF000000; // set to black?
 				
 				cy = (genGlobe.centerY - y) * rInv;
 				
@@ -236,11 +268,16 @@ IMAGES:
 IMAGES:
 				for (int i = usableBitmaps.size() - 1; i >= 0; i--) {
 					MapBlitter mapBlitter = (MapBlitter) usableBitmaps.elementAt(i);
-					try {
-						pixel = mapBlitter.getPixel(v1, pixelSize);
-					} catch (InterruptedException e) {
+					if (mapBlitter == null) continue;
+					try {pixel = mapBlitter.getPixel(v1, pixelSize);} 
+					catch (InterruptedException e) {
 						return;
 					}
+					catch (IOException e) { // Bad Bitmap
+						usableBitmaps.set(i, null);
+						continue;
+					}
+
 					if (pixel != 0) {
 						usedBitmaps[i] = true;
 						break IMAGES;
@@ -307,7 +344,7 @@ IMAGES:
 					}
 				}
 				
-				canvas.offScreenPixels[mapIndex] = pixel;
+				offScreenPixels[mapIndex] = pixel;
 				if (!keepDrawing) {return;} // for very fast abortion
 
 				}
@@ -315,21 +352,22 @@ IMAGES:
 			if (!keepDrawing) {return;}
 			
 			// When bitmap is slow, update on-screen image
-			// if (((x % stripWidth) == 0) && (x > 0)){
-				// onScreenGraphics.drawImage(canvas.memOffScreenImage,
+			if (((x % stripWidth) == 0) && (x > 0)) {
+				// offScreenSource.newPixels(x - stripWidth,0, stripWidth,yMax);
+				// onScreenGraphics.drawImage(memOffScreenImage,
 				//						   x - stripWidth,0, x,yMax,
 				//						   x - stripWidth,0, x,yMax,
 				//						   canvas);
-				// canvas.offScreenSource.newPixels(x - stripWidth,0, stripWidth,yMax);
-			// }
+			}
 		}
-		// canvas.offScreenSource.newPixels(0,0,width,height);
+		// offScreenSource.newPixels(0,0,width,height);
 		
 		// Update time stamp on those bitmaps which were used in this draw
 		long timeStamp = (new Date()).getTime();
 		for (int i = 0; i < usableBitmaps.size(); i++) {
 			if (usedBitmaps[i]) {
 				MapBlitter mapBlitter = (MapBlitter) usableBitmaps.elementAt(i);
+				if (mapBlitter == null) continue;
 				mapBlitter.timeOfPreviousUse = timeStamp;
 			}
 		}
