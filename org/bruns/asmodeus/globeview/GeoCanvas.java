@@ -13,6 +13,19 @@ import java.text.*;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.8  2005/03/28 01:03:20  cmbruns
+// Reorganized header area
+// Added methods to start and stop progressBarThread
+// Propagate OutOfMemoryError when caught
+// Created updateOnScreen method to copy offscreen buffer to screen
+// Created updateOffScreen method to handle some of the complexity of drawing stereoscopic images
+// Reorganized paint() method to use new updateOffScreen() and updateOnScreen() methods
+// Added and used "left eye" off screen buffers for stereoscopic use
+// Added projection and genglobe arguments to paintBackground() and paintOutline() methods.  TODO - the use of new genglobe members has not been fully implemented in these methods.
+// Created getCurrentGenglobe() method for use in stereoscopic display
+// Created rasterToSphere() and rasterToUnrotatedSphere() methods to abstract some of the genglobe calculations that were being done.
+// Fixed bug in setting of whatTheModifiedMouse does
+//
 // Revision 1.7  2005/03/14 04:19:14  cmbruns
 // Created mechanism for turning nightUpdateThread on and off
 // Wrapped shadeBoxColor initialization so that it goes to black if the Java version does not have transparency
@@ -62,7 +75,7 @@ import java.text.*;
 // created centerOnPosition() routine
 //
 // Revision 1.3  2005/03/02 01:48:23  cmbruns
-// Changed data type of borders and labels to GeoCollection, to make it easier for the new ParameterFiles to add to them.
+// Changed data type of coasts and labels to GeoCollection, to make it easier for the new ParameterFiles to add to them.
 //
 // Revision 1.2  2005/03/01 02:13:14  cmbruns
 // added cvs headers
@@ -96,44 +109,57 @@ import java.text.*;
 public class GeoCanvas extends Canvas 
 implements MouseListener, MouseMotionListener
 {
-    // double planetRadius = 6371; // Radius of earth in kilometers
-	
+    double planetRadius = 6371; // Radius of earth in kilometers
+
+	// Variables associated with ancillary process threads
     NightUpdateThread nightUpdateThread;
 	volatile boolean keepNightUpdate = true;
+	
 	DrawBitmapThread drawBitmapThread;
+	volatile boolean drawNothing = false; // For incremental drawing
+	
+	ProgressBar progressBar;
+	ProgressBarThread progressBarThread;
+	volatile double loadProgress = 100.0;
+	volatile double drawProgress = 100.0;
+	volatile boolean keepProgressBar = true;
+	
 	String busyString = "";
 	InfoDialog outOfMemoryDialog;
 	
-    int colorResolution = 30;
-    // Colors of different transparency for labels
-    Vector labelColors;
-	
+	// Colors
 	int oceanColorInt = 0xFF3060E0;
 	int oceanColorInt2 = oceanColorInt - 0xFF000000;
     Color oceanColor = new Color(oceanColorInt2);
     Color outlineColor = new Color(40, 40, 180);
     Color crosshairColor = Color.white;
-    // Color equatorColor = new Color(220, 70, 70);
-    Color backgroundColor = Color.black;
-	Color borderColor = new Color(120,180,50);
 	int backgroundColorInt = 0xFF000000;
+    Color backgroundColor = Color.black;
+	Color coastColor = new Color(70,100,30);
+	Color riverColor = new Color(5,10,140);
 	Color scaleBarColor = new Color(255, 220, 220); // Pink
 	Color shadeBoxColor;
+	Color borderColor = new Color(50, 50, 50); // Dark Grey
 	
     // Define what kinds of objects will be drawn
+	boolean drawStereoscopic = false; // For perspective projection only	
     volatile boolean fullUpdateNow = true; // Want to draw satellite image on startup
     boolean drawSatelliteImage = true; // Want to draw satellite image in general
     boolean dayNight = true; // Draw day/night terminator
     boolean drawLabels = true;
 	boolean drawGraticule = true;
 	boolean drawBearing = false;
+	boolean drawBorders = true;
 	boolean drawCoastLines = true;
+	boolean drawRivers = true;
 	boolean drawScaleBar = true;
 	boolean drawCrosshair = true;
 	
     int canvasWidth, canvasHeight;	
 	
-    volatile GenGlobe genGlobe = new GenGlobe(6371); // Radius in kilometers
+    volatile GenGlobe genGlobe = new GenGlobe(planetRadius); // Radius in kilometers
+	volatile GenGlobe leftGenGlobe = genGlobe;
+	volatile GenGlobe rightGenGlobe = genGlobe;
 	
 	// Objects whose sole purpose is to communicate resolution ranges
 	GeoObject allResolution = new GeoObject(-1,-1,-1,-1);
@@ -141,27 +167,23 @@ implements MouseListener, MouseMotionListener
 	GeoObject lowResolution = new GeoObject(0.005, 0.005, 0.150, 0.150);
 	GeoObject highResolution = new GeoObject(0.150, 0.150, -1, -1);
 	
+	// Container objects for map display elements
 	GeoCollection directionGraticule = new GeoCollection();
-
 	GeoCollection graticule = new GeoCollection();
-	
-    // Vector siteLabels; // All the city labels we are using
-	GeoCollection siteLabels = new GeoCollection();
-	SiteLabelCollection newSiteLabels;
-	
+	GeoCollection siteLabels = new GeoCollection();	
 	GeoCollection paramFiles = new GeoCollection();
+	ImageCollection images = new ImageCollection(this);
+	GeoCollection coasts = new GeoCollection();
+	GeoCollection rivers = new GeoCollection();
+	GeoCollection borders = new GeoCollection();
+    Label messageArea = new Label("");
+		
+    Projection projection = Projection.ORTHOGRAPHIC;
 	
     // For Sinusoidal Projection outline shape
     int numOutlinePoints = 100;
     int xOutlinePoints[] = new int[numOutlinePoints];
     int yOutlinePoints[] = new int[numOutlinePoints];
-    
-    Projection projection = Projection.ORTHOGRAPHIC;
-	
-	ImageCollection images = new ImageCollection(this);
-    MapBlitter mapBlitter;
-
-	GeoCollection borders = new GeoCollection();
 	
     Method whatTheMouseDoes;
     Method whatTheModifiedMouseDoes;
@@ -169,22 +191,17 @@ implements MouseListener, MouseMotionListener
     // Whole gang of objects to represent one off-screen image buffer
     int offScreenPixels[];
     public MemoryImageSource offScreenSource;
-    public Image memOffScreenImage;
-	
+    public Image memOffScreenImage;	
     public Image offScreenImage;
     volatile public Graphics offScreenGraphics;
 	
-    Label messageArea = new Label("");
+    int leftEyePixels[];
+    public MemoryImageSource leftEyeSource;
+    public Image memLeftEyeImage;	
+    public Image leftEyeImage;
+    volatile public Graphics leftEyeGraphics;
 	
 	GlobeView globeViewFrame;
-	
-    // These two lines form the paradigm for converting from plane to screen
-    // Turn abstract plane coordinates into screen pixel coordinates
-    // int screenX(double x) {return (int) (x * genGlobe.getPixelRadius()) + centerX;}
-    // int screenY(double y) {return centerY - (int) (y * genGlobe.getPixelRadius());}
-    // Turn screen coordinates into plane coordinates
-    // double planeX(int x) {return (double)(x - centerX) * genGlobe.getInvPixelRadius();}
-    // double planeY(int y) {return (double)(centerY - y) * genGlobe.getInvPixelRadius();}
 	
     GeoCanvas(int width, int height, GlobeView parent) {
 		setSize(width, height);
@@ -194,9 +211,11 @@ implements MouseListener, MouseMotionListener
 		globeViewFrame = parent;
 		
 		// Automatically updates image periodically, if dayNight is set
-		startNightUpdateThread();
+		progressBar = new ProgressBar(this);
 		
-		labelColors = SiteLabel.fadeColors(new Color(100, 255, 255));
+		startNightUpdateThread();
+		startProgressBarThread();
+		
 		try {shadeBoxColor = new Color(0, 0, 0, 128);} // transparent black
 		catch (NoSuchMethodError e) {shadeBoxColor = new Color(0,0,0);} // solid black
 		
@@ -204,7 +223,7 @@ implements MouseListener, MouseMotionListener
 		
 		genGlobe.centerX = width / 2;
 		genGlobe.centerY = height / 2;
-		
+
 		addMouseListener(this);
 		addMouseMotionListener(this);
 
@@ -223,7 +242,8 @@ implements MouseListener, MouseMotionListener
 		outOfMemoryDialog.addLine("GlobeView ran out of memory!");
 		outOfMemoryDialog.finalizeDialog();
 		
-		createOffScreen(width, height);		
+		checkOffScreenImage();
+		// createOffScreen(width, height);		
     }
 	
 	boolean stopNightUpdateThread() {
@@ -244,8 +264,30 @@ implements MouseListener, MouseMotionListener
 	void startNightUpdateThread() {
 		stopNightUpdateThread();
 		keepNightUpdate = true;
-		nightUpdateThread = new NightUpdateThread("nightUpdateThread");
+		nightUpdateThread = new NightUpdateThread(this);
 		nightUpdateThread.start();
+	}
+	
+	boolean stopProgressBarThread() {
+		keepProgressBar = false;
+		if ((progressBarThread != null) && (progressBarThread.isAlive())) {
+			// Java bug causes exception to be thrown when thread is not running
+			try {progressBarThread.interrupt();}
+			// catch (java.security.AccessControlException e) {} // netscape has a conniption
+			catch (Exception e) {}
+			
+			try {progressBarThread.join(2000); // Wait up to two seconds for it to die
+			} catch (InterruptedException e) {}
+		}
+		if ((progressBarThread != null) && (progressBarThread.isAlive())) return false; // Did not stop
+		return true;
+	}
+	
+	void startProgressBarThread() {
+		stopProgressBarThread();
+		keepProgressBar = true;
+		progressBarThread = new ProgressBarThread(this);
+		progressBarThread.start();
 	}
 	
 	public boolean stopBitmapThread() {
@@ -264,7 +306,16 @@ implements MouseListener, MouseMotionListener
 		return true;
 	}
 	
+	public void startBitmapThread(Graphics g, LensRegion viewLens) {
+		if (!stopBitmapThread()) return;
+		images.keepDrawing = true;
+		drawBitmapThread = new DrawBitmapThread("DrawBitmap", this, g, viewLens);
+		drawNothing = true; // Until bitmap returns
+		drawBitmapThread.start();
+	}
+				
     public void fastRepaint() {
+		if (drawNothing) return;
 		// Most repaints should postpone auto-painting
 		if (nightUpdateThread != null && nightUpdateThread.isAlive()) {
 			nightUpdateThread.interrupt();
@@ -275,6 +326,7 @@ implements MouseListener, MouseMotionListener
     }
 	
     public void fullRepaint() {
+		if (drawNothing) return;
 		// Most repaints should postpone auto-painting
 		if (nightUpdateThread != null && nightUpdateThread.isAlive()) {
 			nightUpdateThread.interrupt();
@@ -287,11 +339,12 @@ implements MouseListener, MouseMotionListener
     }
 	
     // Projection-specific outline of map
-    public void paintOutline(Graphics g) {
-		int type = projection.getBackgroundType();
+    public void paintOutline(Graphics g, Projection p, GenGlobe gg) {
+		int type = p.getBackgroundType();
 		
-		double r = genGlobe.getPixelRadius();
-		double param = projection.getBackgroundParameter() * r;
+		double r = gg.getPixelRadius();
+		// double param = p.getBackgroundParameter() * r;
+		double param = p.getBackgroundParameter();
 		
 		double diameter = r + r;
 		Dimension d = getSize(); // (size of canvas)
@@ -301,20 +354,29 @@ implements MouseListener, MouseMotionListener
 		}
 		if (type == Projection.BKGD_VSTRIPE) {
 			// Vertical stripe, like Mercator
-			g.drawLine(genGlobe.centerX - (int) param, 0, 
-					   genGlobe.centerX - (int) param, d.height);
-			g.drawLine(genGlobe.centerX + (int) param, 0, 
-					   genGlobe.centerX + (int) param, d.height);
+			// g.drawLine(gg.centerX - (int) param, 0, 
+			// 		   gg.centerX - (int) param, d.height);
+			// g.drawLine(gg.centerX + (int) param, 0, 
+			// 		   gg.centerX + (int) param, d.height);
+			g.drawLine(gg.screenX(-param), 0, 
+					   gg.screenX(-param), d.height);
+			g.drawLine(gg.screenX(param), 0, 
+					   gg.screenX(param), d.height);
 		}
 		else if (type == Projection.BKGD_RECTANGLE) {
 			// Rectangle, (2 x 1 aspect ratio)
-			g.drawRect(genGlobe.centerX - (int) param, genGlobe.centerY - (int) (param / 2.0), 
-					   (int) (param + param), (int) param);
+			g.drawRect(gg.screenX(-param), gg.screenY(param / 2.0),
+					   (int) (r * (param + param)), (int) (r * param));
+			// g.drawRect(gg.centerX - (int) param, gg.centerY - (int) (param / 2.0), 
+			//		   (int) (param + param), (int) param);
 		}
 		else if (type == Projection.BKGD_CIRCLE) {
 			// Full projection is shaped like a circle
-			g.drawArc(genGlobe.centerX - (int) param, genGlobe.centerY - (int) param, 
-					  (int) (param + param), (int) (param + param), 
+			// g.drawArc(gg.centerX - (int) param, gg.centerY - (int) param, 
+			// 		  (int) (param + param), (int) (param + param), 
+			// 		  0, 360); 
+			g.drawArc(gg.screenX(-param), gg.screenY(param), 
+					  (int) (r*(param + param)), (int) (r*(param + param)), 
 					  0, 360); 
 		}
 		else if (type == Projection.BKGD_SINUSOID) {
@@ -322,26 +384,27 @@ implements MouseListener, MouseMotionListener
 			int i;
 			for (i = 0; i < numOutlinePoints; ++i) {
 				double halfHeight = param / 2.0;
-				xOutlinePoints[i] = 
-					(int) (param * Math.sin(2.0 * Math.PI * i / numOutlinePoints));
-				yOutlinePoints[i] = (int) (-halfHeight + halfHeight * 
-										   4.0 * i / numOutlinePoints);
-				if (yOutlinePoints[i] > halfHeight)
-					yOutlinePoints[i] = (int) ((2.0 * halfHeight) - yOutlinePoints[i]);
+				xOutlinePoints[i] = gg.screenX(
+					param * Math.sin(2.0 * Math.PI * i / numOutlinePoints));
 				
-				xOutlinePoints[i] += genGlobe.centerX;
-				yOutlinePoints[i] += genGlobe.centerY;
+				yOutlinePoints[i] = gg.screenY(-halfHeight + halfHeight * 
+										   4.0 * i / numOutlinePoints);
+				if (yOutlinePoints[i] < gg.screenY(halfHeight))
+					yOutlinePoints[i] = 2 * gg.screenY(halfHeight) - yOutlinePoints[i];
+				
+				// xOutlinePoints[i] = gg.centerX;
+				// yOutlinePoints[i] += gg.centerY;
 			}
 			g.drawPolygon(xOutlinePoints, yOutlinePoints, numOutlinePoints);
 		}
     }
 	
     // FILLED Projection-specific outline of map
-    public void paintOcean(Graphics g) {
-		int type = projection.getBackgroundType();
+    public void paintOcean(Graphics g, Projection p, GenGlobe gg) {
+		int type = p.getBackgroundType();
 		
-		double r = genGlobe.getPixelRadius();
-		double param = projection.getBackgroundParameter() * r;
+		double r = gg.getPixelRadius();
+		double param = p.getBackgroundParameter() * r;
 		
 		double diameter = r + r;
 		Dimension d = getSize(); // (size of canvas)
@@ -351,18 +414,21 @@ implements MouseListener, MouseMotionListener
 		}
 		if (type == Projection.BKGD_VSTRIPE) {
 			// Vertical stripe, like Mercator
-			g.fillRect(genGlobe.centerX - (int) param, 0,
+			g.fillRect(gg.centerX - (int) param, 0,
 					   (int) (2 * param + 0.5), d.height);
 		}
 		else if (type == Projection.BKGD_RECTANGLE) {
 			// Rectangle, (2 x 1 aspect ratio)
-			g.fillRect(genGlobe.centerX - (int) param, genGlobe.centerY - (int) (param / 2.0), 
+			g.fillRect(gg.centerX - (int) param, gg.centerY - (int) (param / 2.0), 
 					   (int) (param + param), (int) param);
 		}
 		else if (type == Projection.BKGD_CIRCLE) {
 			// Full projection is shaped like a circle
-			g.fillArc(genGlobe.centerX - (int) param, genGlobe.centerY - (int) param, 
-					  (int) (param + param), (int) (param + param), 
+			// g.fillArc(gg.centerX - (int) param, gg.centerY - (int) param, 
+			// 		  (int) (param + param), (int) (param + param), 
+			// 		  0, 360); 
+			g.fillArc(gg.screenX(-param/r), gg.screenY(param/r), 
+					  (int) ((param + param)), (int) ((param + param)), 
 					  0, 360); 
 		}
 		else if (type == Projection.BKGD_SINUSOID) {
@@ -377,8 +443,8 @@ implements MouseListener, MouseMotionListener
 				if (yOutlinePoints[i] > halfHeight)
 					yOutlinePoints[i] = (int) ((2.0 * halfHeight) - yOutlinePoints[i]);
 				
-				xOutlinePoints[i] += genGlobe.centerX;
-				yOutlinePoints[i] += genGlobe.centerY;
+				xOutlinePoints[i] += gg.centerX;
+				yOutlinePoints[i] += gg.centerY;
 			}
 			g.fillPolygon(xOutlinePoints, yOutlinePoints, numOutlinePoints);
 		}
@@ -395,40 +461,42 @@ implements MouseListener, MouseMotionListener
     Vector2D newScreenTemp = new Vector2D();
 	
     // Everything IN FRONT OF the texture map
-    synchronized public void paintForeground(Graphics g, LensRegion viewLens) {
-		double r = genGlobe.getPixelRadius();
+    synchronized public void paintForeground(Graphics g, Projection p, GenGlobe gg, LensRegion viewLens) {
+		double r = gg.getPixelRadius();
 		// double resolution = r / planetRadius; // Pixels per kilometer
-		double resolution = genGlobe.getResolution(); // Pixels per kilometer
+		// double resolution = gg.getResolution(); // Pixels per kilometer
 													  // System.out.println("" + resolution);
 
-		if (drawCoastLines) borders.paint(g, genGlobe, projection, viewLens);
-		if (drawGraticule) graticule.paint(g, genGlobe, projection, viewLens);
+		if (drawBorders) borders.paint(g, gg, projection, viewLens);
+		if (drawGraticule) graticule.paint(g, gg, projection, viewLens);
+		if (drawRivers) rivers.paint(g, gg, projection, viewLens);
+		if (drawCoastLines) coasts.paint(g, gg, projection, viewLens);
 		
 		// Draw the center-focussed elements, such as antenna directions
-		if (drawBearing) directionGraticule.paint(g, genGlobe, projection, null);
+		if (drawBearing) directionGraticule.paint(g, gg, projection, null);
 		
 		// Draw outline (again, to clean up edges)
 		g.setColor(outlineColor);
-		paintOutline(g);
+		paintOutline(g, p, gg);
 		
 		// Draw city labels
-		if (drawLabels) siteLabels.paint(g, genGlobe, projection, viewLens);
+		if (drawLabels) siteLabels.paint(g, gg, projection, viewLens);
 		
-		if (drawScaleBar) paintScaleBar(g, genGlobe, projection, viewLens);
+		if (drawScaleBar) paintScaleBar(g, gg, projection, viewLens);
 		
 		// Cross-hair at center
 		if (drawCrosshair) {
 			g.setColor(crosshairColor);
-			g.drawLine(genGlobe.centerX, genGlobe.centerY - 5, genGlobe.centerX, genGlobe.centerY + 5);
-			g.drawLine(genGlobe.centerX - 5, genGlobe.centerY, genGlobe.centerX + 5, genGlobe.centerY);
+			g.drawLine(gg.centerX, gg.centerY - 5, gg.centerX, gg.centerY + 5);
+			g.drawLine(gg.centerX - 5, gg.centerY, gg.centerX + 5, gg.centerY);
 		}
     }
 	
 	// Paint a scale bar in the lower right corner
-	void paintScaleBar(Graphics g, GenGlobe genGlobe, Projection projection, LensRegion viewLens) {
+	void paintScaleBar(Graphics g, GenGlobe gg, Projection projection, LensRegion viewLens) {
 		// What is the longest round distance less than 150 pixels?
 		int maxPixelsPerBar = 120;
-		double kilometersPerPixel = 1.0 / genGlobe.getResolution();
+		double kilometersPerPixel = 1.0 / gg.getResolution();
 		double maxBarDistance = kilometersPerPixel * maxPixelsPerBar;
 		double logMaxDistance = Math.log(maxBarDistance) / Math.log(10.0);
 
@@ -459,12 +527,15 @@ implements MouseListener, MouseMotionListener
 			unitCount = (int)(barDistance/1000000 + 0.5);
 		}
 		
-		int startX = canvasWidth - 40 - maxPixelsPerBar;
-		int startY = canvasHeight - 20;
+		int cWidth = offScreenImage.getWidth(null);
+		int cHeight = offScreenImage.getHeight(null);
+		
+		int startX = cWidth - 40 - maxPixelsPerBar;
+		int startY = cHeight - 20;
 		
 		// Shade box for light backgrounds
 		g.setColor(shadeBoxColor);
-		g.fillRect(startX - 8, startY - 8, canvasWidth - startX + 8, canvasHeight - startY + 8);
+		g.fillRect(startX - 8, startY - 8, cWidth - startX + 8, cHeight - startY + 8);
 		
 		g.setColor(scaleBarColor);
 		
@@ -526,10 +597,26 @@ implements MouseListener, MouseMotionListener
 		return new LensRegion(lensPlanePoint, lensUnitVector);
 	}
 	
-    void setNorthUp(boolean state) {
-		genGlobe.setNorthUp(state);
-		if ((globeViewFrame != null) && (globeViewFrame.northUpButton != null)) {
-			globeViewFrame.setNorthUp(state);
+	// *** Set/Unset methods below *** //
+	
+    void setBearing(boolean state) {
+		drawBearing = state;
+		if ((globeViewFrame != null) && (globeViewFrame.bearingButton != null)) {
+			globeViewFrame.bearingButton.setState(state);
+		}
+    }
+	
+    void setBorders(boolean state) {
+		drawBorders = state;
+		if ((globeViewFrame != null) && (globeViewFrame.bordersButton != null)) {
+			globeViewFrame.bordersButton.setState(state);
+		}
+    }
+	
+    void setCoastLines(boolean state) {
+		drawCoastLines = state;
+		if ((globeViewFrame != null) && (globeViewFrame.coastsButton != null)) {
+			globeViewFrame.coastsButton.setState(state);
 		}
     }
 	
@@ -547,24 +634,35 @@ implements MouseListener, MouseMotionListener
 		}
     }
 	
-    void setCoastLines(boolean state) {
-		drawCoastLines = state;
-		if ((globeViewFrame != null) && (globeViewFrame.coastsButton != null)) {
-			globeViewFrame.coastsButton.setState(state);
-		}
-    }
-	
-    void setSiteLabels(boolean state) {
-		drawLabels = state;
-		if ((globeViewFrame != null) && (globeViewFrame.sitesButton != null)) {
-			globeViewFrame.sitesButton.setState(state);
-		}
-    }
-	
     void setGraticules(boolean state) {
 		drawGraticule = state;
 		if ((globeViewFrame != null) && (globeViewFrame.graticulesButton != null)) {
 			globeViewFrame.graticulesButton.setState(state);
+		}
+    }
+	
+    void setNorthUp(boolean state) {
+		genGlobe.setNorthUp(state);
+		if ((globeViewFrame != null) && (globeViewFrame.northUpButton != null)) {
+			globeViewFrame.setNorthUp(state);
+		}
+    }
+	
+    void setProjection(Projection p) {
+		projection = p;
+		if (p == Projection.CROSSEYE3D)
+			drawStereoscopic = true;
+		else drawStereoscopic = false;
+		checkOffScreenImage();
+		if (globeViewFrame != null) {
+			globeViewFrame.setProjection(p);
+		}
+    }
+	
+    void setRivers(boolean state) {
+		drawRivers = state;
+		if ((globeViewFrame != null) && (globeViewFrame.riversButton != null)) {
+			globeViewFrame.riversButton.setState(state);
 		}
     }
 	
@@ -582,17 +680,10 @@ implements MouseListener, MouseMotionListener
 		}
     }
 	
-    void setBearing(boolean state) {
-		drawBearing = state;
-		if ((globeViewFrame != null) && (globeViewFrame.bearingButton != null)) {
-			globeViewFrame.bearingButton.setState(state);
-		}
-    }
-	
-    void setProjection(Projection p) {
-		projection = p;
-		if (globeViewFrame != null) {
-			globeViewFrame.setProjection(p);
+    void setSiteLabels(boolean state) {
+		drawLabels = state;
+		if ((globeViewFrame != null) && (globeViewFrame.sitesButton != null)) {
+			globeViewFrame.sitesButton.setState(state);
 		}
     }
 	
@@ -609,19 +700,6 @@ implements MouseListener, MouseMotionListener
 		messageArea.setText(busyString + "(ready)");
 		messageArea.repaint();
 	}
-	
-    void createOffScreen(int width, int height) {
-		// Create one buffer for pixel-by-pixel drawing
-		offScreenPixels = new int[width * height];
-		offScreenSource = new MemoryImageSource(width, height, 
-												offScreenPixels, 
-												0, width);
-		offScreenSource.setAnimated(true);
-		memOffScreenImage = createImage(offScreenSource);
-		
-		// And a second buffer for Graphics based drawing
-		offScreenImage = createImage(width, height);
-    }
 	
 	long oldTime = 0;
 	boolean timeStarted = false;
@@ -645,6 +723,7 @@ implements MouseListener, MouseMotionListener
 		}
 		catch (OutOfMemoryError e) {
 			respondToOutOfMemory(e);
+			throw e;
 		}
     }
 	
@@ -655,70 +734,187 @@ implements MouseListener, MouseMotionListener
 		// TODO - take more drastic measures
 	}
 	
+	// Copy off screen data onto the screen
+	public void updateOnScreen(Graphics g) {
+		if (drawStereoscopic) {
+			g.drawImage(leftEyeImage, 0, 0, this);
+			g.drawImage(offScreenImage, canvasWidth/2, 0, this);
+		}
+		else 
+			g.drawImage(offScreenImage, 0, 0, this);
+	}
+	
+	// Update the offscreen image, without updating the memOffscreen data
+	public void updateOffScreen(LensRegion viewLens) {
+		checkOffScreenImage();
+		
+		// 3D stereo - paint two images
+		if (drawStereoscopic) {
+
+			double screenDist = 1500; // Viewer to screen in pixels
+			double interpupillaryDist = 250; // Distance between eyes in pixels
+			double parallaxAngle = Math.asin((interpupillaryDist/2)/(screenDist + genGlobe.getPixelRadius()));
+			double parallaxPixels = (interpupillaryDist/2)*genGlobe.getPixelRadius()/(genGlobe.getPixelRadius()+screenDist);
+								   
+			leftGenGlobe = genGlobe.copy();
+			leftGenGlobe.centerX = leftEyeImage.getWidth(null)/2;
+			leftGenGlobe.rotateY(parallaxAngle);
+			leftGenGlobe.offsetX = (int)Math.round(parallaxPixels);
+
+			rightGenGlobe = genGlobe.copy();
+			rightGenGlobe.centerX = offScreenImage.getWidth(null)/2;
+			rightGenGlobe.rotateY(-parallaxAngle);
+			rightGenGlobe.offsetX = (int)Math.round(-parallaxPixels);
+			
+			if (drawSatelliteImage || dayNight) {
+				leftEyeGraphics.drawImage(memLeftEyeImage, 0, 0, this);
+				offScreenGraphics.drawImage(memOffScreenImage, 0, 0, this);
+			}
+			else {
+				paintBackground(leftEyeGraphics, projection, leftGenGlobe, 
+								leftEyeImage.getWidth(null), leftEyeImage.getHeight(null));
+				paintBackground(offScreenGraphics, projection, rightGenGlobe,
+								offScreenImage.getWidth(null), offScreenImage.getHeight(null));
+			}
+			paintForeground(leftEyeGraphics, projection, leftGenGlobe, viewLens);
+			paintForeground(offScreenGraphics, projection, rightGenGlobe, viewLens);
+		}
+		else { // non stereo
+			if (drawSatelliteImage || dayNight) // Need memory pixel source for night and planet image
+				offScreenGraphics.drawImage(memOffScreenImage, 0, 0, this);
+			else // paint simple background otherwise
+				paintBackground(offScreenGraphics, projection, genGlobe,
+								offScreenImage.getWidth(null), offScreenImage.getHeight(null));
+
+			paintForeground(offScreenGraphics, projection, genGlobe, viewLens);
+		}		
+	}
+	
     public void paint(Graphics g) {
 		if (!stopBitmapThread()) return; // thread did not stop
 
-		checkOffScreenImage();
 		LensRegion viewLens = getViewLens();
+		updateOffScreen(viewLens); // Store old background off screen
+		
 		if (fullUpdateNow) { // Check for new data to load
 			paramFiles.paint(g, genGlobe, projection, viewLens);
 			viewLens = getViewLens(); // update in case scale or center has changed
 			
 			// In case something new was loaded - instant feedback of foreground
-			paintForeground(g, viewLens);
+			updateOffScreen(viewLens); // Store old background off screen
 		}
+		updateOnScreen(g);
+		drawProgress = 100;
 		
 		// Do we need time consuming draw operation?
-		if (drawSatelliteImage || dayNight) {
-			// Draw old one first
-			offScreenGraphics.drawImage(memOffScreenImage, 0, 0, this);		
+		if (drawSatelliteImage || dayNight) {			
 			if (fullUpdateNow) {
-				images.keepDrawing = true;
-				drawBitmapThread = new DrawBitmapThread("DrawBitmap", this, g, viewLens);
-				drawBitmapThread.start();
+				drawProgress = 0;
+				progressBar.show();
+				startBitmapThread(g, viewLens);
+				return;
 			}
-			else { // Fast update of foreground
-				paintForeground(offScreenGraphics, viewLens);
-				g.drawImage(offScreenImage, 0, 0, null);
-			}
-		}
-		else { // Non-bitmap drawing
-			paintBackground(offScreenGraphics);
-			paintForeground(offScreenGraphics, viewLens);
-			g.drawImage(offScreenImage, 0, 0, null);
-		}
+		}		
     }
 	
     private void checkOffScreenImage() {
+		
 		// double/triple buffering
 		Dimension d = getSize();
-		if ( (offScreenImage == null) ||
-			 (d.width != offScreenImage.getWidth(null)) ||
-			 (d.height != offScreenImage.getHeight(null)) ) {
-			
-			createOffScreen(d.width, d.height);
-			offScreenGraphics = offScreenImage.getGraphics();
-			canvasWidth = d.width;
-			canvasHeight = d.height;
+
+		if (drawStereoscopic) {
+			if ( (offScreenImage == null) ||
+				 (leftEyeImage == null) ||
+				 ((d.width/2) != offScreenImage.getWidth(null)) ||
+				 (d.height != offScreenImage.getHeight(null)) ) {
+
+				createOffScreen(d.width/2, d.height);
+				createLeftEye(d.width/2, d.height);
+				canvasWidth = d.width;
+				canvasHeight = d.height;
+			}
 		}
-    }
+		else {
+			leftEyeImage = null;
+			if ( (offScreenImage == null) ||
+				 (d.width != offScreenImage.getWidth(null)) ||
+				 (d.height != offScreenImage.getHeight(null)) ) {
+
+				createOffScreen(d.width, d.height);
+				canvasWidth = d.width;
+				canvasHeight = d.height;
+			}
+		}
+	}
 	
+    void createOffScreen(int width, int height) {
+		// Create one buffer for pixel-by-pixel drawing
+
+		int arraySize = width * height;
+		offScreenPixels = new int[arraySize];
+		for (int i = 0; i < arraySize; i++) {
+			offScreenPixels[i] = 0xFF404040; // Initialize to grey
+		}
+
+		offScreenSource = new MemoryImageSource(width, height, 
+												offScreenPixels, 
+												0, width);
+		offScreenSource.setAnimated(true);
+		memOffScreenImage = createImage(offScreenSource);
+		
+		// And a second buffer for Graphics based drawing
+		offScreenImage = createImage(width, height);
+		try {
+			offScreenGraphics = offScreenImage.getGraphics();
+			offScreenGraphics.setColor(backgroundColor);
+			offScreenGraphics.fillRect(0,0,width,height);
+		}
+		catch (NullPointerException e) {}
+	}
+
+    void createLeftEye(int width, int height) {
+		// Create one buffer for pixel-by-pixel drawing
+
+		int arraySize = width * height;
+		leftEyePixels = new int[arraySize];
+		for (int i = 0; i < arraySize; i++) {
+			leftEyePixels[i] = 0xFF404040; // Initialize to grey
+		}
+		
+		leftEyePixels = new int[width * height];
+		leftEyeSource = new MemoryImageSource(width, height, 
+												leftEyePixels, 
+												0, width);
+		leftEyeSource.setAnimated(true);
+		memLeftEyeImage = createImage(leftEyeSource);
+		
+		// And a second buffer for Graphics based drawing
+		leftEyeImage = createImage(width, height);
+		try {
+			leftEyeGraphics = leftEyeImage.getGraphics();
+			leftEyeGraphics.setColor(backgroundColor);
+			leftEyeGraphics.fillRect(0,0,width,height);
+		}
+		catch (NullPointerException e) {}
+	}
 	
+
     // Everything BEHIND the texture map
-    public void paintBackground(Graphics g) {
+    public void paintBackground(Graphics g, Projection p, GenGlobe genGlobe, int width, int height) {
 		// Fill everything with black
 		g.setColor(backgroundColor);
-		g.fillRect(0,0,getSize().width,getSize().height);
+		g.fillRect(0, 0, width, height);
 		
 		// Draw background (ocean)
 		g.setColor(oceanColor);
-		paintOcean(g);
+		paintOcean(g, p, genGlobe);
 		
 		// Draw outline
 		g.setColor(outlineColor);
-		paintOutline(g);
+		paintOutline(g, p, genGlobe);
     }
 	
+	// TODO offscreengraphics can change if stereoscopic
     public void paintBitmap(Graphics offScreenGraphics, // always offScreenGraphics?
 							Graphics onScreenGraphics, 
 							GenGlobe genGlobe, 
@@ -801,14 +997,14 @@ implements MouseListener, MouseMotionListener
 	}
 	
     public void mouseClicked(MouseEvent e) {
-		stopBitmapThread();
 		// Recenter globe on clicked point
+
+		tempV3 = rasterToSphere(e.getX(), e.getY(), tempV3);
+		if (tempV3 == null) return;
+		stopBitmapThread();
 		
-		double x = genGlobe.planeX(e.getX());
-		double y = genGlobe.planeY(e.getY());
-		Vector3D newCenter = new Vector3D();
-		newCenter = projection.vec2DTo3D(x, y, newCenter);
-		centerOnPosition(newCenter);
+		tempV3 = genGlobe.rotate(tempV3);
+		centerOnPosition(tempV3);
 		
 		useOldMouse = false;
 		isDragging = false;
@@ -881,27 +1077,66 @@ implements MouseListener, MouseMotionListener
 		useOldMouse = true;
     }
 	
+	// Convert mouse coordinates proper genglobe
+	GenGlobe getCurrentGenGlobe(int rx, int ry) {
+		GenGlobe gg;
+		if (drawStereoscopic)
+			if (rx < canvasWidth/2) gg = leftGenGlobe;
+			else gg = rightGenGlobe;
+		else gg = genGlobe;
+		return gg;
+	}
+
+	// Convert mouse coordinates to XYZ
+	Vector3D rasterToUnrotatedSphere(int rx, int ry, Vector3D v) {
+		double x, y;
+		GenGlobe gg = getCurrentGenGlobe(rx, ry);
+		if (drawStereoscopic) {
+			if (rx < canvasWidth/2) {
+				x = gg.planeX(rx);
+				y = gg.planeY(ry);
+			}
+			else {
+				x = gg.planeX(rx - canvasWidth/2);
+				y = gg.planeY(ry);
+			}
+		} else {
+			x = gg.planeX(rx);
+			y = gg.planeY(ry);
+		}
+
+		v = projection.vec2DTo3D(x, y, utilityV3);
+		if (v == null) {
+			setCursor(defaultCursor);
+			return null;
+		}
+		return v;
+	}
+	
+	// Convert mouse coordinates to XYZ
+	Vector3D rasterToSphere(int rx, int ry, Vector3D v) {
+		v = rasterToUnrotatedSphere(rx, ry, v);
+		if (v == null) return null;
+		GenGlobe gg = getCurrentGenGlobe(rx, ry);
+		v = gg.unrotate(v);
+		return v;
+	}
+	
     String latString, longString;
 	String bearingString;
     double degree, minute, second;
     public void mouseMoved(MouseEvent e) {
 		// Show the latitude and longitude of the mouse position
-		double x = genGlobe.planeX(e.getX());
-		double y = genGlobe.planeY(e.getY());
-		// Vector3D tempV3 = new Vector3D();
-		tempV3 = projection.vec2DTo3D(x, y, utilityV3);
-		if (tempV3 == null) {
-			setCursor(defaultCursor);
-			return;
-		}
-		
+
 		// Save local mouse position for bearing calculation
+		tempV3 = rasterToUnrotatedSphere(e.getX(), e.getY(), tempV3);
+		if (tempV3 == null) return;
 		double localX = tempV3.x();
 		double localY = tempV3.y();
 		double localZ = tempV3.z();
 		
 		// tempV3 = genGlobe.getInverseOrientation().mult(tempV3);
-		tempV3 = genGlobe.unrotate(tempV3);
+		tempV3 = rasterToSphere(e.getX(), e.getY(), tempV3); // includes urotate
 		setCursor(crosshairCursor);
 		
 		// In radians
@@ -993,7 +1228,7 @@ implements MouseListener, MouseMotionListener
 			
 			rotateXY = canvasClass.getMethod("mouseRotateXY", mouseMethodArgs);
 			zoom = canvasClass.getMethod("mouseZoom", mouseMethodArgs);
-			rotateXY = canvasClass.getMethod("mouseRotateZ", mouseMethodArgs);
+			rotateZ = canvasClass.getMethod("mouseRotateZ", mouseMethodArgs);
 
 			if (actionName == "mouseZoom")
 				whatTheModifiedMouseDoes = rotateXY;
@@ -1057,8 +1292,8 @@ implements MouseListener, MouseMotionListener
 		double screenScale = getSize().width + getSize().height;
 		double zoomScale = (deltaX - deltaY) * 3;
 		
-		if (zoomScale > screenScale) return;
-		if (zoomScale < -screenScale/2) return;
+		if (zoomScale > screenScale) return; // Don't grow more than double
+		if (zoomScale < -screenScale/2) return; // Don't shrink less than half
 		
 		double zoomRadius = 
 			genGlobe.getPixelRadius() *
