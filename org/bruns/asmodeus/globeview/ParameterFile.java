@@ -10,6 +10,11 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.3  2005/03/11 00:17:14  cmbruns
+//  Added SCALEBAR parameter
+//  Corrected setLatLon call to send radians, not degrees
+//  Changed order of lon and lat for MapBlitter call
+//
 //  Revision 1.2  2005/03/05 00:17:16  cmbruns
 //  Added ability to load many other things in ParameterFiles;
 //  Including other Parameter files, which can be dynamically loaded when needed, using the paint() routine.
@@ -87,6 +92,9 @@ PARAMETER_LINE:
 			else if (keyWord.equals("SATELLITES"))  {canvas.setSatellites(true);}
 			else if (keyWord.equals("!SATELLITES")) {canvas.setSatellites(false);}
 			
+			else if (keyWord.equals("SCALEBAR"))  {canvas.setScaleBar(true);}
+			else if (keyWord.equals("!SCALEBAR")) {canvas.setScaleBar(false);}
+			
 			// Consider loading another parameter file
 			else if (keyWord.equals("PARAM")) {
 				String paramFileName = tokenizer.nextToken();
@@ -104,7 +112,7 @@ PARAMETER_LINE:
 				
 				if (param != null) {
 					param.setResolution(resolution);
-					param.setLonLatRange(minLon, maxLon, minLat, maxLat);
+					param.setLonLatRange(d2r*minLon, d2r*maxLon, d2r*minLat, d2r*maxLat);
 					canvas.paramFiles.addElement(param);
 				}
 			}
@@ -150,7 +158,7 @@ PARAMETER_LINE:
 				double maxRes = (new Double(tokenizer.nextToken())).doubleValue();
 				double interval = (new Double(tokenizer.nextToken())).doubleValue();
 				GeoObject resolution = new GeoObject(minRes, minRes, maxRes, maxRes);
-				LatitudeGraticule graticule = new LatitudeGraticule(interval * Math.PI / 180.0, 
+				LatitudeGraticule graticule = new LatitudeGraticule(interval * d2r, 
 																	resolution);
 				canvas.graticule.addElement(graticule);
 			}
@@ -169,8 +177,8 @@ PARAMETER_LINE:
 				URL imageURL;
 				imageURL = new URL(url, imageFileName);
 				MapBlitter mapBlitter = MapBlitter.readMap(imageURL, canvas,
-														   minLat*d2r, maxLat*d2r,
-														   minLon*d2r, maxLon*d2r);
+														   minLon*d2r, maxLon*d2r,
+														   minLat*d2r, maxLat*d2r);
 				if (mapBlitter != null) {
 					GeoObject resolution = new GeoObject(minRes, minRes, maxRes, maxRes);
 					mapBlitter.setResolution(resolution);
@@ -197,6 +205,16 @@ PARAMETER_LINE:
 	// Use the paint action to decide whether we need to load data
 	void paint(Graphics g, GenGlobe genGlobe, Projection projection, LensRegion viewLens) {
 		if (loadedData) return;
+
+		if (false && (boundingLens != null) && (viewLens != null)) {
+			System.out.println(" viewLens: "+ 
+							   viewLens.getUnitVector().x()+", "+viewLens.getUnitVector().y()+", "+viewLens.getUnitVector().z()+
+							   " # "+viewLens.getAngleRadius()*180/Math.PI);
+			System.out.println(" parameterFile: "+ 
+							   boundingLens.getUnitVector().x()+", "+boundingLens.getUnitVector().y()+", "+boundingLens.getUnitVector().z()+
+							   " # "+boundingLens.getAngleRadius()*180/Math.PI);
+		}
+		
 		if (!usableResolution(genGlobe)) return;
 		if (!overlaps(viewLens)) return;
 		// If we get this far, it's time to load the data from this parameter file
@@ -206,6 +224,5 @@ PARAMETER_LINE:
 			System.out.println("Error loading parameter file: " + e);
 		}
 		canvas.unsetWait();
-	}
-	
+	}	
 }
