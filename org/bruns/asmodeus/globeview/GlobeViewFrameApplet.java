@@ -2,6 +2,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/03/11 00:08:22  cmbruns
+// New splash dialog appears when globeview is started
+//
 // Revision 1.4  2005/03/05 00:07:26  cmbruns
 // Changed signature to take only parameter file, not individual file URLS
 //
@@ -122,9 +125,28 @@ public class GlobeViewFrameApplet extends Applet
 		setCursor(defaultCursor);
 		button.setCursor(defaultCursor);
 		button.setLabel("Launch GlobeView");
-
+		
 	    }
 	    frame.show();
+		
+		// Splash screen
+		InfoDialog splashDialog = new InfoDialog(frame, "GlobeView", true);
+		splashDialog.okButton.setLabel("OK");
+		splashDialog.addLine("GlobeView applet copyright \u00A9 2001-2005");
+		splashDialog.addLine("Christopher M. Bruns PhD");
+		splashDialog.addLine("All rights reserved");
+		splashDialog.addLine("");
+		splashDialog.addLine("http://bruns.homeip.net/~bruns/globeview.html");
+		splashDialog.addLine("cmbruns@comcast.net");
+		splashDialog.addLine("");
+		splashDialog.addLine("See HELP menu to get started");
+		splashDialog.addLine("See Help menu->About for credits");
+		splashDialog.addLine("");
+		splashDialog.addLine("Submit feature requests and bug reports to:");
+		splashDialog.addLine("  http://bruns.homeip.net/bugzilla/index.cgi");
+		splashDialog.finalizeDialog();
+		splashDialog.showDialog();
+		
 	}
     }
 
