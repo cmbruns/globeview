@@ -9,6 +9,9 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/03/13 22:13:34  cmbruns
+// Replace generic exception catches with specific ones.
+//
 // Revision 1.3  2005/03/11 00:18:34  cmbruns
 // Changed InputStream constructor call to read UTF-8 characters from labels file
 //
@@ -31,8 +34,13 @@ public class SiteLabelCollection extends GeoCollection {
 	SiteLabelCollection(URL siteURL) {
 		
 		try {
-			BufferedReader in = new BufferedReader(new InputStreamReader(siteURL.openStream(),
-												   "UTF-8"));		
+			BufferedReader in;
+			try {
+				in = new BufferedReader(new InputStreamReader(siteURL.openStream(),"UTF-8"));		
+			} catch (UnsupportedEncodingException e) {
+				// City names will be ugly if UTF-8 is not available...
+				in = new BufferedReader(new InputStreamReader(siteURL.openStream()));		
+			}
 			String inputLine;		
 			while ((inputLine = in.readLine()) != null) {
 				StringTokenizer tokenizer = new StringTokenizer(inputLine, "\t");
@@ -52,7 +60,7 @@ public class SiteLabelCollection extends GeoCollection {
 				addElement(label);
 			}
 			in.close();
-		} catch (Exception ex) {
+		} catch (IOException ex) {
 			System.out.println("Problem reading sites URL: " + ex + " URL: " + siteURL);
 		}
 	}
