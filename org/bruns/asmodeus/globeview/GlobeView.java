@@ -2,6 +2,12 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.6  2005/03/13 21:58:47  cmbruns
+// Added optional crosshair menu
+// Added RotateZ option to mouse actions, but only when North is Up
+// Replaced generic exception catches with specific ones.
+// Rearranged and renamed some existing menus.
+//
 // Revision 1.5  2005/03/11 00:07:32  cmbruns
 // Added Help dialog
 // Added support for scale bar on canvas
@@ -61,13 +67,14 @@ public class GlobeView extends Frame
 	CheckboxMenuItem imagesButton;
 	CheckboxMenuItem sitesButton;
 	CheckboxMenuItem scaleBarButton;
+	CheckboxMenuItem crosshairButton;
     
     // Supported mouseActions
     static final int ROT_XY  = 0;
     static final int ZOOM    = 1;
-    // static final int ROT_Z   = 2;
+    static final int ROT_Z   = 2;
     // static final int ROT_XYZ = 3;
-    static final int totalMouseActions = 2;
+    static final int totalMouseActions = 3;
     static int currentMouseAction      = ROT_XY;
     CheckboxMenuItem[] mouseActionCheck = new CheckboxMenuItem[totalMouseActions];
     static String[] mouseActionDescription = new String[totalMouseActions];
@@ -77,7 +84,7 @@ public class GlobeView extends Frame
 		URL parameterURL = new URL(arg[0]);
 	    GlobeView frame = new GlobeView(parameterURL);
 	    frame.show();
-	} catch (Exception exception) {
+	} catch (MalformedURLException exception) {
 	    System.out.println(exception);
 	    System.exit(0);
 	}
@@ -91,8 +98,8 @@ public class GlobeView extends Frame
 			public void windowClosing(WindowEvent e) {
 				try {
 					System.exit(0); // Kill the program
-				} catch (Exception exception) {
-					hide(); // OK, just hide it then
+				} catch (java.security.AccessControlException exception) {
+				 	hide(); // OK, just hide it then
 				}
 			}});
 	
@@ -107,7 +114,7 @@ public class GlobeView extends Frame
 		projectionDescription[STEREOGRAPHIC]      = "Stereographic";
 		
 		mouseActionDescription[ROT_XY]  = "Rotate XY";
-		// mouseActionDescription[ROT_Z]   = "Rotate Z";
+		mouseActionDescription[ROT_Z]   = "Rotate Z";
 		// mouseActionDescription[ROT_XYZ] = "Rotate XYZ";
 		mouseActionDescription[ZOOM]    = "Zoom";
 		
@@ -123,53 +130,76 @@ public class GlobeView extends Frame
 		menu = new Menu("GlobeView");
 		menuBar.add(menu);
 		
-		northUpButton = new CheckboxMenuItem("North Up");
+		northUpButton = new CheckboxMenuItem("Force North Up");
 		northUpButton.setEnabled(true);
 		northUpButton.setState(true);
 		menu.add(northUpButton);
 		northUpButton.addItemListener(this);
 		
-		dayNightButton = new CheckboxMenuItem("Day/Night");
+		dayNightButton = new CheckboxMenuItem("Show Day/Night");
 		dayNightButton.setEnabled(true);
 		dayNightButton.setState(true);
 		menu.add(dayNightButton);
 		dayNightButton.addItemListener(this);
 		
+		Menu graphicsMenu = new Menu("Display Graphics");
+		menu.add(graphicsMenu);
+		
 		sitesButton = new CheckboxMenuItem("Place Names");
 		sitesButton.setEnabled(true);
 		sitesButton.setState(true);
-		menu.add(sitesButton);
+		graphicsMenu.add(sitesButton);
 		sitesButton.addItemListener(this);
 		
 		imagesButton = new CheckboxMenuItem("Satellite Image");
 		imagesButton.setEnabled(true);
 		imagesButton.setState(true);
-		menu.add(imagesButton);
+		graphicsMenu.add(imagesButton);
 		imagesButton.addItemListener(this);
 		
 		coastsButton = new CheckboxMenuItem("Coast Lines");
 		coastsButton.setEnabled(true);
 		coastsButton.setState(true);
-		menu.add(coastsButton);
+		graphicsMenu.add(coastsButton);
 		coastsButton.addItemListener(this);
 		
 		graticulesButton = new CheckboxMenuItem("Graticule");
 		graticulesButton.setEnabled(true);
 		graticulesButton.setState(true);
-		menu.add(graticulesButton);
+		graphicsMenu.add(graticulesButton);
 		graticulesButton.addItemListener(this);
 		
 		scaleBarButton = new CheckboxMenuItem("Scale Bar");
 		scaleBarButton.setEnabled(true);
 		scaleBarButton.setState(true);
-		menu.add(scaleBarButton);
+		graphicsMenu.add(scaleBarButton);
 		scaleBarButton.addItemListener(this);
+		
+		crosshairButton = new CheckboxMenuItem("Crosshair");
+		crosshairButton.setEnabled(true);
+		crosshairButton.setState(true);
+		graphicsMenu.add(crosshairButton);
+		crosshairButton.addItemListener(this);
 		
 		bearingButton = new CheckboxMenuItem("Antenna Bearing");
 		bearingButton.setEnabled(true);
 		bearingButton.setState(false);
-		menu.add(bearingButton);
+		graphicsMenu.add(bearingButton);
 		bearingButton.addItemListener(this);
+		
+		Menu dragMenu = new Menu("Mouse Drag Action");
+		menu.add(dragMenu);
+		for (int i = 0; i < totalMouseActions; ++i) {
+			mouseActionCheck[i] = new CheckboxMenuItem(mouseActionDescription[i]);
+			checkboxMenuItem = mouseActionCheck[i];
+			checkboxMenuItem.setEnabled(true);
+			checkboxMenuItem.setState(i == currentMouseAction);
+			dragMenu.add(checkboxMenuItem);
+			checkboxMenuItem.addItemListener(this);
+		}
+		if (northUpButton.isEnabled())
+			mouseActionCheck[ROT_Z].setEnabled(false);
+		// mouseActionCheck[ROT_XYZ].setEnabled(false);
 		
 		menuItem = new MenuItem("-"); // Separator
 		menu.add(menuItem);
@@ -196,18 +226,6 @@ public class GlobeView extends Frame
 			projectionCheck[i] = checkboxMenuItem;
 		}
 
-		menu = new Menu("MouseDrag");
-		menuBar.add(menu);
-		for (i = 0; i < totalMouseActions; ++i) {
-			mouseActionCheck[i] = new CheckboxMenuItem(mouseActionDescription[i]);
-			checkboxMenuItem = mouseActionCheck[i];
-			checkboxMenuItem.setEnabled(true);
-			checkboxMenuItem.setState(i == currentMouseAction);
-			menu.add(checkboxMenuItem);
-			checkboxMenuItem.addItemListener(this);
-		}
-		// mouseActionCheck[ROT_XYZ].setEnabled(false);
-		
 		menu = new Menu("Help");
 		menuBar.setHelpMenu(menu);
 		menuItem = new MenuItem("GlobeView Help");
@@ -260,19 +278,15 @@ public class GlobeView extends Frame
 		if (e.getActionCommand() == "Quit GlobeView") {
 			try {
 				System.exit(0); // Kill the program
-			} catch (Exception exception) {
+			} catch (java.security.AccessControlException exception) {
 				hide(); // At least hide it, anyway
 			}
 		}
 		if (e.getActionCommand() == "About GlobeView") {
-			// TODO - get about dialog working
 			aboutDialog.showDialog();
-			// System.out.println("Tell me about globeview");
 		}
 		if (e.getActionCommand() == "GlobeView Help") {
-			// TODO - get about dialog working
 			helpDialog.showDialog();
-			// System.out.println("Tell me about globeview");
 		}
     }
 
@@ -283,22 +297,39 @@ public class GlobeView extends Frame
 	    projectionCheck[j].setState(j == currentProjection);
     }
 
+	void setNorthUp(boolean status) {
+		northUpButton.setState(status);
+		if (status) {
+			mouseActionCheck[ROT_Z].setEnabled(false);
+			if (mouseActionCheck[ROT_Z].getState()) {
+				mouseActionCheck[ROT_Z].setState(false);
+				mouseActionCheck[ROT_XY].setState(true);				
+				canvas.setMouseAction("mouseRotateXY");
+			}
+		}
+		else {
+			mouseActionCheck[ROT_Z].setEnabled(true);
+		}
+	}
+	
     // Handle checkbox menu items
     public void itemStateChanged(ItemEvent e) {
-	int i, j;
+		int i, j;
+		
+		if (e.getItem() == "Force North Up") {
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				canvas.setNorthUp(true);
+				setNorthUp(true);
+				canvas.fullRepaint();
+			}
+			else {
+				canvas.setNorthUp(false);
+				setNorthUp(false);
+			}
+			return;
+		}
 
-	if (e.getItem() == "North Up") {
-	    if (e.getStateChange() == ItemEvent.SELECTED) {
-			canvas.setNorthUp(true);
-			canvas.fullRepaint();
-	    }
-	    else {
-			canvas.setNorthUp(false);
-	    }
-	    return;
-	}
-
-	if (e.getItem() == "Day/Night") {
+	if (e.getItem() == "Show Day/Night") {
 	    if (e.getStateChange() == ItemEvent.SELECTED) {
 		canvas.dayNight = true;
 		canvas.fullRepaint();
@@ -353,6 +384,18 @@ public class GlobeView extends Frame
 	    }
 	    else {
 			canvas.drawSatelliteImage = false;
+			canvas.fullRepaint();
+	    }
+	    return;
+	}
+	
+	if (e.getItem() == "Crosshair") {
+	    if (e.getStateChange() == ItemEvent.SELECTED) {
+			canvas.drawCrosshair = true;
+			canvas.fullRepaint();
+	    }
+	    else {
+			canvas.drawCrosshair = false;
 			canvas.fullRepaint();
 	    }
 	    return;
