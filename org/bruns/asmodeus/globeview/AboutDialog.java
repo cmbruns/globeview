@@ -5,8 +5,16 @@
 //  Created by Christopher Bruns on 1/8/05.
 //  Copyright 2005 __MyCompanyName__. All rights reserved.
 //
-
 // Dialog window when user selects "About Globeview"
+// 
+// $Id$
+// $Header$
+// $Log$
+// Revision 1.2  2005/03/01 02:03:25  cmbruns
+// Added cvs headers
+//
+// 
+
 
 package org.bruns.asmodeus.globeview;
 
