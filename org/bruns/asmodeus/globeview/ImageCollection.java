@@ -8,6 +8,11 @@
 //  $Id$
 //  $Header$
 //  $Log$
+//  Revision 1.7  2005/09/30 16:42:56  cmbruns
+//  Make night side darker
+//  Create separate transform for antenna, terminator
+//  "set" method to copy Matrix3D in place
+//
 //  Revision 1.6  2005/03/28 01:18:10  cmbruns
 //  Created paintOneBuffer() method to contain the heavy lifting in rendering, so that the paint() method can spend its time dealing with the complexity of stereoscopic rendering.
 //
@@ -301,8 +306,10 @@ IMAGES:
 					// (i.e. twilight is all in shadow)
 					// if (sinSunElevation < twilightWidth ) { // not quite day
 					if (sinSunElevation < 0) { // not quite day
-						darkPixel = pixel >> 1; // Shift to darken
-						darkPixel = darkPixel & 0xFF7F7F7F; // High bit zero in each color
+						// darkPixel = pixel >> 1; // Shift to darken
+						// darkPixel = darkPixel & 0xFF7F7F7F; // High bit zero in each color
+						darkPixel = pixel >> 2; // Shift to darken
+						darkPixel = darkPixel & 0xFF3F3F3F; // High bit zero in each color
 						darkPixel = darkPixel | 0xFF000000; // Restore opacity
 						
 						if (sinSunElevation < -twilightWidth) { // definitely night

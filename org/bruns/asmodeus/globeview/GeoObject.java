@@ -1,5 +1,3 @@
-package org.bruns.asmodeus.globeview;
-
 // GeoObject.java
 // March 20, 2001  Chris Bruns
 // Meant to be the new parent class of SiteLabel, BitMap, and PolyVector
@@ -10,6 +8,11 @@ package org.bruns.asmodeus.globeview;
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.7  2005/09/30 16:42:56  cmbruns
+// Make night side darker
+// Create separate transform for antenna, terminator
+// "set" method to copy Matrix3D in place
+//
 // Revision 1.6  2005/03/28 01:04:45  cmbruns
 // Changed checkResolution() routine to use new genglobe->getAdustedResolution() method so that the new DetailLevel option will work.
 //
@@ -27,6 +30,7 @@ package org.bruns.asmodeus.globeview;
 // added cvs headers
 //
 //
+package org.bruns.asmodeus.globeview;
 
 import java.awt.*;
 
@@ -40,6 +44,7 @@ public class GeoObject
 	
 	private BoundingBox boundingBox = null;
 	public LensRegion boundingLens = null;
+	Matrix3D postTransform = null; // Some objects don't follow the earth the same way, e.g. the terminator and antenna bearing
 	
     // Constructor
     GeoObject() {

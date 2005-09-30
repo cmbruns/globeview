@@ -2,6 +2,11 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.5  2005/09/30 16:42:56  cmbruns
+// Make night side darker
+// Create separate transform for antenna, terminator
+// "set" method to copy Matrix3D in place
+//
 // Revision 1.4  2005/03/28 01:53:13  cmbruns
 // Created four separate static instances of Perspective projection for 3D stereoscopic modes
 // Enhanced getByName() method to work for Orthographic and some of the stereoscopic modes
@@ -417,6 +422,9 @@ class AzimuthalEqualAreaProjection extends Projection {
     // *** Perspective *** //
     // ******************* //
     class PerspectiveProjection extends Projection {
+	// TODO - Adjust viewerDistance and screenRadius with zoom level
+	// TODO - Make new projections for left and right views
+	
 	double viewerDistance = 9; // radians between eye and screen
 	double screenRadius = 1; // Radius of image of projected globe
 	double zclip = 0; // Don't draw any points below here

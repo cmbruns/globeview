@@ -2,6 +2,11 @@
 // $Id$
 // $Header$
 // $Log$
+// Revision 1.4  2005/09/30 16:42:56  cmbruns
+// Make night side darker
+// Create separate transform for antenna, terminator
+// "set" method to copy Matrix3D in place
+//
 // Revision 1.3  2005/03/28 01:46:01  cmbruns
 // Created copy() method for use in the copy() method of GenGlobe()
 //
@@ -35,7 +40,20 @@ public class Matrix3D {
 	element[2][2] = e22;
 
     }
-
+	
+	// Copy contents of another matrix, so we can change matriced passed by reference
+    void set(Matrix3D m2) {
+		element[0][0] = m2.element[0][0];
+		element[0][1] = m2.element[0][1];
+		element[0][2] = m2.element[0][2];
+		element[1][0] = m2.element[1][0];
+		element[1][1] = m2.element[1][1];
+		element[1][2] = m2.element[1][2];
+		element[2][0] = m2.element[2][0];
+		element[2][1] = m2.element[2][1];
+		element[2][2] = m2.element[2][2];
+    }
+	
 	Matrix3D copy() {return this.mult(1.0);}
 	
     Matrix3D mult(Matrix3D m2) {
