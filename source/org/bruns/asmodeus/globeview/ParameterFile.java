@@ -84,7 +84,10 @@ public class ParameterFile extends GeoObject {
 		loadedData = true;
 		// Open file
 		BufferedReader in;
-		// try {
+
+        if (url == null) throw new IOException("Globeview parameter file URL is null");
+        
+        //try {
 			InputStream uncompressedStream;
 			InputStream urlStream = url.openStream();
 			uncompressedStream = urlStream;

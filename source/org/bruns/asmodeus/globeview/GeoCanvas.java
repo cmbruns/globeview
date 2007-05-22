@@ -31,10 +31,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import java.awt.image.*;
-import java.net.*; // URL
-import org.bruns.asmodeus.globeview.*;
-import java.lang.*;
-import java.text.*;
 
 // $Id$
 // $Header$

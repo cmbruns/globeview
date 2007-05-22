@@ -106,7 +106,7 @@ public class GlobeView extends Frame
 		try {
 			URL parameterURL = new URL(arg[0]);
 			GlobeView frame = new GlobeView(parameterURL);
-			frame.show();
+			frame.setVisible(true);
 		} catch (MalformedURLException exception) {
 			System.out.println(exception);
 			System.exit(0);
@@ -120,172 +120,10 @@ public class GlobeView extends Frame
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				try {System.exit(0);} // Kill the program
-				catch (Exception exception) {hide();} // OK, just hide it then
+				catch (Exception exception) {setVisible(false);} // OK, just hide it then
 			}});
 
-		// Menus
-		MenuBar menuBar;
-		Menu menu;
-		MenuItem menuItem;
-		CheckboxMenuItem checkboxMenuItem;
-		
-		menuBar = new MenuBar();
-		setMenuBar(menuBar);
-		
-		menu = new Menu("GlobeView");
-		menuBar.add(menu);
-		
-		Menu natureMenu = new Menu("Nature");
-		menu.add(natureMenu);
-		Menu cartographyMenu = new Menu("Cartography");
-		menu.add(cartographyMenu);
-		Menu politicsMenu = new Menu("Politics");
-		menu.add(politicsMenu);
-
-		northUpButton = new CheckboxMenuItem("Force North Up");
-		northUpButton.setEnabled(true);
-		northUpButton.setState(true);
-		cartographyMenu.add(northUpButton);
-		northUpButton.addItemListener(this);
-		
-		dayNightButton = new CheckboxMenuItem("Darken Night Side");
-		dayNightButton.setEnabled(true);
-		dayNightButton.setState(true);
-		natureMenu.add(dayNightButton);
-		dayNightButton.addItemListener(this);
-		
-		sitesButton = new CheckboxMenuItem("Show Place Names");
-		sitesButton.setEnabled(true);
-		sitesButton.setState(true);
-		politicsMenu.add(sitesButton);
-		sitesButton.addItemListener(this);
-		
-		bordersButton = new CheckboxMenuItem("Show Political Borders");
-		bordersButton.setEnabled(true);
-		bordersButton.setState(true);
-		politicsMenu.add(bordersButton);
-		bordersButton.addItemListener(this);
-		
-		imagesButton = new CheckboxMenuItem("Show Planet Image");
-		imagesButton.setEnabled(true);
-		imagesButton.setState(true);
-		natureMenu.add(imagesButton);
-		imagesButton.addItemListener(this);
-		
-		coastsButton = new CheckboxMenuItem("Show Coast Lines");
-		coastsButton.setEnabled(true);
-		coastsButton.setState(true);
-		natureMenu.add(coastsButton);
-		coastsButton.addItemListener(this);
-		
-		riversButton = new CheckboxMenuItem("Show Rivers");
-		riversButton.setEnabled(true);
-		riversButton.setState(true);
-		natureMenu.add(riversButton);
-		riversButton.addItemListener(this);
-		
-		graticulesButton = new CheckboxMenuItem("Show Graticule");
-		graticulesButton.setEnabled(true);
-		graticulesButton.setState(true);
-		cartographyMenu.add(graticulesButton);
-		graticulesButton.addItemListener(this);
-		
-		scaleBarButton = new CheckboxMenuItem("Show Scale Bar");
-		scaleBarButton.setEnabled(true);
-		scaleBarButton.setState(true);
-		cartographyMenu.add(scaleBarButton);
-		scaleBarButton.addItemListener(this);
-		
-		crosshairButton = new CheckboxMenuItem("Show Crosshair");
-		crosshairButton.setEnabled(true);
-		crosshairButton.setState(true);
-		cartographyMenu.add(crosshairButton);
-		crosshairButton.addItemListener(this);
-		
-		bearingButton = new CheckboxMenuItem("Show Antenna Bearing");
-		bearingButton.setEnabled(true);
-		bearingButton.setState(false);
-		cartographyMenu.add(bearingButton);
-		bearingButton.addItemListener(this);
-		
-		Menu dragMenu = new Menu("Mouse Drag Action");
-		menu.add(dragMenu);
-		addMouseActionItem(dragMenu, "Rotate XY", true);
-		addMouseActionItem(dragMenu, "Zoom", true);
-		boolean doIRotateZ = true;
-		if (northUpButton.isEnabled()) doIRotateZ = false;
-		addMouseActionItem(dragMenu, "Rotate Z", doIRotateZ);
-		mouseActionGroup.getItem("Rotate XY").setState(true); // Set initial mouse to rot XY
-		
-		Menu detailMenu = new Menu("Detail Level");
-		menu.add(detailMenu);
-		
-		CheckboxMenuItem lowDetailButton = new CheckboxMenuItem("Coarse Detail");
-		lowDetailButton.setEnabled(true);
-		lowDetailButton.setState(false);
-		detailMenu.add(lowDetailButton);
-		lowDetailButton.addItemListener(this);
-		detailGroup.add(lowDetailButton);
-
-		CheckboxMenuItem mediumDetailButton = new CheckboxMenuItem("Normal Detail");
-		mediumDetailButton.setEnabled(true);
-		mediumDetailButton.setState(true);
-		detailMenu.add(mediumDetailButton);
-		mediumDetailButton.addItemListener(this);
-		detailGroup.add(mediumDetailButton);
-
-		CheckboxMenuItem highDetailButton = new CheckboxMenuItem("Fine Detail");
-		highDetailButton.setEnabled(true);
-		highDetailButton.setState(false);
-		detailMenu.add(highDetailButton);
-		highDetailButton.addItemListener(this);
-		detailGroup.add(highDetailButton);
-		
-		menuItem = new MenuItem("-"); // Separator
-		menu.add(menuItem);
-		
-		menuItem = new MenuItem("Quit GlobeView");
-		menuItem.setEnabled(true);
-		menuItem.addActionListener(this);
-		menu.add(menuItem);
-		
-		int i; 
-		Menu projectionMenu = new Menu("MapProjection");
-		menuBar.add(projectionMenu);
-		
-		addProjectionMenuItem(projectionMenu, "Azimuthal Equal Area", true);
-		addProjectionMenuItem(projectionMenu, "Azimuthal Equidistant", true);
-		addProjectionMenuItem(projectionMenu, "Equirectangular", true);
-		addProjectionMenuItem(projectionMenu, "Gnomonic", true);
-		addProjectionMenuItem(projectionMenu, "Mercator", true);
-		addProjectionMenuItem(projectionMenu, "Orthographic", true);
-
-		Menu perspectiveMenu = new Menu("Perspective");
-		projectionMenu.add(perspectiveMenu);
-
-		addProjectionMenuItem(perspectiveMenu, "Normal Monoscopic Perspective", true);
-		addProjectionMenuItem(perspectiveMenu, "Cross-Eye 3D", true);
-		addProjectionMenuItem(perspectiveMenu, "Wall-Eye 3D", false);
-		addProjectionMenuItem(perspectiveMenu, "Red/Blue 3D", false);
-		addProjectionMenuItem(perspectiveMenu, "Interlaced 3D", false);		
-
-		addProjectionMenuItem(projectionMenu, "Sinusoidal", true);
-		addProjectionMenuItem(projectionMenu, "Stereographic", true);
-				
-		menu = new Menu("Help");
-		menuBar.setHelpMenu(menu);
-		menuItem = new MenuItem("GlobeView Help");
-		menuItem.addActionListener(this);
-		menuItem.setEnabled(true);
-		menu.add(menuItem);
-
-		menuItem = new MenuItem("-"); // Separator
-		menu.add(menuItem);
-		
-		menuItem = new MenuItem("About GlobeView");
-		menuItem.addActionListener(this);
-		menuItem.setEnabled(true);
-		menu.add(menuItem);
+        createMenus();
 		
 		// Canvas, which actually implements most of the hard stuff
 		canvas = new GeoCanvas(canvasStartWidth, canvasStartHeight, this);
@@ -317,6 +155,172 @@ public class GlobeView extends Frame
 		setLocation(locX, locY);
     }
 
+    private void createMenus() {
+        // Menus
+        MenuBar menuBar;
+        Menu menu;
+        MenuItem menuItem;
+        CheckboxMenuItem checkboxMenuItem;
+        
+        menuBar = new MenuBar();
+        setMenuBar(menuBar);
+        
+        menu = new Menu("GlobeView");
+        menuBar.add(menu);
+        
+        Menu natureMenu = new Menu("Nature");
+        menu.add(natureMenu);
+        Menu cartographyMenu = new Menu("Cartography");
+        menu.add(cartographyMenu);
+        Menu politicsMenu = new Menu("Politics");
+        menu.add(politicsMenu);
+
+        northUpButton = new CheckboxMenuItem("Force North Up");
+        northUpButton.setEnabled(true);
+        northUpButton.setState(true);
+        cartographyMenu.add(northUpButton);
+        northUpButton.addItemListener(this);
+        
+        dayNightButton = new CheckboxMenuItem("Darken Night Side");
+        dayNightButton.setEnabled(true);
+        dayNightButton.setState(true);
+        natureMenu.add(dayNightButton);
+        dayNightButton.addItemListener(this);
+        
+        sitesButton = new CheckboxMenuItem("Show Place Names");
+        sitesButton.setEnabled(true);
+        sitesButton.setState(true);
+        politicsMenu.add(sitesButton);
+        sitesButton.addItemListener(this);
+        
+        bordersButton = new CheckboxMenuItem("Show Political Borders");
+        bordersButton.setEnabled(true);
+        bordersButton.setState(true);
+        politicsMenu.add(bordersButton);
+        bordersButton.addItemListener(this);
+        
+        imagesButton = new CheckboxMenuItem("Show Planet Image");
+        imagesButton.setEnabled(true);
+        imagesButton.setState(true);
+        natureMenu.add(imagesButton);
+        imagesButton.addItemListener(this);
+        
+        coastsButton = new CheckboxMenuItem("Show Coast Lines");
+        coastsButton.setEnabled(true);
+        coastsButton.setState(true);
+        natureMenu.add(coastsButton);
+        coastsButton.addItemListener(this);
+        
+        riversButton = new CheckboxMenuItem("Show Rivers");
+        riversButton.setEnabled(true);
+        riversButton.setState(true);
+        natureMenu.add(riversButton);
+        riversButton.addItemListener(this);
+        
+        graticulesButton = new CheckboxMenuItem("Show Graticule");
+        graticulesButton.setEnabled(true);
+        graticulesButton.setState(true);
+        cartographyMenu.add(graticulesButton);
+        graticulesButton.addItemListener(this);
+        
+        scaleBarButton = new CheckboxMenuItem("Show Scale Bar");
+        scaleBarButton.setEnabled(true);
+        scaleBarButton.setState(true);
+        cartographyMenu.add(scaleBarButton);
+        scaleBarButton.addItemListener(this);
+        
+        crosshairButton = new CheckboxMenuItem("Show Crosshair");
+        crosshairButton.setEnabled(true);
+        crosshairButton.setState(true);
+        cartographyMenu.add(crosshairButton);
+        crosshairButton.addItemListener(this);
+        
+        bearingButton = new CheckboxMenuItem("Show Antenna Bearing");
+        bearingButton.setEnabled(true);
+        bearingButton.setState(false);
+        cartographyMenu.add(bearingButton);
+        bearingButton.addItemListener(this);
+        
+        Menu dragMenu = new Menu("Mouse Drag Action");
+        menu.add(dragMenu);
+        addMouseActionItem(dragMenu, "Rotate XY", true);
+        addMouseActionItem(dragMenu, "Zoom", true);
+        boolean doIRotateZ = true;
+        if (northUpButton.isEnabled()) doIRotateZ = false;
+        addMouseActionItem(dragMenu, "Rotate Z", doIRotateZ);
+        mouseActionGroup.getItem("Rotate XY").setState(true); // Set initial mouse to rot XY
+        
+        Menu detailMenu = new Menu("Detail Level");
+        menu.add(detailMenu);
+        
+        CheckboxMenuItem lowDetailButton = new CheckboxMenuItem("Coarse Detail");
+        lowDetailButton.setEnabled(true);
+        lowDetailButton.setState(false);
+        detailMenu.add(lowDetailButton);
+        lowDetailButton.addItemListener(this);
+        detailGroup.add(lowDetailButton);
+
+        CheckboxMenuItem mediumDetailButton = new CheckboxMenuItem("Normal Detail");
+        mediumDetailButton.setEnabled(true);
+        mediumDetailButton.setState(true);
+        detailMenu.add(mediumDetailButton);
+        mediumDetailButton.addItemListener(this);
+        detailGroup.add(mediumDetailButton);
+
+        CheckboxMenuItem highDetailButton = new CheckboxMenuItem("Fine Detail");
+        highDetailButton.setEnabled(true);
+        highDetailButton.setState(false);
+        detailMenu.add(highDetailButton);
+        highDetailButton.addItemListener(this);
+        detailGroup.add(highDetailButton);
+        
+        menuItem = new MenuItem("-"); // Separator
+        menu.add(menuItem);
+        
+        menuItem = new MenuItem("Quit GlobeView");
+        menuItem.setEnabled(true);
+        menuItem.addActionListener(this);
+        menu.add(menuItem);
+        
+        int i; 
+        Menu projectionMenu = new Menu("MapProjection");
+        menuBar.add(projectionMenu);
+        
+        addProjectionMenuItem(projectionMenu, "Azimuthal Equal Area", true);
+        addProjectionMenuItem(projectionMenu, "Azimuthal Equidistant", true);
+        addProjectionMenuItem(projectionMenu, "Equirectangular", true);
+        addProjectionMenuItem(projectionMenu, "Gnomonic", true);
+        addProjectionMenuItem(projectionMenu, "Mercator", true);
+        addProjectionMenuItem(projectionMenu, "Orthographic", true);
+
+        Menu perspectiveMenu = new Menu("Perspective");
+        projectionMenu.add(perspectiveMenu);
+
+        addProjectionMenuItem(perspectiveMenu, "Normal Monoscopic Perspective", true);
+        addProjectionMenuItem(perspectiveMenu, "Cross-Eye 3D", true);
+        addProjectionMenuItem(perspectiveMenu, "Wall-Eye 3D", false);
+        addProjectionMenuItem(perspectiveMenu, "Red/Blue 3D", false);
+        addProjectionMenuItem(perspectiveMenu, "Interlaced 3D", false);     
+
+        addProjectionMenuItem(projectionMenu, "Sinusoidal", true);
+        addProjectionMenuItem(projectionMenu, "Stereographic", true);
+                
+        menu = new Menu("Help");
+        menuBar.setHelpMenu(menu);
+        menuItem = new MenuItem("GlobeView Help");
+        menuItem.addActionListener(this);
+        menuItem.setEnabled(true);
+        menu.add(menuItem);
+
+        menuItem = new MenuItem("-"); // Separator
+        menu.add(menuItem);
+        
+        menuItem = new MenuItem("About GlobeView");
+        menuItem.addActionListener(this);
+        menuItem.setEnabled(true);
+        menu.add(menuItem);        
+    }
+    
 	void addProjectionMenuItem(Menu m, String projectionName, boolean enabled) {
 
 		Projection p = Projection.getByName(projectionName);
@@ -351,7 +355,7 @@ public class GlobeView extends Frame
 				System.exit(0); // Kill the program
 			// } catch (java.security.AccessControlException exception) {
 			} catch (Exception exception) {
-				hide(); // At least hide it, anyway
+				setVisible(false); // At least hide it, anyway
 			}
 		}
 		if (e.getActionCommand() == "About GlobeView") {
@@ -564,7 +568,7 @@ public class GlobeView extends Frame
 	}
 
 	public void stop() { // What to do when parent applet gets stop()
-		hide();
+		setVisible(false);
 		canvas.stopBitmapThread();
 		canvas.stopNightUpdateThread();
 		canvas.stopProgressBarThread();
